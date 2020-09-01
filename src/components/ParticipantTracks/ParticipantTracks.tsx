@@ -8,7 +8,6 @@ import { TRACK_TYPE } from '../../utils/displayStrings';
 interface ParticipantTracksProps {
   participant: Participant;
   disableAudio?: boolean;
-  enableScreenShare?: boolean;
   videoPriority?: Track.Priority | null;
 }
 
@@ -20,23 +19,12 @@ interface ParticipantTracksProps {
  *  and the Publication component renders Tracks.
  */
 
-export default function ParticipantTracks({
-  participant,
-  disableAudio,
-  enableScreenShare,
-  videoPriority,
-}: ParticipantTracksProps) {
+export default function ParticipantTracks({ participant, disableAudio, videoPriority }: ParticipantTracksProps) {
   const { room } = useVideoContext();
   const publications = usePublications(participant);
   const isLocal = participant === room.localParticipant;
 
-  let filteredPublications;
-
-  if (enableScreenShare && publications.some(p => p.trackName === TRACK_TYPE.SCREEN)) {
-    filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.VIDEO);
-  } else {
-    filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.SCREEN);
-  }
+  let filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.SCREEN);
 
   return (
     <>

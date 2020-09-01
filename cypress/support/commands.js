@@ -1,17 +1,17 @@
 import detectSound from './detectSound';
 
-Cypress.Commands.add('joinRoom', (username, roomname) => {
+Cypress.Commands.add('joinRoom', (partyType,partyName, caseNumber) => {
   cy.visit('/');
-  // cy.get('#party-type').type(partyType);
-  cy.get('#menu-name').type(username);
-  cy.get('#menu-room').type(roomname);
+  cy.get('#party-type').type(partyType);
+  cy.get('#party-name').type(partyName);
+  cy.get('#case-number').type(caseNumber);
   cy.get('[type="submit"]').click();
-  //cy.get('[data-cy-main-participant]');
+  cy.get('[data-cy-main-participant]');
 });
 
 Cypress.Commands.add('leaveRoom', () => {
   cy.wait(500);
-  cy.get('body').click(); // Makes controls reappear
+ // cy.get('body').click(); // Makes controls reappear
   cy.get('[title="End Call"]').click();
   cy.task('removeAllParticipants');
   cy.get('#menu-room');

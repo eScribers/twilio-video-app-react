@@ -27,13 +27,7 @@ export default function Publication({ publication, isLocal, disableAudio, videoP
 
   switch (track.kind) {
     case TRACK_TYPE.VIDEO:
-      return (
-        <VideoTrack
-          track={track as IVideoTrack}
-          priority={videoPriority}
-          isLocal={track.kind === TRACK_TYPE.AUDIO && isLocal}
-        />
-      );
+      return <VideoTrack track={track as IVideoTrack} priority={videoPriority} isLocal={isLocal} />;
     case TRACK_TYPE.AUDIO:
       return disableAudio ? null : <AudioTrack track={track as IAudioTrack} />;
     default:

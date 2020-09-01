@@ -17,17 +17,7 @@ describe('the Publication component', () => {
       expect(wrapper.find('VideoTrack').length).toBe(1);
     });
 
-    it('should ignore the "isLocal" prop when track.name is not "camera"', () => {
-      mockUseTrack.mockImplementation(() => ({ kind: 'video', name: 'screen-123456' }));
-      const wrapper = shallow(
-        <Publication isLocal publication={'mockPublication' as any} participant={'mockParticipant' as any} />
-      );
-      expect(useTrack).toHaveBeenCalledWith('mockPublication');
-      expect(wrapper.find({ isLocal: false }).length).toBe(0);
-      //expect(wrapper.find({ isLocal: false }).length).toBe(1);
-    });
-
-    it('should use the "isLocal" prop when track.name is "camera"', () => {
+    it('should use the "isLocal" prop', () => {
       mockUseTrack.mockImplementation(() => ({ kind: 'video', name: 'camera-123456' }));
       const wrapper = shallow(
         <Publication isLocal publication={'mockPublication' as any} participant={'mockParticipant' as any} />

@@ -89,7 +89,7 @@ export default function MenuBar() {
   let repoterInfo: any = reporterToken ? jwt_decode(reporterToken) : '';
   const classes = useStyles();
   const { setError, getToken, isFetching } = useAppState();
-  const { isConnecting, connect, room, localTracks } = useVideoContext();
+  const { isConnecting, connect, room, localTracks, isAcquiringLocalTracks } = useVideoContext();
   const roomState = useRoomState();
   const alert = useAlert();
   const [partyType, setPartyType] = useState(reporterToken ? PARTICIANT_TYPES.REPORTER : '');
@@ -108,6 +108,7 @@ export default function MenuBar() {
         }
       })
       .catch(err => {
+        if (err.message) setError({ message: err.message });
         if (err.response) setError({ message: err.response.data });
         else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
 
@@ -145,6 +146,7 @@ export default function MenuBar() {
             <FormControl className={classes.textField}>
               <InputLabel htmlFor="party-type">Party Type</InputLabel>
               <Select
+                data-testid="my-select-component"
                 id="party-type"
                 label="Party Type"
                 value={partyType}
@@ -162,7 +164,7 @@ export default function MenuBar() {
             </FormControl>
             <TextField
               autoComplete="off"
-              id="menu-name"
+              id="party-name"
               label="Party Name"
               className={classes.textField}
               value={partyName}
@@ -173,7 +175,7 @@ export default function MenuBar() {
 
             <TextField
               autoComplete="off"
-              id="menu-room"
+              id="case-number"
               label="Case Number"
               className={classes.textField}
               value={caseNumber}
@@ -187,7 +189,9 @@ export default function MenuBar() {
                 type="submit"
                 color="primary"
                 variant="contained"
-                disabled={isConnecting || !partyName || !caseNumber || isFetching}
+                disabled={
+                  isConnecting || !partyName || !partyType || !caseNumber || isFetching || isAcquiringLocalTracks
+                }
               >
                 {submitButtonValue}
               </Button>

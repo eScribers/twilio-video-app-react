@@ -16,7 +16,6 @@ export default function useLocalVideoToggle() {
   const previousDeviceIdRef = useRef<string>();
 
   const toggleVideoEnabled = useCallback(() => {
-    //if (!isPublishing) {
     if (videoTrack) {
       if (localParticipant) {
         previousDeviceIdRef.current = videoTrack.mediaStreamTrack.getSettings().deviceId;
