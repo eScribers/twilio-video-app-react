@@ -41,7 +41,10 @@ jobs:
       # Install Node dependencies
       - script: npm ci
         displayName: 'Install NPM dependencies'
-
+      
+      - script: npm install cypress --save-dev
+        displayName: 'Install cypress'
+      
       - script: npm run cy:verify
         displayName: 'Cypress verify'
 
