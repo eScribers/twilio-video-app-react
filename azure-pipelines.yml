@@ -60,8 +60,10 @@ jobs:
           npx print-env BUILD
           npx print-env SYSTEM
           npm run start:ci:windows &
-          npx cypress run --record --parallel --ci-build-id $BUILD_BUILDNUMBER --group "Azure CI"
+          npx cypress run --record --parallel --ci-build-id $BUILDID --group "Azure CI"
+          
         displayName: 'Run Cypress tests'
         env:
           # avoid warnings about terminal
           TERM: xterm
+          BUILDID: $(Build.BuildId)
