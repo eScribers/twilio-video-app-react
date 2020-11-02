@@ -31,7 +31,13 @@ export interface IVideoContext {
 }
 export const VideoContext = createContext<IVideoContext>(null!);
 
-export function VideoProvider({ options, children, onError = () => {}, onDisconnect = () => {} }: any) {
+export function VideoProvider({
+  options,
+  children,
+  onError = () => {},
+  onNotification = () => {},
+  onDisconnect = () => {},
+}: any) {
   const onErrorCallback = (error: TwilioError) => {
     console.log(`ERROR: ${error.message}`, error);
     onError(error);
@@ -47,7 +53,7 @@ export function VideoProvider({ options, children, onError = () => {}, onDisconn
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
   // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionErrors(room, onError);
+  useHandleRoomDisconnectionErrors(room, onError, onNotification);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
 

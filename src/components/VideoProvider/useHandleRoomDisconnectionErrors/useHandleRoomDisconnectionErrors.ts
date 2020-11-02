@@ -2,12 +2,13 @@ import { Room, TwilioError } from 'twilio-video';
 import { useEffect } from 'react';
 import { ROOM_STATE } from '../../../utils/displayStrings';
 import { Callback } from '../../../types';
+import { NOTIFICATION_MESSAGE } from '../../../utils/displayStrings';
 
-export default function useHandleRoomDisconnectionErrors(room: Room, onError: Callback) {
+export default function useHandleRoomDisconnectionErrors(room: Room, onError: Callback, onNotification: Callback) {
   useEffect(() => {
     const onDisconnected = (room: Room, error: TwilioError) => {
       if (error) {
-        onError(error);
+        if (error.code == 53118) onNotification({ message: NOTIFICATION_MESSAGE.ROOM_COMPLETED });
       }
     };
 

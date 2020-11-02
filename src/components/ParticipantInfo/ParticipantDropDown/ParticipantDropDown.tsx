@@ -32,6 +32,7 @@ export default function ParticipantDropDown({ participant }) {
 
   return (
     <div style={{ float: 'right' }}>
+      {' '}
       <IconButton
         aria-label="more"
         aria-controls="long-menu"
