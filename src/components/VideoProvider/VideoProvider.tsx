@@ -2,7 +2,7 @@ import { Callback, ErrorCallback } from '../../types';
 import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
 
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
-import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
+import useHandleRoomDisconnectionEvents from './useHandleRoomDisconnectionEvents/useHandleRoomDisconnectionEvents';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
@@ -53,7 +53,7 @@ export function VideoProvider({
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
   // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionErrors(room, onError, onNotification);
+  useHandleRoomDisconnectionEvents(room, onError, onNotification);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
 
