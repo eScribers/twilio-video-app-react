@@ -3,7 +3,8 @@ import useTrack from '../../hooks/useTrack/useTrack';
 import AudioTrack from '../AudioTrack/AudioTrack';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import { IVideoTrack } from '../../types';
+import DataTrack from '../DataTrack/DataTrack';
+import { IDataTrack, IVideoTrack } from '../../types';
 import {
   AudioTrack as IAudioTrack,
   LocalTrackPublication,
@@ -17,10 +18,17 @@ interface PublicationProps {
   participant: Participant;
   isLocal: boolean;
   disableAudio?: boolean;
+  disableData?: boolean;
   videoPriority?: Track.Priority | null;
 }
 
-export default function Publication({ publication, isLocal, disableAudio, videoPriority }: PublicationProps) {
+export default function Publication({
+  publication,
+  isLocal,
+  disableAudio,
+  disableData,
+  videoPriority,
+}: PublicationProps) {
   const track = useTrack(publication);
 
   if (!track) return null;
@@ -36,6 +44,9 @@ export default function Publication({ publication, isLocal, disableAudio, videoP
       );
     case TRACK_TYPE.AUDIO:
       return disableAudio ? null : <AudioTrack track={track as IAudioTrack} />;
+    case TRACK_TYPE.DATA:
+      return disableData ? null : <DataTrack track={track as IDataTrack} />;
+
     default:
       return null;
   }

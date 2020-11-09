@@ -1,4 +1,4 @@
-import { LocalVideoTrack, RemoteVideoTrack, TwilioError } from 'twilio-video';
+import { LocalDataTrack, LocalVideoTrack, RemoteDataTrack, RemoteVideoTrack, TwilioError } from 'twilio-video';
 
 declare module 'twilio-video' {
   interface LocalParticipant {
@@ -14,6 +14,11 @@ declare module 'twilio-video' {
     isSwitchedOff: undefined;
     setPriority: undefined;
     restart: (constraints: MediaStreamConstraints['video']) => Promise<void>;
+  }
+
+  interface LocalDataTrack {
+    isSwitchedOff: undefined;
+    setPriority: undefined;
   }
 
   interface LocalAudioTrack {
@@ -51,3 +56,5 @@ export type Callback = (...args: any[]) => void;
 export type ErrorCallback = (error: TwilioError) => void;
 
 export type IVideoTrack = LocalVideoTrack | RemoteVideoTrack;
+
+export type IDataTrack = LocalDataTrack | RemoteDataTrack;

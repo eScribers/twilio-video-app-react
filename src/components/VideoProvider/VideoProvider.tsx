@@ -13,13 +13,14 @@ import {
   ConnectOptions,
   LocalAudioTrack,
   LocalVideoTrack,
+  LocalDataTrack,
   Room,
   TwilioError,
 } from 'twilio-video';
 
 export interface IVideoContext {
   room: Room;
-  localTracks: (LocalAudioTrack | LocalVideoTrack)[];
+  localTracks: (LocalAudioTrack | LocalVideoTrack | LocalDataTrack)[];
   isConnecting: boolean;
   connect: (token: string) => Promise<void>;
   onError: ErrorCallback;

@@ -1,7 +1,7 @@
 import { Callback } from '../../../types';
 import EventEmitter from 'events';
 import { isMobile } from '../../../utils';
-import Video, { ConnectOptions, LocalTrack, Room } from 'twilio-video';
+import Video, { ConnectOptions, LocalDataTrack, LocalTrack, Room } from 'twilio-video';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ROOM_STATE, TRACK_TYPE } from '../../../utils/displayStrings';
 
@@ -12,6 +12,7 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
   const [room, setRoom] = useState<Room>(new EventEmitter() as Room);
   const [isConnecting, setIsConnecting] = useState(false);
   const localTracksRef = useRef<LocalTrack[]>([]);
+  const optionsRef = useRef(options);
 
   useEffect(() => {
     // It can take a moment for Video.connect to connect to a room. During this time, the user may have enabled or disabled their
@@ -20,10 +21,15 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
     localTracksRef.current = localTracks;
   }, [localTracks]);
 
+  useEffect(() => {
+    // This allows the connect function to always access the most recent version of the options object. This allows us to
+    // reliably use the connect function at any time.
+    optionsRef.current = options;
+  }, [options]);
   const connect = useCallback(
     token => {
       setIsConnecting(true);
-      return Video.connect(token, { ...options, tracks: [] }).then(
+      return Video.connect(token, { ...optionsRef.current, tracks: [...localTracks, new LocalDataTrack()] }).then(
         newRoom => {
           setRoom(newRoom);
           const disconnect = () => newRoom.disconnect();

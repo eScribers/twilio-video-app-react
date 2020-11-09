@@ -130,6 +130,14 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
   const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
   const videoPublication = publications.find(p => p.kind === TRACK_TYPE.VIDEO);
 
+  /*   const [localDataTrackPublication] = [...room.localParticipant.dataTracks.values()];
+    const isHostIn = useIsHostIn(room.localParticipant);
+    if (isHostIn) {
+      const fullMessage = 'hostIn';
+      localDataTrackPublication.track.send(fullMessage);
+    }
+  }*/
+
   const networkQualityLevel = useParticipantNetworkQualityLevel(participant);
   const isVideoEnabled = Boolean(videoPublication);
   const isScreenShareEnabled = publications.find(p => p.trackName === TRACK_TYPE.SCREEN);

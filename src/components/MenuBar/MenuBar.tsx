@@ -22,6 +22,9 @@ import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
+import useIsHostIn from '../../hooks/UseIsHostIn/useIsHostIn';
+import ParticipantConnectionIndicator from 'components/ParticipantInfo/ParticipantConnectionIndicator/ParticipantConnectionIndicator';
+import { partition } from 'cypress/types/lodash';
 
 const JOIN_ROOM_MESSAGE = 'Join Room';
 const RETRY_ROOM_MESSAGE = 'Retry';
