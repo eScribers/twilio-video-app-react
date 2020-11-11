@@ -153,7 +153,7 @@ export default function MenuBar() {
   }
 
   if (roomState !== ROOM_STATE.DISCONNECTED) {
-    if (!useIsHostIn()) {
+    if (!useIsHostIn(room)) {
       console.log('use room');
       audioTrack?.disable();
       videoTrack?.disable();

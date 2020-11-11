@@ -8,19 +8,19 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useIsHostIn from '../../hooks/useIsHosetIn/useIsHostIn';
 
 export default function useLocalAudioToggle() {
-  const { localTracks } = useVideoContext();
+  const { localTracks, room } = useVideoContext();
   const roomState = useRoomState();
 
   const audioTrack = localTracks.find(track => track.kind === TRACK_TYPE.AUDIO) as LocalAudioTrack;
-  let isEnabled = useIsTrackEnabled(audioTrack);
+  const isEnabled = useIsTrackEnabled(audioTrack);
 
   const toggleAudioEnabled = useCallback(() => {
     if (roomState !== ROOM_STATE.DISCONNECTED) {
-      if (!useIsHostIn()) {
+      if (!useIsHostIn(room)) {
         console.log('use room');
         audioTrack?.disable();
         alert('waiting for reporter to join');
-        isEnabled = false;
+        // isEnabled = false;
         // toggleAudioButton({ disabled: true });
       } else {
         audioTrack.isEnabled ? audioTrack.disable() : audioTrack.enable();
