@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import * as jwt_decode from 'jwt-decode';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -21,6 +20,9 @@ import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
+//import { NodeJS } from 'node';
+//import * as NodeJS from 'node';
+//const NodeJS = require('node');
 
 const JOIN_ROOM_MESSAGE = 'Join Room';
 const RETRY_ROOM_MESSAGE = 'Retry';
@@ -83,11 +85,24 @@ const mobileAndTabletCheck = function() {
 export default function MenuBar() {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
-  const { setError, getToken, isFetching, authoriseParticipant, setNotification } = useAppState();
+  const {
+    setError,
+    getToken,
+    isFetching,
+    authoriseParticipant,
+    setNotification,
+    isAutoRetryingToJoinRoom,
+    setWaitingNotification,
+  } = useAppState();
   const { isConnecting, connect, room, localTracks } = useVideoContext();
   const roomState = useRoomState();
 
   const [participantInfo, setParticipantInfo] = useState<any>(null);
+  const [joinRoomAttemptIntervalId, setJoinRoomAttemptIntervalId] = useState<NodeJS.Timeout>(null as any);
+
+  if (isAutoRetryingToJoinRoom === false) {
+    clearTimeout(joinRoomAttemptIntervalId);
+  }
 
   async function joinRoom(participantInformation) {
     try {
@@ -95,8 +110,14 @@ export default function MenuBar() {
 
       if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
         setSubmitButtonValue(RETRY_ROOM_MESSAGE);
-        setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+        if (isAutoRetryingToJoinRoom) {
+          setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
+          setJoinRoomAttemptIntervalId(setTimeout(joinRoom, 5000, participantInformation));
+        } else {
+          setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+        }
       } else {
+        setWaitingNotification(null);
         await connect(response);
         setSubmitButtonValue(JOIN_ROOM_MESSAGE);
       }
