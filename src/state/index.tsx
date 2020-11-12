@@ -18,8 +18,6 @@ export interface StateContextType {
   setError(error: TwilioError | null): void;
   notification: string | null;
   setNotification(notification: string | null): void;
-  isWaitingForRoomToStart: boolean;
-  setIsWaitingForRoomToStart(isWaiting: boolean): void;
   isAutoRetryingToJoinRoom: boolean;
   setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
   waitingNotification: string;
@@ -45,7 +43,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [notification, setNotification] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
-  const [isWaitingForRoomToStart, setIsWaitingForRoomToStart] = useState(true);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
 
