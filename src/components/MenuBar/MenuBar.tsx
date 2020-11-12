@@ -20,12 +20,9 @@ import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
-//import { NodeJS } from 'node';
-//import * as NodeJS from 'node';
-//const NodeJS = require('node');
 
-const JOIN_ROOM_MESSAGE = 'Join Room';
-const RETRY_ROOM_MESSAGE = 'Retry';
+const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
+const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
   createStyles({
     container: {
@@ -98,33 +95,35 @@ export default function MenuBar() {
   const roomState = useRoomState();
 
   const [participantInfo, setParticipantInfo] = useState<any>(null);
-  const [joinRoomAttemptIntervalId, setJoinRoomAttemptIntervalId] = useState<NodeJS.Timeout>(null as any);
+  const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
+  const RETRY_INTERVAL = 15000;
 
   if (isAutoRetryingToJoinRoom === false) {
-    clearTimeout(joinRoomAttemptIntervalId);
+    clearTimeout(retryJoinRoomAttemptTimerId);
   }
 
   async function joinRoom(participantInformation) {
+    var response = null as any;
     try {
-      const response = await getToken(participantInformation);
-
-      if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
-        setSubmitButtonValue(RETRY_ROOM_MESSAGE);
-        if (isAutoRetryingToJoinRoom) {
-          setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
-          setJoinRoomAttemptIntervalId(setTimeout(joinRoom, 5000, participantInformation));
-        } else {
-          setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
-        }
-      } else {
-        setWaitingNotification(null);
-        await connect(response);
-        setSubmitButtonValue(JOIN_ROOM_MESSAGE);
-      }
+      response = await getToken(participantInformation);
     } catch (err) {
       if (err.response) setError({ message: err.response.data });
       else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
 
+      setSubmitButtonValue(JOIN_ROOM_MESSAGE);
+    }
+
+    if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
+      setSubmitButtonValue(RETRY_ROOM_MESSAGE);
+      if (isAutoRetryingToJoinRoom) {
+        setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
+        setRetryJoinRoomAttemptTimerId(setTimeout(joinRoom, RETRY_INTERVAL, participantInformation));
+      } else {
+        setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+      }
+    } else {
+      setWaitingNotification(null);
+      await connect(response);
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
   }
