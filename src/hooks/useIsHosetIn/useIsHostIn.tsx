@@ -1,8 +1,5 @@
-import { Room } from 'twilio-video';
 import { PARTICIANT_TYPES } from '../../utils/participantTypes';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
-import { ROOM_STATE } from 'utils/displayStrings';
 
 export default function useIsHostIn() {
   const { room } = useVideoContext();
