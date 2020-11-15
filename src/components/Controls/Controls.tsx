@@ -8,8 +8,8 @@ import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import { ROOM_STATE } from '../../utils/displayStrings';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
-import useIsHostIn from '../../hooks/useIsHosetIn/useIsHostIn';
-
+//import useIsHostIn from '../../hooks/useIsHosetIn/useIsHostIn';
+import useDisableToggleButtons from '../../hooks/useDisableToggleButtons/useDisableToggleButtons';
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     container: {
@@ -36,19 +36,20 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function Controls() {
+export default function Controls(props: { disabled?: boolean }) {
   const classes = useStyles();
   const roomState = useRoomState();
   const isReconnecting = roomState === ROOM_STATE.RECONNECTING;
   const isdisconnected = roomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
+  const disableToggleButtons = useDisableToggleButtons();
   const showControls = isUserActive || roomState === ROOM_STATE.DISCONNECTED;
-  const enableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : false /*!useIsHostIn()*/;
+  const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : disableToggleButtons;
 
   return (
     <div className={clsx(classes.container, { showControls })}>
-      <ToggleAudioButton disabled={enableButtons} />
-      <ToggleVideoButton disabled={enableButtons} />
+      <ToggleAudioButton disabled={disableButtons} />
+      <ToggleVideoButton disabled={disableButtons} />
       {roomState !== ROOM_STATE.DISCONNECTED && (
         <>
           <EndCallButton />
