@@ -13,9 +13,9 @@ export default function useDisbleToggleButtons(onNotification: Callback) {
 
   useEffect(() => {
     if (!isHostIn) {
-      room.localParticipant.audioTracks.forEach(function(audioTrack) {
+      /* room.localParticipant.audioTracks.forEach(function(audioTrack) {
         audioTrack.track.disable();
-      });
+      });*/
       /* room.localParticipant.videoTracks.forEach(function(videoTrack) {
           videoTrack.track.disable();
         });*/
@@ -38,9 +38,9 @@ export default function useDisbleToggleButtons(onNotification: Callback) {
 
     const participantDisconnected = (participant: RemoteParticipant) => {
       if (participant.identity.split('@')[1] === PARTICIANT_TYPES.REPORTER && !isHostIn) {
-        room.localParticipant.audioTracks.forEach(function(audioTrack) {
+        /*   room.localParticipant.audioTracks.forEach(function(audioTrack) {
           audioTrack.track.disable();
-        });
+        });*/
         /* room.localParticipant.videoTracks.forEach(function(videoTrack) {
           videoTrack.track.disable();
         });*/

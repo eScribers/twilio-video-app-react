@@ -20,6 +20,7 @@ import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
+import useDisableToggleButtons from '../../hooks/useDisableToggleButtons/useDisableToggleButtons';
 
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
@@ -98,6 +99,8 @@ export default function MenuBar() {
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
+  const isHostIn = useDisableToggleButtons(() => {});
+
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
   }
@@ -169,6 +172,11 @@ export default function MenuBar() {
       deviceId: videoTrack.mediaStreamTrack.getSettings().deviceId as string,
       groupdId: videoTrack.mediaStreamTrack.getSettings().groupId as string,
     };
+  }
+
+  if (!isHostIn) {
+    audioTrack?.disable();
+    videoTrack?.disable();
   }
 
   return (
