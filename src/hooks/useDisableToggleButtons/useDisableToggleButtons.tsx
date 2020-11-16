@@ -17,8 +17,8 @@ export default function useDisbleToggleButtons(onNotification: Callback) {
         audioTrack.track.disable();
       });
       /* room.localParticipant.videoTracks.forEach(function(videoTrack) {
-        videoTrack.track.disable();
-      });*/
+          videoTrack.track.disable();
+        });*/
       onNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
       // alert('waiting for reporter to join');
       setDisbleToggleButtons(true);
