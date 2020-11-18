@@ -99,7 +99,7 @@ export default function MenuBar() {
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
-  const isHostIn = useIsHostIn(() => {});
+  const isHostIn = useIsHostIn();
   const [isHostInState, setIsHostInState] = useState(isHostIn);
 
   if (isAutoRetryingToJoinRoom === false) {
