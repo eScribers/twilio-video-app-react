@@ -1,6 +1,4 @@
 import React from 'react';
-import { useState } from 'react';
-
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
@@ -11,7 +9,6 @@ import { ROOM_STATE } from '../../utils/displayStrings';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
-import NotificationDialog from '../../components/NotificationDialog/NotificationDialog';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -45,8 +42,7 @@ export default function Controls(props: { disabled?: boolean }) {
   const isReconnecting = roomState === ROOM_STATE.RECONNECTING;
   const isdisconnected = roomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
-  const [notification, setNotification] = useState(null);
-  const isHostIn = useIsHostIn(setNotification);
+  const isHostIn = useIsHostIn();
   const showControls = isUserActive || roomState === ROOM_STATE.DISCONNECTED;
   const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !isHostIn;
 
@@ -54,7 +50,6 @@ export default function Controls(props: { disabled?: boolean }) {
     <div className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={isReconnecting} />
-      <NotificationDialog dismissNotification={() => setNotification(null)} notification={notification} />
       {roomState !== ROOM_STATE.DISCONNECTED && (
         <>
           <EndCallButton />

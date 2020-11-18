@@ -100,6 +100,7 @@ export default function MenuBar() {
   const RETRY_INTERVAL = 15000;
 
   const isHostIn = useIsHostIn(() => {});
+  const [isHostInState, setIsHostInState] = useState(isHostIn);
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
@@ -174,8 +175,15 @@ export default function MenuBar() {
     };
   }
 
-  if (!isHostIn) {
-    audioTrack?.disable();
+  if (isHostIn !== isHostInState) {
+    if (isHostIn) {
+      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      setIsHostInState(isHostIn);
+    } else if (!isHostIn) {
+      audioTrack?.disable();
+      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+      setIsHostInState(isHostIn);
+    }
   }
 
   return (
