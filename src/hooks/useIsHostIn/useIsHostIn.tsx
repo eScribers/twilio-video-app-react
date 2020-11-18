@@ -37,7 +37,7 @@ export default function useIsHostIn() {
   return isHostIn;
 
   function checkIsHostIn(room) {
-    if (typeof room.participants !== 'undefined' && room !== null) {
+    if (room !== null && typeof room.participants !== 'undefined') {
       let flag = false;
       room.participants.forEach(participant => {
         if (participant.identity.split('@')[1] === PARTICIANT_TYPES.REPORTER) {

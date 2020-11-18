@@ -20,7 +20,7 @@ describe('the useIsHosetIn hook', () => {
     }));
   });
 
-  it('should return true by default', () => {
+  it('when there are no participants yet should return true', () => {
     const { result } = renderHook(useIsHosetIn());
     expect(result.current).toEqual(true);
   });
