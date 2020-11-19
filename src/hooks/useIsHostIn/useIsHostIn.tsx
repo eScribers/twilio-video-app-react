@@ -8,7 +8,7 @@ export default function useIsHostIn() {
   const [isHostIn, setIsHostIn] = useState(true);
 
   useEffect(() => {
-    if (!checkIsHostIn(room)) {
+    if (!checkIsHostIn()) {
       setIsHostIn(false);
     }
   }, [room]);
@@ -21,7 +21,7 @@ export default function useIsHostIn() {
     };
 
     const participantDisconnected = (participant: RemoteParticipant) => {
-      if (participant.identity.split('@')[1] === PARTICIANT_TYPES.REPORTER && !checkIsHostIn(room)) {
+      if (participant.identity.split('@')[1] === PARTICIANT_TYPES.REPORTER && !checkIsHostIn()) {
         setIsHostIn(false);
       }
     };
@@ -36,7 +36,7 @@ export default function useIsHostIn() {
 
   return isHostIn;
 
-  function checkIsHostIn(room) {
+  function checkIsHostIn() {
     if (room !== null && typeof room.participants !== 'undefined') {
       let flag = false;
       room.participants.forEach(participant => {

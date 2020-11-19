@@ -179,7 +179,7 @@ export default function MenuBar() {
     if (isHostIn) {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       setIsHostInState(isHostIn);
-    } else if (!isHostIn) {
+    } else {
       audioTrack?.disable();
       setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
       setIsHostInState(isHostIn);
