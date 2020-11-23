@@ -21,12 +21,12 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('when there are no participants yet should return true', () => {
-    const { result } = renderHook(useIsHosetIn());
+    const { result } = renderHook(useIsHosetIn);
     expect(result.current).toEqual(true);
   });
 
   it('should return false when "participantConnected" is not the host', async () => {
-    const { result } = renderHook(useIsHosetIn());
+    const { result } = renderHook(useIsHosetIn);
     act(() => {
       mockRoom.emit('participantConnected', 'newParticipant@HearingOfficer');
     });
@@ -34,7 +34,7 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('should return true when "participantConnected" is the host', async () => {
-    const { result } = renderHook(useIsHosetIn());
+    const { result } = renderHook(useIsHosetIn);
     act(() => {
       mockRoom.emit('participantConnected', 'newParticipant@HearingOfficer');
       mockRoom.emit('participantConnected', 'newParticipant@Reporter');
@@ -43,7 +43,7 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('should return false after host had left', async () => {
-    const { result } = renderHook(useIsHosetIn());
+    const { result } = renderHook(useIsHosetIn);
     act(() => {
       mockRoom.emit('participantConnected', 'newParticipant@HearingOfficer');
       mockRoom.emit('participantConnected', 'newParticipant@Reporter');
@@ -53,7 +53,7 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('should return true after host had left and there is another host in the room', async () => {
-    const { result } = renderHook(useIsHosetIn());
+    const { result } = renderHook(useIsHosetIn);
     act(() => {
       mockRoom.emit('participantConnected', 'newParticipant@HearingOfficer');
       mockRoom.emit('participantConnected', 'newParticipant@Reporter');
