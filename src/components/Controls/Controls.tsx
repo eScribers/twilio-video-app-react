@@ -1,4 +1,4 @@
-/*import React from 'react';
+import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
@@ -57,4 +57,4 @@ export default function Controls(props: { disabled?: boolean }) {
       )}
     </div>
   );
-}*/
+}
