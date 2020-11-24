@@ -1,9 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import EventEmitter from 'events';
-import useDominantSpeaker from '../useDominantSpeaker/useDominantSpeaker';
 import useIsHosetIn from './useIsHostIn';
 import useVideoContext from '../useVideoContext/useVideoContext';
-import { NOTIFICATION_MESSAGE } from '../../utils/displayStrings';
 
 jest.mock('../useVideoContext/useVideoContext');
 jest.mock('../useDominantSpeaker/useDominantSpeaker');
