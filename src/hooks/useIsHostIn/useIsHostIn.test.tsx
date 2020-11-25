@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import EventEmitter from 'events';
-import useIsHosetIn from './useIsHostIn';
+import useIsHostIn from './useIsHostIn';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
 jest.mock('../useVideoContext/useVideoContext');
@@ -8,7 +8,7 @@ jest.mock('../useDominantSpeaker/useDominantSpeaker');
 
 const mockedVideoContext = useVideoContext as jest.Mock<any>;
 
-describe('the useIsHosetIn hook', () => {
+describe('the useIsHostIn hook', () => {
   let mockRoom: any;
 
   beforeEach(() => {
@@ -19,12 +19,12 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('when there are no participants yet should return true', () => {
-    const { result } = renderHook(useIsHosetIn);
+    const { result } = renderHook(useIsHostIn);
     expect(result.current).toEqual(true);
   });
 
   it('should return false when "participantConnected" is not the host', async () => {
-    const { result } = renderHook(useIsHosetIn);
+    const { result } = renderHook(useIsHostIn);
     act(() => {
       mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
     });
@@ -32,7 +32,7 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('should return true when "participantConnected" is the host', async () => {
-    const { result } = renderHook(useIsHosetIn);
+    const { result } = renderHook(useIsHostIn);
     act(() => {
       mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
       mockRoom.emit('participantConnected', { identity: 'newParticipant@Reporter' });
@@ -41,7 +41,7 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('should return false after host had left', async () => {
-    const { result } = renderHook(useIsHosetIn);
+    const { result } = renderHook(useIsHostIn);
     act(() => {
       mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
       mockRoom.emit('participantConnected', { identity: 'newParticipant@Reporter' });
@@ -51,7 +51,7 @@ describe('the useIsHosetIn hook', () => {
   });
 
   it('should return true after host had left and there is another host in the room', async () => {
-    const { result } = renderHook(useIsHosetIn);
+    const { result } = renderHook(useIsHostIn);
     act(() => {
       mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
       mockRoom.emit('participantConnected', { identity: 'newParticipant@Reporter' });
