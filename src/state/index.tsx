@@ -45,7 +45,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
-
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
   const [gridView, setGridView] = useState(true);
@@ -261,7 +260,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 function participantIsMemberInHostRole(partyType: string) {
   return partyType === PARTICIANT_TYPES.REPORTER || partyType === PARTICIANT_TYPES.HEARING_OFFICER;
 }
-
 export function useAppState(): any {
   const context = useContext(StateContext);
   if (!context) {

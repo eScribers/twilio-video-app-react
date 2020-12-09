@@ -21,6 +21,7 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
+import { LogglyTracker } from 'react-native-loggly-jslogger';
 
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
@@ -91,6 +92,7 @@ export default function MenuBar() {
     setNotification,
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
+    logger,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
   const roomState = useRoomState();
@@ -139,6 +141,11 @@ export default function MenuBar() {
 
         if (participantInformation && participantInformation.displayName !== '') {
           setParticipantInfo(participantInformation);
+          logger.push({
+            browserType: detectBrowser(),
+            userAgent: navigator.userAgent,
+            participantInformation: participantInformation,
+          });
         }
       }
     }
@@ -263,4 +270,36 @@ export default function MenuBar() {
       </Toolbar>
     </AppBar>
   );
+}
+function detectBrowser() {
+  // Get the user-agent string
+  let userAgentString = navigator.userAgent;
+
+  // Detect Chrome
+  let chromeAgent = userAgentString.indexOf('Chrome') > -1;
+
+  // Detect Internet Explorer
+  let IExplorerAgent = userAgentString.indexOf('MSIE') > -1 || userAgentString.indexOf('rv:') > -1;
+
+  // Detect Firefox
+  let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
+
+  // Detect Safari
+  let safariAgent = userAgentString.indexOf('Safari') > -1;
+
+  // Discard Safari since it also matches Chrome
+  if (chromeAgent && safariAgent) safariAgent = false;
+
+  // Detect Opera
+  let operaAgent = userAgentString.indexOf('OP') > -1;
+
+  // Discard Chrome since it also matches Opera
+  if (chromeAgent && operaAgent) chromeAgent = false;
+
+  if (safariAgent) return 'safariAgent';
+  if (chromeAgent) return 'chromeAgent';
+  if (IExplorerAgent) return 'IExplorerAgent';
+  if (operaAgent) return 'operaAgent';
+  if (firefoxAgent) return 'firefoxAgent';
+  return 'no detected browser';
 }

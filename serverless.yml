@@ -20,7 +20,13 @@ custom:
     originId: S3-escribers-videoapp-website-${opt:stage}
   output:
     file: stackOutput.json # toml, yaml, yml, and json format is available
-    
+provider:
+  
+  environment:
+    STAGE: ${opt:stage}
+    REACT_APP_LOGGLY_CUSTOMER_TOKEN: ${opt:loggly-token}
+    REACT_APP_LOGGLY_TAG: ${opt:loggly-tag}   
+
 resources:
   Resources:
     WebsiteBucket:
