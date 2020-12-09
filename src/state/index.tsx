@@ -5,10 +5,6 @@ import { PARTICIANT_TYPES } from '../utils/participantTypes';
 import axios from 'axios';
 
 import * as jwt_decode from 'jwt-decode';
-import { LogglyTracker } from 'react-native-loggly-jslogger';
-interface Window {
-  opera: string;
-}
 
 export interface ParticipantInformation {
   caseReference: string;
@@ -22,7 +18,6 @@ export interface StateContextType {
   setError(error: TwilioError | null): void;
   notification: string | null;
   setNotification(notification: string | null): void;
-  logger: LogglyTracker;
   isAutoRetryingToJoinRoom: boolean;
   setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
   waitingNotification: string;
@@ -44,12 +39,6 @@ export interface StateContextType {
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
-  const logger = new LogglyTracker();
-  logger.push({
-    logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
-    sendConsoleErrors: true,
-    tag: process.env.REACT_APP_LOGGLY_TAG,
-  });
   const [error, setError] = useState<TwilioError | null>(null);
   const [notification, setNotification] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
@@ -142,7 +131,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setError,
     notification,
     setNotification,
-    logger,
     isAutoRetryingToJoinRoom,
     setIsAutoRetryingToJoinRoom,
     waitingNotification,

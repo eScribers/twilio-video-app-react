@@ -38,3 +38,36 @@ export function removeUndefineds<T>(obj: T): T {
 
   return target as T;
 }
+
+export function detectBrowser() {
+  // Get the user-agent string
+  let userAgentString = navigator.userAgent;
+
+  // Detect Chrome
+  let chromeAgent = userAgentString.indexOf('Chrome') > -1;
+
+  // Detect Internet Explorer
+  let IExplorerAgent = userAgentString.indexOf('MSIE') > -1 || userAgentString.indexOf('rv:') > -1;
+
+  // Detect Firefox
+  let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
+
+  // Detect Safari
+  let safariAgent = userAgentString.indexOf('Safari') > -1;
+
+  // Discard Safari since it also matches Chrome
+  if (chromeAgent && safariAgent) safariAgent = false;
+
+  // Detect Opera
+  let operaAgent = userAgentString.indexOf('OP') > -1;
+
+  // Discard Chrome since it also matches Opera
+  if (chromeAgent && operaAgent) chromeAgent = false;
+
+  if (safariAgent) return 'safariAgent';
+  if (chromeAgent) return 'chromeAgent';
+  if (IExplorerAgent) return 'IExplorerAgent';
+  if (operaAgent) return 'operaAgent';
+  if (firefoxAgent) return 'firefoxAgent';
+  return 'no detected browser';
+}
