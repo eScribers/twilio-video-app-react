@@ -11,8 +11,8 @@ provider:
   runtime: nodejs12.x
   environment:
     STAGE: ${opt:stage}
-    REACT_APP_LOGGLY_CUSTOMER_TOKEN: ${opt:loggly-token}
-    REACT_APP_LOGGLY_TAG: ${opt:loggly-tag}   
+    REACT_APP_LOGGLY_CUSTOMER_TOKEN: ${env:LOGGLY_CUSTOMER_TOKEN}
+    REACT_APP_LOGGLY_TAG: ${env:LOGGLY_TAG}   
   
 custom:
   client:
