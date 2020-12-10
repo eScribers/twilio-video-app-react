@@ -55,7 +55,8 @@ const VideoApp = () => {
     setWaitingNotification,
     waitingNotification,
   } = useAppState();
-
+  console.log('process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN' + process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN);
+  console.log(process.env.REACT_APP_LOGGLY_TAG);
   useEffect(() => {
     logger.push({
       logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
