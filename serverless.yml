@@ -9,8 +9,6 @@ provider:
   name: aws
   stage: ${opt:stage}
   runtime: nodejs12.x
-  environment:
-    STAGE: ${opt:stage}
   
 custom:
   client:
