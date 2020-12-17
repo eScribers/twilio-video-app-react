@@ -83,6 +83,7 @@ const mobileAndTabletCheck = function() {
 
 export default function MenuBar() {
   const classes = useStyles();
+  const isRegister = useState(false);
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
   const {
     setError,
@@ -92,7 +93,6 @@ export default function MenuBar() {
     setNotification,
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
-    logger,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
   const roomState = useRoomState();
@@ -141,11 +141,6 @@ export default function MenuBar() {
 
         if (participantInformation && participantInformation.displayName !== '') {
           setParticipantInfo(participantInformation);
-          logger.push({
-            browserType: detectBrowser(),
-            userAgent: navigator.userAgent,
-            participantInformation: participantInformation,
-          });
         }
       }
     }
@@ -255,9 +250,19 @@ export default function MenuBar() {
             {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
         ) : (
-          <h3 style={{ paddingLeft: '10px' }}>
-            Case Reference: {participantInfo ? participantInfo.caseReference : ''}
-          </h3>
+          <div>
+            <h3 style={{ paddingLeft: '10px' }}>
+              Case Reference: {participantInfo ? participantInfo.caseReference : ''}
+            </h3>
+            <TextField
+              autoComplete="off"
+              label="IsRegister"
+              className={classes.textField}
+              value={participantInfo && participantInfo.userId ? 'true' : 'false'}
+              margin="dense"
+              disabled={true}
+            />
+          </div>
         )}
         <div className={classes.rightButtonContainer}>
           <ToggleGridViewButton />
