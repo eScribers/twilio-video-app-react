@@ -10,6 +10,7 @@ export interface ParticipantInformation {
   caseReference: string;
   displayName: string;
   partyType: string;
+  userId: number | null;
   videoConferenceRoomName: string;
 }
 
@@ -167,6 +168,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
           caseReference: participantInformation.caseReference,
           partyName: participantInformation.displayName,
           partyType: participantInformation.partyType,
+          userId: participantInformation.userId,
           videoConferenceRoomName: participantInformation.videoConferenceRoomName,
         },
       });
