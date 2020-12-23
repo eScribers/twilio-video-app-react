@@ -151,11 +151,11 @@ export default function MenuBar() {
 
         if (participantInformation && participantInformation.displayName !== '') {
           setParticipantInfo(participantInformation);
-          logger.push({
+          /*logger.push({
             browserType: detectBrowser(),
             userAgent: navigator.userAgent,
             participantInformation: participantInformation,
-          });
+          });*/
         }
       }
     }
