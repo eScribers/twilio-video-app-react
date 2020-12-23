@@ -6,7 +6,7 @@ import { TRACK_TYPE } from 'utils/displayStrings';
 import isModerator from 'utils/rbac/roleChecker';
 import { IMuteRemoteParticipantMessage } from '../../utils/muteRemoteParticipantMessage';
 
-export default function useModeratorTrackListener() {
+export default function useDataTrackListener() {
   const { room, localTracks } = useVideoContext();
 
   useEffect(() => {
@@ -15,19 +15,19 @@ export default function useModeratorTrackListener() {
         participant.on('trackSubscribed', track => {
           console.log(`Participant "${participant.identity}" added ${track.kind} Track ${track.sid}`);
           if (track.kind === 'data') {
-            track.on('message', data => {
-              console.log('message recieved ' + data);
-              handleMessage(data);
+            track.on('message', messageData => {
+              console.log('message recieved ' + messageData);
+              handleMessage(messageData);
             });
           }
         });
       }
     };
 
-    function handleMessage(data: any) {
-      console.log(`received message on mute moderator data track: ${data}`);
+    function handleMessage(messageData: any) {
+      console.log(`received message on data tack: ${messageData}`);
 
-      var muteRemoteParticipantMessage = JSON.parse(data) as IMuteRemoteParticipantMessage;
+      var muteRemoteParticipantMessage = JSON.parse(messageData) as IMuteRemoteParticipantMessage;
       if (muteRemoteParticipantMessage.participantSid === room.localParticipant.sid) {
         console.log(
           `Received mute participant message for this participant (${room.localParticipant.sid}). Disabling/Muting local audio track`

@@ -21,8 +21,8 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
-import usePublishDataTrack from 'hooks/useDataTrackPublisher/usePublishDataTrack';
-import useModeratorTrackListener from '../../hooks/useModeratorTrackListener/useModeratorTrackListener';
+import usePublishDataTrack from 'hooks/useDataTrackPublisher/useDataTrackPublisher';
+import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
@@ -104,7 +104,7 @@ export default function MenuBar() {
   const isHostIn = useIsHostIn();
   const [isHostInState, setIsHostInState] = useState(isHostIn);
 
-  useModeratorTrackListener();
+  useDataTrackListener();
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);

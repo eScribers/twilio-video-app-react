@@ -30,9 +30,9 @@ async function publishDataTrack(localParticipant: LocalParticipant) {
   localDataTrackOptions.maxRetransmits = 3;
   localDataTrackOptions.ordered = true;
 
-  var moderatorTrack = new LocalDataTrack(localDataTrackOptions);
+  var localDataTrack = new LocalDataTrack(localDataTrackOptions);
   try {
-    const localTrackPublication = await localParticipant.publishTrack(moderatorTrack);
+    const localTrackPublication = await localParticipant.publishTrack(localDataTrack);
     console.log(
       `local track published ${localTrackPublication.track.id}. track name:  ${localTrackPublication.track.id}. track kind:  ${localTrackPublication.track.kind}. local participant identity ${localParticipant.identity}`
     );

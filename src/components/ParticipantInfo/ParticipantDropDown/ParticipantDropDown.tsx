@@ -1,13 +1,10 @@
 import React from 'react';
-import { useAppState } from '../../../state';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import { TRACK_TYPE } from '../../../utils/displayStrings';
 import { Participant } from 'twilio-video';
-import { IMuteRemoteParticipantMessage } from '../../../utils/muteRemoteParticipantMessage';
+import useParticipant from '../../../hooks/useParticipant/useParticipant';
 
 interface ParticipantDropDownProps {
   participant: Participant;
@@ -20,7 +17,7 @@ const ITEM_HEIGHT = 48;
 
 export default function ParticipantDropDown({ participant }: ParticipantDropDownProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const videoContext = useVideoContext();
+  const participantCommands = useParticipant();
 
   const handleClick = event => {
     event.stopPropagation();
@@ -36,32 +33,15 @@ export default function ParticipantDropDown({ participant }: ParticipantDropDown
       console.log(participant.sid);
       //console.log(options.length);
       console.log('attempting to mute now');
-      muteParticipant(participant);
+      participantCommands.muteParticipant(participant);
     }
 
     if (option === REMOVE) {
       console.log(participant.sid);
       //console.log(options.length);
-      removeParticipant(participant.sid).catch(err => {
-        setError({ message: err.response.data });
-      });
+      participantCommands.removeParticipant(participant);
     }
   };
-
-  function muteParticipant(participantToMute: Participant) {
-    let localModeratorDataTrack = Array.from(videoContext.room.localParticipant.dataTracks.values()).filter(
-      dataTrack => dataTrack.kind === TRACK_TYPE.DATA
-    );
-    if (localModeratorDataTrack && localModeratorDataTrack.length >= 1) {
-      var muteRemoteParticipantMessage = {} as IMuteRemoteParticipantMessage;
-      muteRemoteParticipantMessage.action = 'mute';
-      muteRemoteParticipantMessage.participantSid = participantToMute.sid;
-
-      localModeratorDataTrack[0].track.send(JSON.stringify(muteRemoteParticipantMessage));
-    }
-  }
-
-  const { setError, removeParticipant } = useAppState();
 
   return (
     <div style={{ float: 'right' }}>
