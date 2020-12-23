@@ -46,7 +46,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
-
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
   const [gridView, setGridView] = useState(true);
