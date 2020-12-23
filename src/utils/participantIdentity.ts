@@ -15,7 +15,7 @@ export class ParticipantIdentity {
     this.partyName = this.participantIdentityParts[0];
     this.partyType = this.participantIdentityParts[1];
 
-    if (this.participantIdentityParts.length > 1) this.personId = this.participantIdentityParts[2];
+    if (this.participantIdentityParts.length > 2) this.personId = this.participantIdentityParts[2];
 
     if (this.participantIdentityParts.length > 3) {
       this.userId = this.participantIdentityParts[3];
