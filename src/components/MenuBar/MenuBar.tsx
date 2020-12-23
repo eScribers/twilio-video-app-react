@@ -21,6 +21,8 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
+import usePublishDataTrack from 'hooks/useDataTrackPublisher/useDataTrackPublisher';
+import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
 
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
@@ -97,18 +99,22 @@ export default function MenuBar() {
   const { isConnecting, connect, localTracks } = useVideoContext();
   const roomState = useRoomState();
 
-  const [participantInfo, setParticipantInfo] = useState<any>(null);
+  const [participantInfo, setParticipantInfo] = useState<ParticipantInformation | null>(null);
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
   const isHostIn = useIsHostIn();
   const [isHostInState, setIsHostInState] = useState(isHostIn);
 
+  useDataTrackListener();
+
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
   }
 
-  async function joinRoom(participantInformation) {
+  async function joinRoom(participantInformation: ParticipantInformation | null) {
+    if (participantInformation === null) return;
+
     var response = null as any;
     try {
       response = await getToken(participantInformation);
@@ -123,29 +129,33 @@ export default function MenuBar() {
       setSubmitButtonValue(RETRY_ROOM_MESSAGE);
       if (isAutoRetryingToJoinRoom) {
         setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
-        setRetryJoinRoomAttemptTimerId(setTimeout(joinRoom, RETRY_INTERVAL, participantInformation));
+        var timeoutObj: NodeJS.Timeout = setTimeout(() => {
+          joinRoom(participantInformation);
+        }, RETRY_INTERVAL);
+        setRetryJoinRoomAttemptTimerId(timeoutObj);
       } else {
         setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
       }
     } else {
       setWaitingNotification(null);
       await connect(response);
+
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
   }
 
-  function authorise(currentParticipantInformation) {
+  function authorise(currentParticipantInformation: ParticipantInformation | null) {
     async function authoriseAsync() {
       if (currentParticipantInformation === null) {
         const participantInformation: ParticipantInformation = await authoriseParticipant();
 
         if (participantInformation && participantInformation.displayName !== '') {
           setParticipantInfo(participantInformation);
-          logger.push({
+          /*logger.push({
             browserType: detectBrowser(),
             userAgent: navigator.userAgent,
             participantInformation: participantInformation,
-          });
+          });*/
         }
       }
     }
@@ -192,6 +202,8 @@ export default function MenuBar() {
       setIsHostInState(isHostIn);
     }
   }
+
+  usePublishDataTrack(participantInfo);
 
   return (
     <AppBar className={classes.container} position="static">
