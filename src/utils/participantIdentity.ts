@@ -17,8 +17,8 @@ export class ParticipantIdentity {
 
     if (this.participantIdentityParts.length > 1) this.personId = this.participantIdentityParts[2];
 
-    if (this.participantIdentityParts.length > 2) {
-      this.userId = this.participantIdentityParts[2];
+    if (this.participantIdentityParts.length > 3) {
+      this.userId = this.participantIdentityParts[3];
       this.isRegisteredUser = true;
     }
   }
