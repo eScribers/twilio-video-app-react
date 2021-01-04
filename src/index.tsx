@@ -51,6 +51,7 @@ const VideoApp = () => {
     error,
     setError,
     notification,
+    disconnectParticipant,
     setNotification,
     setIsAutoRetryingToJoinRoom,
     setWaitingNotification,
@@ -76,7 +77,12 @@ const VideoApp = () => {
     );
   }
   return (
-    <VideoProvider options={connectionOptions} onError={setError} onNotification={setNotification}>
+    <VideoProvider
+      options={connectionOptions}
+      onError={setError}
+      onDisconnect={disconnectParticipant}
+      onNotification={setNotification}
+    >
       <ErrorDialog dismissError={() => setError(null)} error={error} />
       <NotificationDialog dismissNotification={() => setNotification(null)} notification={notification} />
       <WaitingForRoomDialog

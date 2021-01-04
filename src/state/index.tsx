@@ -2,7 +2,6 @@ import React, { createContext, useContext, useReducer, useState, useEffect } fro
 import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
-
 import * as jwt_decode from 'jwt-decode';
 import isModerator from '../utils/rbac/roleChecker';
 
@@ -21,6 +20,7 @@ export interface StateContextType {
   setNotification(notification: string | null): void;
   isAutoRetryingToJoinRoom: boolean;
   setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
+  disconnectParticipant(isRegistered?: boolean): void;
   waitingNotification: string;
   setWaitingNotification(waitingNotification: string | null): void;
   isFetching: boolean;
@@ -54,9 +54,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
-
   const participantAuthToken = window.location.hash.substr(1);
-
+  const query = new URLSearchParams(window.location.search);
+  const tabulaRedirectUrl = query.get('returnUrl');
   //const [endpoint, setEndpoint] = useState('');
   var endpoint = '';
 
@@ -173,6 +173,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       });
 
       return data;
+    },
+    disconnectParticipant: (isRegistered?: boolean) => {
+      var decodedRedirectTabulaUrl = atob(tabulaRedirectUrl ? tabulaRedirectUrl : '');
+      if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
     },
     removeParticipant: async participantSid => {
       if (!(await ensureEndpointInitialised())) return null;
