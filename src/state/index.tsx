@@ -56,7 +56,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [participantInfo, setParticipantInfo] = useState(null);
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
-  const tabulaRedirectUrl = query.get('returnUrl');
+  const returnUrl = query.get('returnUrl');
   //const [endpoint, setEndpoint] = useState('');
   var endpoint = '';
 
@@ -175,7 +175,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       return data;
     },
     disconnectParticipant: (isRegistered?: boolean) => {
-      var decodedRedirectTabulaUrl = atob(tabulaRedirectUrl ? tabulaRedirectUrl : '');
+      var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
     },
     removeParticipant: async participantSid => {
