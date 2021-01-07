@@ -59,7 +59,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const returnUrl = query.get('returnUrl');
   //const [endpoint, setEndpoint] = useState('');
   var endpoint = '';
-
+  var environmentName = '';
   // fetch(`${process.env.PUBLIC_URL}/config.json`)
   //   .then(r => r.json())
   //   .then(data => {
@@ -68,20 +68,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   //   });
 
   async function fetchEndpoint(endpointUrl) {
-    if (endpointUrl !== '') return;
-
-    console.log(
-      `fetching endpoint. process.env: ${
-        process.env ? 'process.env: ' + JSON.stringify(process.env) : 'not yet initialised'
-      }`
-    );
-    console.log(
-      `fetching endpoint. process.env.PUBLIC_URL: ${
-        process.env.PUBLIC_URL
-          ? 'process.env.PUBLIC_URL: ' + JSON.stringify(process.env.PUBLIC_URL)
-          : 'not yet initialised'
-      }`
-    );
+    if (endpointUrl !== '' && environmentName !== '') return;
 
     await fetch(`${process.env.PUBLIC_URL}/config.json`)
       .then(
@@ -95,21 +82,21 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       )
       .then(responseBodyAsJson => {
         console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
-        //setEndpoint(responseBodyAsJson.endPoint);
         endpoint = responseBodyAsJson.endPoint;
+        environmentName = responseBodyAsJson.environmentName;
       });
   }
 
-  async function ensureEndpointInitialised() {
-    if (endpoint === '') {
-      console.log('ensureEndpointInitialised. endpoint not yet defined attempting to fetch now');
+  async function ensureEnvironmentInitialised() {
+    if (endpoint === '' || environmentName == '') {
+      console.log('ensureEnvironmentInitialised. endpoint not yet defined attempting to fetch now');
       await fetchEndpoint(endpoint);
       if (endpoint === '') {
-        //throw new Error('endpoint still not defined.');
-        console.log('warning: endpoint not defined');
+        console.log('warning: environment not defined');
         return false;
       } else {
         console.log('managed to fetch endpoint: ' + endpoint);
+        console.log('managed to fetch environmentName: ' + environmentName);
         return true;
       }
     } else return true;
@@ -134,7 +121,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     gridView,
     setGridView,
     authoriseParticipant: async () => {
-      if (!(await ensureEndpointInitialised())) return null;
+      if (!(await ensureEnvironmentInitialised())) return null;
 
       const url = `${endpoint}/authorise-participant`;
 
@@ -153,8 +140,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     },
     participantInfo,
     getToken: async (participantInformation: ParticipantInformation) => {
-      const endpointIsInitialised = await ensureEndpointInitialised();
-      if (!endpointIsInitialised) return null;
+      if (!(await ensureEnvironmentInitialised())) return null;
 
       const url = `${endpoint}/token`;
       const { data } = await axios({
@@ -176,10 +162,12 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     },
     disconnectParticipant: (isRegistered?: boolean) => {
       var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      var loginPageUrl = `http://tabula-${environmentName}.escribers.io/tabula/welcome/login`;
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
+      else window.location.replace(loginPageUrl);
     },
     removeParticipant: async participantSid => {
-      if (!(await ensureEndpointInitialised())) return null;
+      if (!(await ensureEnvironmentInitialised())) return null;
       const url = `${endpoint}/remove-participant`;
 
       const { data } = await axios({
