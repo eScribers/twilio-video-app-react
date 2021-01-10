@@ -197,12 +197,14 @@ export default function MenuBar() {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       setIsHostInState(isHostIn);
     } else {
+      if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
+        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+      else setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
       audioTrack?.disable();
-      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+
       setIsHostInState(isHostIn);
     }
   }
-
   usePublishDataTrack(participantInfo);
 
   return (

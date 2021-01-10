@@ -11,6 +11,8 @@ export const NOTIFICATION_MESSAGE = {
   ROOM_COMPLETED: 'Conference ended since the host left the call',
   WAITING_FOR_REPORTER: 'Waiting for reporter to join.',
   REPORTER_HAS_JOINED: 'Reporter has joined. Please unmute your microphone.',
+  REPORTER_DROPPED_FROM_THE_CALL:
+    'All participants have been muted (except you as the hearing officer).  Your reporter will be rejoined to the conference momentarily and all parties will be unmuted',
 };
 export const PLAYER_STATE = {
   stopped: 'stopped',
