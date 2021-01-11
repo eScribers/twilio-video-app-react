@@ -200,10 +200,11 @@ export default function MenuBar() {
     } else {
       if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
         setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
-      else setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
-      audioTrack?.disable();
-
-      setIsHostInState(isHostIn);
+      else {
+        setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+        audioTrack?.disable();
+        setIsHostInState(isHostIn);
+      }
     }
   }
   usePublishDataTrack(participantInfo);
