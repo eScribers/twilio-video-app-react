@@ -194,7 +194,8 @@ export default function MenuBar() {
 
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
-      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
+        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       setIsHostInState(isHostIn);
     } else {
       if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)

@@ -48,10 +48,7 @@ export default function useIsHostIn() {
           flag = true;
         }
       });
-      if (
-        ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIANT_TYPES.REPORTER ||
-        ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIANT_TYPES.HEARING_OFFICER
-      ) {
+      if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
         flag = true;
       }
 
