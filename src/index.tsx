@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import { EnvironmentConfig } from './utils/EnvironmentConfig';
 import Video, { TwilioError } from 'twilio-video';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
@@ -71,20 +70,6 @@ const VideoApp = () => {
       browserType: detectBrowser(),
       userAgent: navigator.userAgent,
     });
-  }, []);
-
-  useEffect(() => {
-    async function initPar() {
-      await fetch(`${process.env.PUBLIC_URL}/config.json`)
-        .then(response => response.json())
-        .then(responseBodyAsJson => {
-          SetEnvironmentConfig(new EnvironmentConfig(responseBodyAsJson.environmentName, responseBodyAsJson.endPoint));
-        })
-        .catch(() => {
-          console.log('failed to fetch url. err: ');
-        });
-    }
-    initPar();
   }, []);
 
   if (!Video.isSupported) {
