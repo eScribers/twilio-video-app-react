@@ -4,7 +4,10 @@ import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
 import * as jwt_decode from 'jwt-decode';
 import isModerator from '../utils/rbac/roleChecker';
-
+import { useEnvironment } from '../hooks/useApi/EnvironmentList';
+import { EnvironmentConfig } from '../utils/EnvironmentConfig';
+import { useApi } from 'hooks/useApi/useApi';
+import { wait } from '@testing-library/react';
 export interface ParticipantInformation {
   caseReference: string;
   displayName: string;
@@ -57,9 +60,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
   const returnUrl = query.get('returnUrl');
+  const environmentConfig = useEnvironment();
   //const [endpoint, setEndpoint] = useState('');
-  var endpoint = '';
-  var environmentName = '';
+  // var endpoint = '';
+  // var environmentName = '';
   // fetch(`${process.env.PUBLIC_URL}/config.json`)
   //   .then(r => r.json())
   //   .then(data => {
@@ -67,41 +71,42 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   //     endpoint = data.endPoint;
   //   });
 
-  async function fetchEndpoint(endpointUrl) {
-    if (endpointUrl !== '' && environmentName !== '') return;
+  // async function fetchEndpoint(endpointUrl) {
+  //   if (endpointUrl !== '' && environmentName !== '') return;
 
-    await fetch(`${process.env.PUBLIC_URL}/config.json`)
-      .then(
-        response => {
-          console.log('response from fetch received');
-          return response.json();
-        },
-        err => {
-          console.log('failed to fetch url. err: ' + err);
-        }
-      )
-      .then(responseBodyAsJson => {
-        console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
-        endpoint = responseBodyAsJson.endPoint;
-        environmentName = responseBodyAsJson.environmentName;
-      });
-  }
+  //   await fetch(`${process.env.PUBLIC_URL}/config.json`)
+  //     .then(
+  //       response => {
+  //         console.log('response from fetch received');
+  //         return response.json();
+  //       },
+  //       err => {
+  //         console.log('failed to fetch url. err: ' + err);
+  //       }
+  //     )
+  //     .then(responseBodyAsJson => {
+  //       console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
+  //       endpoint = responseBodyAsJson.endPoint;
+  //       environmentName = responseBodyAsJson.environmentName;
+  //     });
+  // }
 
-  async function ensureEnvironmentInitialised() {
-    if (endpoint === '' || environmentName == '') {
+  const ensureEnvironmentInitialised = () => {
+    if (environmentConfig == null) {
       console.log('ensureEnvironmentInitialised. endpoint not yet defined attempting to fetch now');
-      await fetchEndpoint(endpoint);
-      if (endpoint === '') {
+      setTimeout(() => {
+        console.log(`ensureEnvironmentInitialised = ${ensureEnvironmentInitialised}`);
+      }, 100);
+      if (environmentConfig === null) {
         console.log('warning: environment not defined');
-        return false;
+        return null;
       } else {
-        console.log('managed to fetch endpoint: ' + endpoint);
-        console.log('managed to fetch environmentName: ' + environmentName);
-        return true;
+        //console.log('managed to fetch endpoint: ' + environmentConfig.endPoint);
+        //console.log('managed to fetch environmentName: ' + environmentConfig?.environmentName);
       }
-    } else return true;
-  }
-
+    }
+    return environmentConfig;
+  };
   let contextValue = ({
     error,
     setError,
@@ -121,9 +126,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     gridView,
     setGridView,
     authoriseParticipant: async () => {
-      if (!(await ensureEnvironmentInitialised())) return null;
+      if (ensureEnvironmentInitialised() == null) return null;
 
-      const url = `${endpoint}/authorise-participant`;
+      const url = `${environmentConfig?.endPoint}/authorise-participant`;
 
       console.log('attempting authorise ' + new Date().toLocaleTimeString());
 
@@ -140,9 +145,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     },
     participantInfo,
     getToken: async (participantInformation: ParticipantInformation) => {
-      if (!(await ensureEnvironmentInitialised())) return null;
+      if (!ensureEnvironmentInitialised()) return null;
 
-      const url = `${endpoint}/token`;
+      const url = `${environmentConfig?.endPoint}/token`;
       const { data } = await axios({
         url: url,
         method: 'POST',
@@ -162,14 +167,14 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     },
     disconnectParticipant: (isRegistered?: boolean) => {
       var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-      var loginPageUrl = `http://tabula-${environmentName}.escribers.io/tabula/welcome/login`;
+      var loginPageUrl = `http://tabula-${environmentConfig?.environmentName}.escribers.io/tabula/welcome/login`;
       console.log('loginPageUrl:' + loginPageUrl);
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
       else window.location.replace(loginPageUrl);
     },
     removeParticipant: async participantSid => {
-      if (!(await ensureEnvironmentInitialised())) return null;
-      const url = `${endpoint}/remove-participant`;
+      if (!ensureEnvironmentInitialised()) return null;
+      const url = `${environmentConfig?.endPoint}/remove-participant`;
 
       const { data } = await axios({
         url: url,
