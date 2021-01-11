@@ -20,6 +20,7 @@ export interface StateContextType {
   notification: string | null;
   setNotification(notification: string | null): void;
   isAutoRetryingToJoinRoom: boolean;
+  disconnectParticipant(isRegistered?: boolean): void;
   setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
   waitingNotification: string;
   setWaitingNotification(waitingNotification: string | null): void;
@@ -56,19 +57,12 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [participantInfo, setParticipantInfo] = useState(null);
 
   const participantAuthToken = window.location.hash.substr(1);
-
-  //const [endpoint, setEndpoint] = useState('');
+  const query = new URLSearchParams(window.location.search);
+  const returnUrl = query.get('returnUrl');
   var endpoint = '';
-
-  // fetch(`${process.env.PUBLIC_URL}/config.json`)
-  //   .then(r => r.json())
-  //   .then(data => {
-  //     //setEndpoint(data.endPoint);
-  //     endpoint = data.endPoint;
-  //   });
-
-  async function fetchEndpoint(endpointUrl) {
-    if (endpointUrl !== '') return;
+  var environmentName = '';
+  async function fetchEndpoint() {
+    if (endpoint !== '' || environmentName != '') return;
 
     console.log(
       `fetching endpoint. process.env: ${
@@ -95,17 +89,16 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       )
       .then(responseBodyAsJson => {
         console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
-        //setEndpoint(responseBodyAsJson.endPoint);
         endpoint = responseBodyAsJson.endPoint;
+        environmentName = responseBodyAsJson.environmentName;
       });
   }
 
   async function ensureEndpointInitialised() {
-    if (endpoint === '') {
+    if (endpoint === '' || environmentName === '') {
       console.log('ensureEndpointInitialised. endpoint not yet defined attempting to fetch now');
-      await fetchEndpoint(endpoint);
-      if (endpoint === '') {
-        //throw new Error('endpoint still not defined.');
+      await fetchEndpoint();
+      if (endpoint === '' || environmentName === '') {
         console.log('warning: endpoint not defined');
         return false;
       } else {
@@ -173,6 +166,15 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       });
 
       return data;
+    },
+    disconnectParticipant: async (isRegistered?: boolean) => {
+      if (!(await ensureEndpointInitialised())) return null;
+
+      var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      var loginPageUrl = `http://tabula-${environmentName}.escribers.io/tabula/welcome/login`;
+      console.log('loginPageUrl:' + loginPageUrl);
+      if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
+      else window.location.replace(loginPageUrl);
     },
     removeParticipant: async participantSid => {
       if (!(await ensureEndpointInitialised())) return null;
