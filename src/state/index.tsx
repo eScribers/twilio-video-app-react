@@ -169,7 +169,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     },
     disconnectParticipant: async (isRegistered?: boolean) => {
       if (!(await ensureEndpointInitialised())) return null;
-
       var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
       var loginPageUrl = `http://tabula-${environmentName}.escribers.io/tabula/welcome/login`;
       console.log('loginPageUrl:' + loginPageUrl);
