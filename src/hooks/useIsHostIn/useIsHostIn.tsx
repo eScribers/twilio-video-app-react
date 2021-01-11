@@ -13,6 +13,7 @@ export default function useIsHostIn() {
     if (!checkIsHostIn(room)) {
       setIsHostIn(false);
     }
+    if (checkIsReporterIn(room)) setReporterIn(true);
   }, [room]);
 
   useEffect(() => {
@@ -58,6 +59,23 @@ export default function useIsHostIn() {
       return flag;
     }
 
+    return true;
+  }
+
+  function checkIsReporterIn(theRoom: Room) {
+    if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
+      let flag = false;
+      theRoom.participants.forEach(participant => {
+        if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
+          flag = true;
+        }
+      });
+      if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
+        flag = true;
+      }
+
+      return flag;
+    }
     return true;
   }
 }
