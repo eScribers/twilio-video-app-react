@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-
+import { EnvironmentConfig } from './utils/EnvironmentConfig';
 import Video, { TwilioError } from 'twilio-video';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
@@ -17,6 +17,7 @@ import App from './App';
 import { detectBrowser } from './utils/index';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
+import { isExpressionWithTypeArguments } from 'typescript';
 
 const options = {
   // you can also just use 'bottom center'
@@ -45,6 +46,7 @@ const connectionOptions = {
   networkQuality: { local: 1, remote: 1 },
   preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
 };
+
 const logger: LogglyTracker = new LogglyTracker();
 const VideoApp = () => {
   const {
@@ -69,6 +71,20 @@ const VideoApp = () => {
       browserType: detectBrowser(),
       userAgent: navigator.userAgent,
     });
+  }, []);
+
+  useEffect(() => {
+    async function initPar() {
+      await fetch(`${process.env.PUBLIC_URL}/config.json`)
+        .then(response => response.json())
+        .then(responseBodyAsJson => {
+          SetEnvironmentConfig(new EnvironmentConfig(responseBodyAsJson.environmentName, responseBodyAsJson.endPoint));
+        })
+        .catch(() => {
+          console.log('failed to fetch url. err: ');
+        });
+    }
+    initPar();
   }, []);
 
   if (!Video.isSupported) {

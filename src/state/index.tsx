@@ -60,7 +60,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
   const returnUrl = query.get('returnUrl');
-  const environmentConfig = useEnvironment();
+  let environmentConfig: null | EnvironmentConfig;
   //const [endpoint, setEndpoint] = useState('');
   // var endpoint = '';
   // var environmentName = '';
@@ -71,10 +71,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   //     endpoint = data.endPoint;
   //   });
 
-  // async function fetchEndpoint(endpointUrl) {
-  //   if (endpointUrl !== '' && environmentName !== '') return;
+  // static function fetchEndpoint() {
+  //   if (environmentConfig != null) return;
 
-  //   await fetch(`${process.env.PUBLIC_URL}/config.json`)
+  //   fetch(`${process.env.PUBLIC_URL}/config.json`)
   //     .then(
   //       response => {
   //         console.log('response from fetch received');
@@ -83,12 +83,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   //       err => {
   //         console.log('failed to fetch url. err: ' + err);
   //       }
-  //     )
-  //     .then(responseBodyAsJson => {
-  //       console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
-  //       endpoint = responseBodyAsJson.endPoint;
-  //       environmentName = responseBodyAsJson.environmentName;
-  //     });
+  //     );
   // }
 
   const ensureEnvironmentInitialised = () => {
