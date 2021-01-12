@@ -64,17 +64,17 @@ export default function useIsHostIn() {
 
   function checkIsReporterIn(theRoom: Room) {
     if (theRoom !== null && typeof theRoom.participants !== undefined) {
-      let flag = false;
+      let flagIsReporterIn = false;
       theRoom.participants.forEach(participant => {
         if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
-          flag = true;
+          flagIsReporterIn = true;
         }
       });
       if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
-        flag = true;
+        flagIsReporterIn = true;
       }
 
-      return flag;
+      return flagIsReporterIn;
     }
     return true;
   }
