@@ -42,7 +42,7 @@ export default function useIsHostIn() {
   return { isHostIn, isReporterIn };
 
   function checkIsHostIn(theRoom: Room) {
-    if (theRoom !== null && typeof theRoom.participants !== undefined) {
+    if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
       let flag = false;
       theRoom.participants.forEach(participant => {
         if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
@@ -63,7 +63,7 @@ export default function useIsHostIn() {
   }
 
   function checkIsReporterIn(theRoom: Room) {
-    if (theRoom !== null && typeof theRoom.participants !== undefined) {
+    if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
       let flagIsReporterIn = false;
       theRoom.participants.forEach(participant => {
         if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
