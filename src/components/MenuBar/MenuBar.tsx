@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import * as jwt_decode from 'jwt-decode';
+import React, { useState, useEffect } from 'react';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Button from '@material-ui/core/Button';
@@ -11,9 +10,8 @@ import Toolbar from '@material-ui/core/Toolbar';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Offline, Online } from 'react-detect-offline';
-import { TRACK_TYPE, ERROR_MESSAGE } from '../../utils/displayStrings';
+import { TRACK_TYPE, NOTIFICATION_MESSAGE, ERROR_MESSAGE } from '../../utils/displayStrings';
 import { PARTICIANT_TYPES } from '../../utils/participantTypes';
-import { useAlert } from 'react-alert';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
@@ -21,9 +19,14 @@ import SettingsButton from './SettingsButton/SettingsButton';
 import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { ParticipantInformation } from '../../state/index';
+import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
+import usePublishDataTrack from 'hooks/useDataTrackPublisher/useDataTrackPublisher';
+import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
+import { LogglyTracker } from 'react-native-loggly-jslogger';
 
-const JOIN_ROOM_MESSAGE = 'Join Room';
-const RETRY_ROOM_MESSAGE = 'Retry';
+const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
+const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
   createStyles({
     container: {
@@ -79,41 +82,93 @@ const mobileAndTabletCheck = function() {
   })(navigator.userAgent || navigator.vendor || (window as any).MyNamespace); //window.opera);
   return check;
 };
-let submitButtonValue = JOIN_ROOM_MESSAGE;
-interface ReporterToken {
-  caseNumber: string;
-  reporterName: string;
-}
+
 export default function MenuBar() {
-  const reporterToken: string = window.location.hash.substr(1);
-  let repoterInfo: any = reporterToken ? jwt_decode(reporterToken) : '';
   const classes = useStyles();
-  const { setError, getToken, isFetching } = useAppState();
-  const { isConnecting, connect, room, localTracks, isAcquiringLocalTracks } = useVideoContext();
+  const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
+  const {
+    setError,
+    getToken,
+    isFetching,
+    authoriseParticipant,
+    setNotification,
+    isAutoRetryingToJoinRoom,
+    setWaitingNotification,
+    logger,
+  } = useAppState();
+  const { isConnecting, connect, localTracks } = useVideoContext();
   const roomState = useRoomState();
-  const alert = useAlert();
-  const [partyType, setPartyType] = useState(reporterToken ? PARTICIANT_TYPES.REPORTER : '');
-  const [partyName, setPartyName] = useState(reporterToken ? repoterInfo.reporterName : '');
-  const [caseNumber, setCaseNumber] = useState(reporterToken ? repoterInfo.caseNumber : '');
+
+  const [participantInfo, setParticipantInfo] = useState<ParticipantInformation | null>(null);
+  const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
+  const RETRY_INTERVAL = 15000;
+
+  const { isHostIn, isReporterIn } = useIsHostIn();
+  const [isHostInState, setIsHostInState] = useState(isHostIn);
+  const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
+  useDataTrackListener();
+
+  if (isAutoRetryingToJoinRoom === false) {
+    clearTimeout(retryJoinRoomAttemptTimerId);
+  }
+
+  async function joinRoom(participantInformation: ParticipantInformation | null) {
+    if (participantInformation === null) return;
+
+    var response = null as any;
+    try {
+      response = await getToken(participantInformation);
+    } catch (err) {
+      if (err.response) setError({ message: err.response.data });
+      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
+
+      setSubmitButtonValue(JOIN_ROOM_MESSAGE);
+    }
+
+    if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
+      setSubmitButtonValue(RETRY_ROOM_MESSAGE);
+      if (isAutoRetryingToJoinRoom) {
+        setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
+        var timeoutObj: NodeJS.Timeout = setTimeout(() => {
+          joinRoom(participantInformation);
+        }, RETRY_INTERVAL);
+        setRetryJoinRoomAttemptTimerId(timeoutObj);
+      } else {
+        setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+      }
+    } else {
+      setWaitingNotification(null);
+      await connect(response);
+
+      setSubmitButtonValue(JOIN_ROOM_MESSAGE);
+    }
+  }
+
+  function authorise(currentParticipantInformation: ParticipantInformation | null) {
+    async function authoriseAsync() {
+      if (currentParticipantInformation === null) {
+        const participantInformation: ParticipantInformation = await authoriseParticipant();
+
+        if (participantInformation && participantInformation.displayName !== '') {
+          setParticipantInfo(participantInformation);
+          /*logger.push({
+            browserType: detectBrowser(),
+            userAgent: navigator.userAgent,
+            participantInformation: participantInformation,
+          });*/
+        }
+      }
+    }
+    authoriseAsync();
+  }
+
+  useEffect(() => {
+    authorise(participantInfo);
+  }, [participantInfo]);
+
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    getToken(caseNumber, partyType, partyName)
-      .then(response => {
-        if (response == ERROR_MESSAGE.ROOM_NOT_FOUND) {
-          submitButtonValue = RETRY_ROOM_MESSAGE;
-          return <div>{alert.show(ERROR_MESSAGE.ROOM_NOT_FOUND)}</div>;
-        } else {
-          connect(response);
-          submitButtonValue = JOIN_ROOM_MESSAGE;
-        }
-      })
-      .catch(err => {
-        if (err.message) setError({ message: err.message });
-        if (err.response) setError({ message: err.response.data });
-        else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
-
-        submitButtonValue = JOIN_ROOM_MESSAGE;
-      });
+    joinRoom(participantInfo);
   };
 
   let selectedAudioDevice = { label: '', deviceId: '', groupdId: '' };
@@ -137,6 +192,27 @@ export default function MenuBar() {
     };
   }
 
+  if (isHostIn !== isHostInState) {
+    if (isHostIn) {
+      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      setIsHostInState(isHostIn);
+    } else {
+      audioTrack?.disable();
+      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+      setIsHostInState(isHostIn);
+    }
+  }
+  if (isReporterIn !== isReporterInState) {
+    if (!isReporterIn) {
+      if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
+        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+      setIsReporterInState(isReporterIn);
+    } else {
+      setIsReporterInState(isReporterIn);
+    }
+  }
+  usePublishDataTrack(participantInfo);
+
   return (
     <AppBar className={classes.container} position="static">
       <Toolbar>
@@ -144,33 +220,31 @@ export default function MenuBar() {
         {roomState === 'disconnected' ? (
           <form className={classes.form} onSubmit={handleSubmit}>
             <FormControl className={classes.textField}>
-              <InputLabel htmlFor="party-type">Party Type</InputLabel>
+              <InputLabel>Party Type</InputLabel>
               <Select
-                data-testid="my-select-component"
-                id="party-type"
+                data-cy="select"
                 label="Party Type"
-                value={partyType}
-                onChange={e => setPartyType(e.target.value as string)}
+                value={participantInfo ? participantInfo.partyType : ''}
                 margin="dense"
                 placeholder="Party Type"
-                disabled={!!reporterToken}
+                disabled={true}
               >
                 {getPartyTypes().map(type => (
-                  <MenuItem key={type} value={type}>
+                  <MenuItem key={type} value={type} data-cy="menu-item">
                     {type}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
+
             <TextField
               autoComplete="off"
               id="party-name"
               label="Party Name"
               className={classes.textField}
-              value={partyName}
-              onChange={e => setPartyName(e.target.value)}
+              value={participantInfo ? participantInfo.displayName : ''}
               margin="dense"
-              disabled={!!reporterToken}
+              disabled={true}
             />
 
             <TextField
@@ -178,10 +252,9 @@ export default function MenuBar() {
               id="case-number"
               label="Case Number"
               className={classes.textField}
-              value={caseNumber}
-              onChange={e => setCaseNumber(e.target.value)}
+              value={participantInfo ? participantInfo.caseReference : ''}
               margin="dense"
-              disabled={!!reporterToken}
+              disabled={true}
             />
             <Online>
               <Button
@@ -189,9 +262,7 @@ export default function MenuBar() {
                 type="submit"
                 color="primary"
                 variant="contained"
-                disabled={
-                  isConnecting || !partyName || !partyType || !caseNumber || isFetching || isAcquiringLocalTracks
-                }
+                disabled={isConnecting || !participantInfo || isFetching}
               >
                 {submitButtonValue}
               </Button>
@@ -204,7 +275,9 @@ export default function MenuBar() {
             {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
         ) : (
-          <h3 style={{ paddingLeft: '10px' }}>Case Number: {room.name}</h3>
+          <h3 style={{ paddingLeft: '10px' }}>
+            Case Reference: {participantInfo ? participantInfo.caseReference : ''}
+          </h3>
         )}
         <div className={classes.rightButtonContainer}>
           <ToggleGridViewButton />
@@ -217,4 +290,36 @@ export default function MenuBar() {
       </Toolbar>
     </AppBar>
   );
+}
+function detectBrowser() {
+  // Get the user-agent string
+  let userAgentString = navigator.userAgent;
+
+  // Detect Chrome
+  let chromeAgent = userAgentString.indexOf('Chrome') > -1;
+
+  // Detect Internet Explorer
+  let IExplorerAgent = userAgentString.indexOf('MSIE') > -1 || userAgentString.indexOf('rv:') > -1;
+
+  // Detect Firefox
+  let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
+
+  // Detect Safari
+  let safariAgent = userAgentString.indexOf('Safari') > -1;
+
+  // Discard Safari since it also matches Chrome
+  if (chromeAgent && safariAgent) safariAgent = false;
+
+  // Detect Opera
+  let operaAgent = userAgentString.indexOf('OP') > -1;
+
+  // Discard Chrome since it also matches Opera
+  if (chromeAgent && operaAgent) chromeAgent = false;
+
+  if (safariAgent) return 'safariAgent';
+  if (chromeAgent) return 'chromeAgent';
+  if (IExplorerAgent) return 'IExplorerAgent';
+  if (operaAgent) return 'operaAgent';
+  if (firefoxAgent) return 'firefoxAgent';
+  return 'no detected browser';
 }

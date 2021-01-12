@@ -1,15 +1,23 @@
 import React from 'react';
-import { useAppState } from '../../../state';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import { Participant } from 'twilio-video';
+import useParticipant from '../../../hooks/useParticipant/useParticipant';
+
+interface ParticipantDropDownProps {
+  participant: Participant;
+}
+
 const REMOVE = 'Remove';
-const options = [REMOVE];
+const MUTE = 'Mute';
+const options = [MUTE, REMOVE];
 const ITEM_HEIGHT = 48;
 
-export default function ParticipantDropDown({ participant }) {
+export default function ParticipantDropDown({ participant }: ParticipantDropDownProps) {
   const [anchorEl, setAnchorEl] = React.useState(null);
+  const participantCommands = useParticipant();
 
   const handleClick = event => {
     event.stopPropagation();
@@ -19,16 +27,21 @@ export default function ParticipantDropDown({ participant }) {
   const handleClose = (event, option) => {
     event.stopPropagation();
     setAnchorEl(null);
+    console.log('user chose option: ' + option);
+
+    if (option === MUTE) {
+      console.log(participant.sid);
+      //console.log(options.length);
+      console.log('attempting to mute now');
+      participantCommands.muteParticipant(participant);
+    }
+
     if (option === REMOVE) {
       console.log(participant.sid);
-      console.log(options.length);
-      removeParticipant(participant.sid).catch(err => {
-        setError({ message: err.response.data });
-      });
+      //console.log(options.length);
+      participantCommands.removeParticipant(participant);
     }
   };
-
-  const { setError, removeParticipant } = useAppState();
 
   return (
     <div style={{ float: 'right' }}>

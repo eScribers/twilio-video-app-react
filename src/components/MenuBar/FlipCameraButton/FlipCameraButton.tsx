@@ -27,10 +27,15 @@ export default function FlipCameraButton() {
 
   const toggleFacingMode = useCallback(() => {
     const newFacingMode = mediaStreamTrack?.getSettings().facingMode === 'user' ? 'environment' : 'user';
-    videoTrack.restart({
+    /* commented out by YN 20201223 to work around problem with upgrading to latest twilio video library:
+       types.ts on the main twilio repo (not our fork, removed this function from the interface and keeping it
+       ourselves was breaking the app over type inconsistencies. As they have removed it we have too but have yet
+       to update/align the rest of the code base to the main twilio repo)
+       
+      videoTrack.restart({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
       facingMode: newFacingMode,
-    });
+    });*/
   }, [mediaStreamTrack, videoTrack]);
 
   return supportsFacingMode ? (

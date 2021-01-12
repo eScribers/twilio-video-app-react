@@ -20,7 +20,7 @@ custom:
     originId: S3-escribers-videoapp-website-${opt:stage}
   output:
     file: stackOutput.json # toml, yaml, yml, and json format is available
-    
+
 resources:
   Resources:
     WebsiteBucket:

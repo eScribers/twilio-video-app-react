@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -11,8 +11,13 @@ import AlertTemplate from 'react-alert-template-basic';
 import AppStateProvider, { useAppState } from './state';
 import { VideoProvider } from './components/VideoProvider/';
 import ErrorDialog from './components/ErrorDialog/ErrorDialog';
+import NotificationDialog from './components/NotificationDialog/NotificationDialog';
 import theme from './theme';
 import App from './App';
+import { detectBrowser } from './utils/index';
+import { LogglyTracker } from 'react-native-loggly-jslogger';
+import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
+
 const options = {
   // you can also just use 'bottom center'
   position: positions.BOTTOM_CENTER,
@@ -25,7 +30,8 @@ const options = {
 const connectionOptions = {
   bandwidthProfile: {
     video: {
-      mode: 'collaboration',
+      mode: 'grid',
+      maxTracks: 10,
       dominantSpeakerPriority: 'standard',
       renderDimensions: {
         high: { height: 1080, width: 1920 },
@@ -34,22 +40,52 @@ const connectionOptions = {
       },
     },
   },
-  dominantSpeaker: true,
+  dominantSpeaker: false,
   maxAudioBitrate: 12000,
   networkQuality: { local: 1, remote: 1 },
   preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
 };
-
+const logger: LogglyTracker = new LogglyTracker();
 const VideoApp = () => {
-  const { error, setError } = useAppState();
+  const {
+    error,
+    setError,
+    notification,
+    setNotification,
+    setIsAutoRetryingToJoinRoom,
+    setWaitingNotification,
+    waitingNotification,
+  } = useAppState();
+
+  useEffect(() => {
+    logger.push({
+      logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
+      sendConsoleErrors: true,
+      tag: process.env.REACT_APP_LOGGLY_TAG,
+    });
+    logger.push({
+      vendor: navigator.vendor,
+      browserType: detectBrowser(),
+      userAgent: navigator.userAgent,
+    });
+  }, []);
+
   if (!Video.isSupported) {
     return (
       <ErrorDialog dismissError={() => null} error={(ERROR_MESSAGE.UNSUPPORTED_MESSAGE as unknown) as TwilioError} />
     );
   }
   return (
-    <VideoProvider options={connectionOptions} onError={setError}>
+    <VideoProvider options={connectionOptions} onError={setError} onNotification={setNotification}>
       <ErrorDialog dismissError={() => setError(null)} error={error} />
+      <NotificationDialog dismissNotification={() => setNotification(null)} notification={notification} />
+      <WaitingForRoomDialog
+        cancelWait={() => {
+          setIsAutoRetryingToJoinRoom(false);
+          setWaitingNotification(null);
+        }}
+        waitingNotification={waitingNotification}
+      />
       <App />
     </VideoProvider>
   );
