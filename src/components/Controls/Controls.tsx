@@ -42,7 +42,7 @@ export default function Controls(props: { disabled?: boolean }) {
   const isReconnecting = roomState === ROOM_STATE.RECONNECTING;
   const isdisconnected = roomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
-  const isHostIn = useIsHostIn();
+  const { isHostIn } = useIsHostIn();
   const showControls = isUserActive || roomState === ROOM_STATE.DISCONNECTED;
   const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !isHostIn;
 

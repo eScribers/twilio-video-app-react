@@ -10,7 +10,7 @@ node_modules
 .vs/
 # testing
 coverage
-
+src/debug.log
 # production
 build
 

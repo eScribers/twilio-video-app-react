@@ -7,26 +7,27 @@ import { ParticipantIdentity } from '../../utils/participantIdentity';
 export default function useIsHostIn() {
   const { room } = useVideoContext();
   const [isHostIn, setIsHostIn] = useState(true);
+  const [isReporterIn, setReporterIn] = useState(false);
 
   useEffect(() => {
     if (!checkIsHostIn(room)) {
       setIsHostIn(false);
     }
+    if (checkIsReporterIn(room)) setReporterIn(true);
   }, [room]);
 
   useEffect(() => {
     const participantConnected = (participant: RemoteParticipant) => {
       if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
         setIsHostIn(true);
+        setReporterIn(true);
       }
     };
 
     const participantDisconnected = (participant: RemoteParticipant) => {
-      if (
-        ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER &&
-        !checkIsHostIn(room)
-      ) {
-        setIsHostIn(false);
+      if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
+        setReporterIn(false);
+        if (!checkIsHostIn(room)) setIsHostIn(false);
       }
     };
 
@@ -38,10 +39,10 @@ export default function useIsHostIn() {
     };
   }, [room]);
 
-  return isHostIn;
+  return { isHostIn, isReporterIn };
 
   function checkIsHostIn(theRoom: Room) {
-    if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
+    if (theRoom !== null && typeof theRoom.participants !== undefined) {
       let flag = false;
       theRoom.participants.forEach(participant => {
         if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
@@ -58,6 +59,23 @@ export default function useIsHostIn() {
       return flag;
     }
 
+    return true;
+  }
+
+  function checkIsReporterIn(theRoom: Room) {
+    if (theRoom !== null && typeof theRoom.participants !== undefined) {
+      let flagIsReporterIn = false;
+      theRoom.participants.forEach(participant => {
+        if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
+          flagIsReporterIn = true;
+        }
+      });
+      if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIANT_TYPES.REPORTER) {
+        flagIsReporterIn = true;
+      }
+
+      return flagIsReporterIn;
+    }
     return true;
   }
 }
