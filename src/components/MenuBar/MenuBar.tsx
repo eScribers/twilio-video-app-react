@@ -194,12 +194,11 @@ export default function MenuBar() {
 
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
-      if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
-        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       setIsHostInState(isHostIn);
     } else {
-      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
       audioTrack?.disable();
+      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
       setIsHostInState(isHostIn);
     }
   }
