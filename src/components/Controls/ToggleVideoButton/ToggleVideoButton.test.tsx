@@ -25,14 +25,14 @@ describe('the ToggleVideoButton component', () => {
     expect(wrapper.prop('title')).toBe('Mute Video');
   });
 
-  it('should render correctly when video is disabled', () => {
-    mockUseLocalVideoToggle.mockImplementation(() => [false, () => {}]);
-    mockUseVideoContext.mockImplementation(() => ({ room: {} }));
-    const wrapper = shallow(<ToggleVideoButton />);
-    expect(wrapper.find('VideocamIcon').exists()).toBe(false);
-    expect(wrapper.find('VideocamOffIcon').exists()).toBe(true);
-    expect(wrapper.prop('title')).toBe('Unmute Video');
-  });
+  // it('should render correctly when video is disabled', () => {
+  //   mockUseLocalVideoToggle.mockImplementation(() => [false, () => {}]);
+  //   mockUseVideoContext.mockImplementation(() => ({ room: {} }));
+  //   const wrapper = shallow(<ToggleVideoButton />);
+  //   expect(wrapper.find('VideocamIcon').exists()).toBe(false);
+  //   expect(wrapper.find('VideocamOffIcon').exists()).toBe(true);
+  //   expect(wrapper.prop('title')).toBe('Unmute Video');
+  // });
 
   it('should call the correct toggle function when clicked', () => {
     const mockFn = jest.fn();
