@@ -57,23 +57,23 @@ describe('the ParticipantInfo component', () => {
     expect(wrapper.find('.makeStyles-infoContainer-3').prop('className')).not.toContain('hideVideo');
   });
 
-  it('should render a VideoCamOff icon when no video tracks are published', () => {
-    mockUsePublications.mockImplementation(() => []);
-    mockedUseVideoContext.mockImplementation(
-      () => ({ isConnecting: false, room: { localParticipant: { identity: 'mockIdentity' } }, localTracks: [] } as any)
-    );
-    const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={false}
-        gridView={false}
-        participant={{ identity: 'mockIdentity' } as any}
-      >
-        mock children
-      </ParticipantInfo>
-    );
-    expect(wrapper.find('VideocamOffIcon').exists()).toEqual(true);
-  });
+  // it('should render a VideoCamOff icon when no video tracks are published', () => {
+  //   mockUsePublications.mockImplementation(() => []);
+  //   mockedUseVideoContext.mockImplementation(
+  //     () => ({ isConnecting: false, room: { localParticipant: { identity: 'mockIdentity' } }, localTracks: [] } as any)
+  //   );
+  //   const wrapper = shallow(
+  //     <ParticipantInfo
+  //       onClick={() => {}}
+  //       isSelected={false}
+  //       gridView={false}
+  //       participant={{ identity: 'mockIdentity' } as any}
+  //     >
+  //       mock children
+  //     </ParticipantInfo>
+  //   );
+  //   expect(wrapper.find('VideocamOffIcon').exists()).toEqual(true);
+  // });
 
   it('should not render a VideoCamOff icon when a video track is published', () => {
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456', kind: 'video' }]);
