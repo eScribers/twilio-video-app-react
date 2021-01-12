@@ -1,3 +1,5 @@
 {
-     "endPoint":"https://digu74hvnk.execute-api.us-east-1.amazonaws.com/dev/"
-}
+     "endPoint":"https://e3a58th8vh.execute-api.us-east-1.amazonaws.com/mt-intg-01-aws-us-east-1",
+     "environmentName":"mt-intg-01",
+     "domainName":"escribers.io"
+ }
