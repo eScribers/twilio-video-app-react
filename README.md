@@ -121,7 +121,9 @@ Now the local token server (see [server.js](server.js)) can dispense Access Toke
 Add config.json with endpoint and stage to public directory 
 for example:
 {
-     "endPoint":"https://digu74hvnk.execute-api.us-east-1.amazonaws.com/dev"
+    "endPoint":"https://kcebitv62h.execute-api.us-east-2.amazonaws.com/dev",
+    "environmentName":"mt-intg-01",
+    "domainName":"escribers.io"
 }
 
 Run the app locally with
