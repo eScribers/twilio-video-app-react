@@ -103,9 +103,9 @@ export default function MenuBar() {
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
-  const isHostIn = useIsHostIn();
+  const { isHostIn, isReporterIn } = useIsHostIn();
   const [isHostInState, setIsHostInState] = useState(isHostIn);
-
+  const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
   useDataTrackListener();
 
   if (isAutoRetryingToJoinRoom === false) {
@@ -202,7 +202,15 @@ export default function MenuBar() {
       setIsHostInState(isHostIn);
     }
   }
-
+  if (isReporterIn !== isReporterInState) {
+    if (!isReporterIn) {
+      if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
+        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+      setIsReporterInState(isReporterIn);
+    } else {
+      setIsReporterInState(isReporterIn);
+    }
+  }
   usePublishDataTrack(participantInfo);
 
   return (
