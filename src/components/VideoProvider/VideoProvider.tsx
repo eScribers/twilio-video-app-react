@@ -23,7 +23,7 @@ export interface IVideoContext {
   isConnecting: boolean;
   connect: (token: string) => Promise<void>;
   onError: ErrorCallback;
-  onDisconnect: Callback;
+  onDisconnect: (isRegistered?: boolean) => void;
   getLocalVideoTrack: (newOptions?: CreateLocalTrackOptions) => Promise<LocalVideoTrack>;
   getLocalAudioTrack: (deviceId?: string) => Promise<LocalAudioTrack>;
   isAcquiringLocalTracks: boolean;
