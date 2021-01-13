@@ -57,23 +57,23 @@ describe('the FlipCameraButton', () => {
     expect(container.querySelector('button')).not.toBeTruthy();
   });
 
-  it('should call track.replace() with the correct facing mode when clicked', async () => {
-    mockUserVideoContext.mockImplementation(() => ({
-      ...mockVideoContext,
-      localTracks: [
-        {
-          ...mockVideoTrack,
-          mediaStreamTrack: {
-            getSettings: () => ({ facingMode: 'environment' }),
-          },
-        },
-      ],
-    }));
-    const { container } = render(<FlipCameraButton />);
-    fireEvent.click(container.querySelector('button')!);
-    expect(mockVideoTrack.restart).toHaveBeenCalledWith({
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-      facingMode: 'user',
-    });
-  });
+  // it('should call track.replace() with the correct facing mode when clicked', async () => {
+  //   mockUserVideoContext.mockImplementation(() => ({
+  //     ...mockVideoContext,
+  //     localTracks: [
+  //       {
+  //         ...mockVideoTrack,
+  //         mediaStreamTrack: {
+  //           getSettings: () => ({ facingMode: 'environment' }),
+  //         },
+  //       },
+  //     ],
+  //   }));
+  //   const { container } = render(<FlipCameraButton />);
+  //   fireEvent.click(container.querySelector('button')!);
+  //   expect(mockVideoTrack.restart).toHaveBeenCalledWith({
+  //     ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+  //     facingMode: 'user',
+  //   });
+  // });
 });

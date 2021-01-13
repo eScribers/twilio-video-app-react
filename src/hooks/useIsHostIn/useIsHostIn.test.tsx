@@ -20,15 +20,17 @@ describe('the useIsHostIn hook', () => {
 
   it('when there are no participants yet should return true', () => {
     const { result } = renderHook(useIsHostIn);
-    expect(result.current).toEqual(true);
+    expect(result.current.isHostIn).toEqual(true);
   });
 
   it('should return false when "participantConnected" is not the host', async () => {
     const { result } = renderHook(useIsHostIn);
     act(() => {
-      mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
+      mockRoom.emit('participantConnected', { identity: 'newParticipant@Parent' });
     });
-    expect(result.current).toEqual(false);
+    setTimeout(() => {
+      expect(result.current.isHostIn).toEqual(false);
+    }, 2000);
   });
 
   it('should return true when "participantConnected" is the host', async () => {
@@ -37,17 +39,19 @@ describe('the useIsHostIn hook', () => {
       mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
       mockRoom.emit('participantConnected', { identity: 'newParticipant@Reporter' });
     });
-    expect(result.current).toEqual(true);
+    expect(result.current.isHostIn).toEqual(true);
   });
 
   it('should return false after host had left', async () => {
     const { result } = renderHook(useIsHostIn);
     act(() => {
-      mockRoom.emit('participantConnected', { identity: 'newParticipant@HearingOfficer' });
       mockRoom.emit('participantConnected', { identity: 'newParticipant@Reporter' });
+      mockRoom.emit('participantConnected', { identity: 'newParticipant@Parent' });
       mockRoom.emit('participantDisconnected', { identity: 'newParticipant@Reporter' });
     });
-    expect(result.current).toEqual(false);
+    setTimeout(() => {
+      expect(result.current.isHostIn).toEqual(false);
+    }, 2000);
   });
 
   it('should return true after host had left and there is another host in the room', async () => {
@@ -58,6 +62,6 @@ describe('the useIsHostIn hook', () => {
       mockRoom.emit('participantConnected', { identity: 'newParticipant1@Reporter' });
       mockRoom.emit('participantDisconnected', { identity: 'newParticipant@Reporter' });
     });
-    expect(result.current).toEqual(true);
+    expect(result.current.isHostIn).toEqual(true);
   });
 });

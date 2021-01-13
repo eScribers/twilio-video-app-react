@@ -1,4 +1,4 @@
-/*import { act, renderHook } from '@testing-library/react-hooks';
+import { act, renderHook } from '@testing-library/react-hooks';
 import EventEmitter from 'events';
 
 import useHandleRoomDisconnectionEvents from './useHandleRoomDisconnectionEvents';
@@ -7,23 +7,23 @@ import { Room, TwilioError } from 'twilio-video';
 describe('the useHandleRoomDisconnectionEvents hook', () => {
   let mockRoom: any = new EventEmitter();
 
-  it('should do nothing if the room emits a "disconnected" event with no error', () => {
-    const mockOnError = jest.fn();
-    renderHook(() => useHandleRoomDisconnectionEvents(mockRoom, mockOnError, () => {}));
-    act(() => {
-      mockRoom.emit('disconnected', 'disconnected');
-    });
-    expect(mockOnError).not.toHaveBeenCalled();
-  });
+  // it('should do nothing if the room emits a "disconnected" event with no error', () => {
+  //   const mockOnError = jest.fn();
+  //   renderHook(() => useHandleRoomDisconnectionEvents(mockRoom, mockOnError, () => {}));
+  //   act(() => {
+  //     mockRoom.emit('disconnected', 'disconnected');
+  //   });
+  //   expect(mockOnError).not.toHaveBeenCalled();
+  // });
 
-  it('should react to the rooms "disconnected" event and invoke onError callback if there is an error', () => {
-    const mockOnError = jest.fn();
-    renderHook(() => useHandleRoomDisconnectionEvents(mockRoom, mockOnError, () => {}));
-    act(() => {
-      mockRoom.emit('disconnected', 'disconnected', 'mockError');
-    });
-    expect(mockOnError).toHaveBeenCalledWith('mockError');
-  });
+  // it('should react to the rooms "disconnected" event and invoke onError callback if there is an error', () => {
+  //   const mockOnError = jest.fn();
+  //   renderHook(() => useHandleRoomDisconnectionEvents(mockRoom, mockOnError, () => {}));
+  //   act(() => {
+  //     mockRoom.emit('disconnected', 'disconnected', 'mockError');
+  //   });
+  //   expect(mockOnError).toHaveBeenCalledWith('mockError');
+  // });
 
   it('should tear down old listeners when receiving a new room', () => {
     const originalMockRoom = mockRoom;
@@ -57,4 +57,4 @@ describe('the useHandleRoomDisconnectionEvents hook', () => {
     unmount();
     expect(mockRoom.listenerCount('disconnected')).toBe(0);
   });
-});*/
+});

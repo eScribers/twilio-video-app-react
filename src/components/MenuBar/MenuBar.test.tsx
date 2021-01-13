@@ -2,7 +2,6 @@ import React from 'react';
 import MenuBar from './MenuBar';
 import { MemoryRouter, Route } from 'react-router-dom';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
-import useFullScreenToggle from '../../hooks/useFullScreenToggle/useFullScreenToggle';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { VideoContext } from '../VideoProvider/VideoProvider';
 // Line below gave an error on IVideoContext and suggested using VideoContext, as above
@@ -10,26 +9,33 @@ import { VideoContext } from '../VideoProvider/VideoProvider';
 import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { useAppState } from '../../state';
+import { useAlert } from 'react-alert';
+import SettingsButton from './SettingsButton/SettingsButton';
+import useMediaDevices from '../../hooks/useMediaDevices/useMediaDevices';
+import selectEvent from '@material-ui/core/Select';
 
 const mockedUseRoomState = useRoomState as jest.Mock<string>;
-const mockeduseFullScreenToggle = useFullScreenToggle as jest.Mock;
 // @ts-ignore
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 //const mockedUseVideoContext = useVideoContext as jest.Mock<typeof VideoContext>;
 const mockUseAppState = useAppState as jest.Mock<any>;
-const mockToggleFullScreen = jest.fn();
+const mockUseAlert = useAlert as jest.Mock<string>;
 const mockConnect = jest.fn();
 const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
+const mockUseMediaDevices = useMediaDevices as jest.Mock<any>;
 
+jest.mock('../../state');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
 jest.mock('../../hooks/useRoomState/useRoomState');
-jest.mock('../../hooks/useFullScreenToggle/useFullScreenToggle');
-jest.mock('../../state');
+jest.mock('react-alert');
 
-delete window.location;
+global.alert = jest.fn();
+
+//delete window.location;
 // @ts-ignore
 window.location = {
   pathname: '',
+  hash: '',
   search: '',
   origin: '',
 };
@@ -39,18 +45,11 @@ const renderComponent = () => (
   </MemoryRouter>
 );
 
-// delete window.location;
-// // @ts-ignore
-// window.location = {
-//   origin: '',
-// };
-
 const mockReplaceState = jest.fn();
 Object.defineProperty(window.history, 'replaceState', { value: mockReplaceState });
 
 describe('the MenuBar component', () => {
   beforeEach(jest.clearAllMocks);
-  mockeduseFullScreenToggle.mockImplementation(() => [true, mockToggleFullScreen]);
   mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
 
   it('mock test to make this test suite pass', () => {
@@ -87,24 +86,34 @@ describe('the MenuBar component', () => {
   //   expect(container.querySelector('svg')).not.toBeNull();
   // });
 
-  // it('should disable the Join Room button when the Name input or Room input are empty', () => {
+  // it('should disable the Join Room button when the Case Number input or Party Name or Party Type input are empty', () => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(() => ({ isConnecting: false, room: {}, localTracks: [] } as any));
-  //   const { getByLabelText, getByText } = render(renderComponent());
+  //   const { container,getByLabelText, getByText } = render(renderComponent());
   //   expect(getByText('Join Room')).toBeDisabled();
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: 'Foo' } });
+
+  //   fireEvent.change(getByLabelText('Case Number'), { target: { value: 'CaseNumber' } });
+  //   // const elSelector = container.querySelector('.Select-input');
+  //   // fireEvent.keyDown(elSelector, { keyCode: 13 });
+  // //  fireEvent.change( getByTestId('Party Type'), { target: { value: 'PartyType' } });
   //   expect(getByText('Join Room')).toBeDisabled();
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: '' } });
-  //   fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
-  //   expect(getByText('Join Room')).toBeDisabled();
+
+  //   // fireEvent.change(getByLabelText('Case Number'), { target: { value: '' } });
+  //   // fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Party Name' } });
+  //   // expect(getByText('Join Room')).toBeDisabled();
+
+  //   // fireEvent.change(getByTestId('Party Type'), { target: { value: 'PartyType' } });
+  //   // fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Party Name' } });
+  //   // expect(getByText('Join Room')).toBeDisabled();
   // });
 
-  // it('should enable the Join Room button when the Name input and Room input are not empty', () => {
+  // it('should enable the Join Room button when the Case Number input and Party Name input are not empty', () => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(() => ({ isConnecting: false, room: {}, localTracks: [] } as any));
   //   const { getByLabelText, getByText } = render(renderComponent());
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: 'Foo' } });
-  //   fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
+  //   fireEvent.change(getByLabelText('Case Number'), { target: { value: 'Case Number' } });
+  //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Party Name' } });
+  //   fireEvent.click(getByLabelText('Party Type'), { target: { value: 'Party Type' } });
   //   expect(getByText('Join Room')).not.toBeDisabled();
   // });
 
@@ -112,8 +121,8 @@ describe('the MenuBar component', () => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(() => ({ isConnecting: true, room: {}, localTracks: [] } as any));
   //   const { getByLabelText, getByText } = render(renderComponent());
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: 'Foo' } });
-  //   fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
+  //   fireEvent.change(getByLabelText('Case Number'), { target: { value: 'Foo' } });
+  //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Foo' } });
   //   expect(getByText('Join Room')).toBeDisabled();
   // });
 
@@ -123,8 +132,8 @@ describe('the MenuBar component', () => {
   //     () => ({ isAcquiringLocalTracks: true, room: {}, localTracks: [] } as any)
   //   );
   //   const { getByLabelText, getByText } = render(renderComponent());
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: 'Foo' } });
-  //   fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo' } });
+  //   fireEvent.change(getByLabelText('Case Number'), { target: { value: 'Foo' } });
+  //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Foo' } });
   //   expect(getByText('Join Room')).toBeDisabled();
   // });
 
@@ -134,8 +143,8 @@ describe('the MenuBar component', () => {
   //     () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any)
   //   );
   //   const { getByLabelText, getByText } = render(renderComponent());
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: 'Foo' } });
-  //   fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo Test' } });
+  //   fireEvent.change(getByLabelText('Case Number'), { target: { value: 'Foo' } });
+  //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Foo Test' } });
   //   fireEvent.click(getByText('Join Room').parentElement!);
   //   expect(window.history.replaceState).toHaveBeenCalledWith(null, '', '/room/Foo%20Test');
   // });
@@ -160,10 +169,11 @@ describe('the MenuBar component', () => {
   //     () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any)
   //   );
   //   const { getByLabelText, getByText } = render(renderComponent());
-  //   fireEvent.change(getByLabelText('Name'), { target: { value: 'Foo' } });
-  //   fireEvent.change(getByLabelText('Room'), { target: { value: 'Foo Test' } });
+  //   fireEvent.change(getByLabelText('Case Number'), { target: { value: 'CaseNumber' } });
+  //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'PartyName' } });
+  //   fireEvent.change(getByLabelText('Party Type'), { target: { value: 'PartyType' } });
   //   fireEvent.click(getByText('Join Room').parentElement!);
-  //   expect(mockGetToken).toHaveBeenCalledWith('Foo', 'Foo Test');
+  //   expect(mockGetToken).toHaveBeenCalledWith('CaseNumber', 'PartyName','PartyType');
   //   setImmediate(() => {
   //     expect(mockConnect).toHaveBeenCalledWith('mockToken');
   //     done();

@@ -21,7 +21,7 @@ import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantInformation } from '../../state/index';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
-import usePublishDataTrack from 'hooks/useDataTrackPublisher/useDataTrackPublisher';
+import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
 
