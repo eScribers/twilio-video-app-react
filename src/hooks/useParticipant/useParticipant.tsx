@@ -1,5 +1,5 @@
 import useVideoContext from '../useVideoContext/useVideoContext';
-import { TRACK_TYPE } from 'utils/displayStrings';
+import { TRACK_TYPE } from '../../utils/displayStrings';
 import { Participant } from 'twilio-video';
 import { useAppState } from '../../state';
 import { IMuteRemoteParticipantMessage } from 'utils/muteRemoteParticipantMessage';

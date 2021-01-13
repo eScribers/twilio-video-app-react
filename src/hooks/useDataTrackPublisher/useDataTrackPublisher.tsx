@@ -1,8 +1,8 @@
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { LocalDataTrack, LocalDataTrackOptions, LocalParticipant } from 'twilio-video';
-import useVideoContext from 'hooks/useVideoContext/useVideoContext';
+import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { useState } from 'react';
-import isModerator from 'utils/rbac/roleChecker';
+import isModerator from '../../utils/rbac/roleChecker';
 import { ParticipantInformation } from 'state';
 
 export default function usePublishDataTrack(participantInfo: ParticipantInformation | null) {
