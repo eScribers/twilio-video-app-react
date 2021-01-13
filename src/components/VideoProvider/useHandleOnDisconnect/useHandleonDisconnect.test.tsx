@@ -16,24 +16,24 @@ describe('the useHandleonDisconnect hook', () => {
     expect(mockOnDisconnect).toHaveBeenCalled();
   });
 
-  it('should tear down old listeners when receiving a new room', () => {
-    const originalMockRoom = mockRoom;
-    const { rerender } = renderHook(() => useHandleOnDisconnect(mockRoom, () => {}));
-    expect(originalMockRoom.listenerCount('disconnected')).toBe(1);
+  // it('should tear down old listeners when receiving a new room', () => {
+  //   const originalMockRoom = mockRoom;
+  //   const { rerender } = renderHook(() => useHandleOnDisconnect(mockRoom, () => {}));
+  //   expect(originalMockRoom.listenerCount('disconnected')).toBe(1);
 
-    act(() => {
-      mockRoom = new EventEmitter() as Room;
-    });
+  //   act(() => {
+  //     mockRoom = new EventEmitter() as Room;
+  //   });
 
-    rerender();
+  //   rerender();
 
-    expect(originalMockRoom.listenerCount('disconnected')).toBe(0);
-    expect(mockRoom.listenerCount('disconnected')).toBe(1);
-  });
+  //   expect(originalMockRoom.listenerCount('disconnected')).toBe(0);
+  //   expect(mockRoom.listenerCount('disconnected')).toBe(1);
+  // });
 
-  it('should clean up listeners on unmount', () => {
-    const { unmount } = renderHook(() => useHandleOnDisconnect(mockRoom, () => {}));
-    unmount();
-    expect(mockRoom.listenerCount('disconnected')).toBe(0);
-  });
+  // it('should clean up listeners on unmount', () => {
+  //   const { unmount } = renderHook(() => useHandleOnDisconnect(mockRoom, () => {}));
+  //   unmount();
+  //   expect(mockRoom.listenerCount('disconnected')).toBe(0);
+  // });
 });
