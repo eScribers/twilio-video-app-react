@@ -11,7 +11,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Offline, Online } from 'react-detect-offline';
 import { TRACK_TYPE, NOTIFICATION_MESSAGE, ERROR_MESSAGE } from '../../utils/displayStrings';
-import { PARTICIANT_TYPES } from '../../utils/participantTypes';
+import { DOE_PARTICIPANT_TYPES } from '../../utils/rbac/DOEParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
@@ -64,7 +64,7 @@ const useStyles = makeStyles(theme =>
   })
 );
 const getPartyTypes = () => {
-  return Object.values(PARTICIANT_TYPES);
+  return Object.values(DOE_PARTICIPANT_TYPES);
 };
 
 const mobileAndTabletCheck = function() {
@@ -204,7 +204,7 @@ export default function MenuBar() {
   }
   if (isReporterIn !== isReporterInState) {
     if (!isReporterIn) {
-      if (participantInfo?.partyType === PARTICIANT_TYPES.HEARING_OFFICER)
+      if (participantInfo?.partyType === DOE_PARTICIPANT_TYPES.HEARING_OFFICER)
         setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
       setIsReporterInState(isReporterIn);
     } else {

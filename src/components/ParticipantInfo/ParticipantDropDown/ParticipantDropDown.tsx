@@ -5,17 +5,41 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Participant } from 'twilio-video';
 import useParticipant from '../../../hooks/useParticipant/useParticipant';
-
+import roleChecker from '../../../utils/rbac/roleChecker';
+import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
+import { ParticipantIdentity } from '../../../utils/participantIdentity';
 interface ParticipantDropDownProps {
   participant: Participant;
 }
 
 const REMOVE = 'Remove';
 const MUTE = 'Mute';
-const options = [MUTE, REMOVE];
 const ITEM_HEIGHT = 48;
 
-export default function ParticipantDropDown({ participant }: ParticipantDropDownProps) {
+export default function ParticipantDropDown({ localParticipantType, participant }: any) {
+  const initOption = () => {
+    let options: string[] = [];
+    let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
+    if (localParticipantType === remoteParticipantPartyType) return options;
+    if (
+      roleChecker.doesRoleHavePermission(
+        ROLE_PERMISSIONS.MUTE_PARTICIPANT,
+        localParticipantType,
+        remoteParticipantPartyType
+      )
+    )
+      options[0] = MUTE;
+    if (
+      roleChecker.doesRoleHavePermission(
+        ROLE_PERMISSIONS.REMOVE_PARTICIPANT,
+        localParticipantType,
+        remoteParticipantPartyType
+      )
+    )
+      options[1] = REMOVE;
+    return options;
+  };
+  const options = initOption();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const participantCommands = useParticipant();
 
@@ -31,20 +55,17 @@ export default function ParticipantDropDown({ participant }: ParticipantDropDown
 
     if (option === MUTE) {
       console.log(participant.sid);
-      //console.log(options.length);
       console.log('attempting to mute now');
       participantCommands.muteParticipant(participant);
     }
 
     if (option === REMOVE) {
       console.log(participant.sid);
-      //console.log(options.length);
       participantCommands.removeParticipant(participant);
     }
   };
-
   return (
-    <div style={{ float: 'right' }}>
+    <div hidden={options.length === 0} style={{ float: 'right' }}>
       <IconButton
         aria-label="more"
         aria-controls="long-menu"

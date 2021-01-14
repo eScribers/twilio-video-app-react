@@ -1,4 +1,4 @@
-export const PARTICIANT_TYPES = {
+export const DOE_PARTICIPANT_TYPES = {
   REPORTER: 'Reporter',
   HEARING_OFFICER: 'Hearing Officer',
   PARENT: 'Parent',

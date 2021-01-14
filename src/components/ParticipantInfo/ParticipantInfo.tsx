@@ -18,7 +18,6 @@ import useTrack from '../../hooks/useTrack/useTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useHeight from '../../hooks/useHeight/useHeight';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import { PARTICIANT_TYPES } from '../../utils/participantTypes';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 export default function ParticipantInfo({ participant, onClick, isSelected, children, gridView }) {
   const useStyles = gridView
@@ -144,12 +143,7 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const localParticipantType = ParticipantIdentity.Parse(localParticipant.identity).partyType;
-  const participantType = ParticipantIdentity.Parse(participant.identity).partyType;
-  const enableParticipantDropDown =
-    (localParticipantType === PARTICIANT_TYPES.REPORTER || localParticipantType === PARTICIANT_TYPES.HEARING_OFFICER) &&
-    localParticipant.identity !== participant.identity &&
-    !(localParticipantType === PARTICIANT_TYPES.HEARING_OFFICER && participantType === PARTICIANT_TYPES.REPORTER);
+  const localParticipantType: string = ParticipantIdentity.Parse(localParticipant.identity).partyType;
 
   const height = useHeight();
   const getHeight = () => {
@@ -197,7 +191,7 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
           <AudioLevelIndicator audioTrack={audioTrack} background="white" />
           {!isVideoEnabled && <VideocamOff />}
           {isSelected && <PinIcon />}
-          {enableParticipantDropDown && <ParticipantDropDown participant={participant} />}
+          <ParticipantDropDown participant={participant} localParticipantType={localParticipantType} />
         </div>
       </div>
       {isVideoSwitchedOff && <BandwidthWarning />}
