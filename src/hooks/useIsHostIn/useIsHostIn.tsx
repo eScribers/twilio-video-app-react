@@ -1,4 +1,4 @@
-import { DOE_PARTICIPANT_TYPES } from '../../utils/rbac/DOEParticipantTypes';
+import { DOE_PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { useEffect, useState } from 'react';
 import { RemoteParticipant, Room } from 'twilio-video';

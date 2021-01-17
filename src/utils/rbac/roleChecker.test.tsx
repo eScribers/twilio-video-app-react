@@ -1,6 +1,6 @@
 import roleChecker from './roleChecker';
 import { ROLE_PERMISSIONS } from './rolePermissions';
-import { DOE_PARTICIPANT_TYPES } from './DOEParticipantTypes';
+import { DOE_PARTICIPANT_TYPES } from './ParticipantTypes';
 
 describe('the doesRoleHavePermission function', () => {
   it('should decided if role have a permision to start room', () => {

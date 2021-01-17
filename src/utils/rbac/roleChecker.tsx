@@ -1,4 +1,4 @@
-import { DOE_PARTICIPANT_TYPES } from './DOEParticipantTypes';
+import { DOE_PARTICIPANT_TYPES } from './ParticipantTypes';
 
 import { ROLE_PERMISSIONS } from './rolePermissions';
 
