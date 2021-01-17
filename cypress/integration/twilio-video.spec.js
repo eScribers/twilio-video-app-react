@@ -7,8 +7,8 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min) + min); 
 }
 
-const loginUrlPath = "/welcome";
-const conferenceUrlPath = "/conference/newconference";
+const loginUrlPath = Cypress.env('baseUrl') + "/welcome";
+const conferenceUrlPath = Cypress.env('baseUrl') + "/conference/newconference";
 const getRoomName = () =>
     Math.random()
         .toString(36)
@@ -22,7 +22,8 @@ const caseRef = uuid();
  context('Startup', () => {
     
       before(() => { 
-                  cy.tabulaLogin(conferenceUrlPath,Cypress.env('login_user_name'),Cypress.env('login_user_password'));
+           
+                  cy.tabulaLogin(conferenceUrlPath,Cypress.env('loginUserName'),Cypress.env('loginPassword'));
                   const nowDate = Cypress.moment();
                   cy.createNewConference(conferenceUrlPath,caseRef,`caseName-${caseRef}`,nowDate.format('yyyy-MM-DD') ,
                   nowDate.format('HH:mm:ss'), nowDate.add(1000000).format('HH:mm:ss'),providers[0],

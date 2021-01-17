@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+require('dotenv').config()
 const participants = {};
 
 // This function is called when a project is opened or re-opened (e.g. due to
@@ -6,6 +7,10 @@ const participants = {};
 // `on` is used to hook into various events Cypress emits
 // `config` is the resolved Cypress config
 module.exports = (on, config) => {
+  // config.env.baseUrl = process.env.BASE_URL;
+  // console.log(config.env.baseUrl);
+  // config.env.username = process.env.LOGIN_USER_NAME;
+  // config.env.password = process.env.LOGIN_USER_PASSWORD;
   const participantFunctions = {
     addParticipant: async ({ name, roomName, color }) => {
       const args = ['--use-fake-ui-for-media-stream', '--use-fake-device-for-media-stream'];
@@ -59,4 +64,5 @@ module.exports = (on, config) => {
     },
   };
   on('task', participantFunctions);
+  return config;
 };
