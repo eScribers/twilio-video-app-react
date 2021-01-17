@@ -2,9 +2,10 @@ import React, { createContext, useContext, useReducer, useState, useEffect } fro
 import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
+import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
 
 import * as jwt_decode from 'jwt-decode';
-import isModerator from '../utils/rbac/roleChecker';
+import roleChecker from '../utils/rbac/roleChecker';
 
 export interface ParticipantInformation {
   caseReference: string;
@@ -180,7 +181,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       if (!(await ensureEnvironmentFromConfigInitialised())) return null;
 
       var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-      var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/login`;
+      var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
 
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
       else window.location.replace(loginPageUrl);
@@ -231,7 +232,11 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     try {
       setIsFetching(false);
 
-      if (!res.roomExist && !isModerator(participantInformation.partyType)) return NOTIFICATION_MESSAGE.ROOM_NOT_FOUND;
+      if (
+        !res.roomExist &&
+        !roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.START_ROOM, participantInformation.partyType)
+      )
+        return NOTIFICATION_MESSAGE.ROOM_NOT_FOUND;
 
       setUserToken(res.result);
       const user = jwt_decode(res.result);
