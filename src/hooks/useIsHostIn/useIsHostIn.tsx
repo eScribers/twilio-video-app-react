@@ -1,4 +1,4 @@
-import { DOE_PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
+import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { useEffect, useState } from 'react';
 import { RemoteParticipant, Room } from 'twilio-video';
@@ -18,14 +18,14 @@ export default function useIsHostIn() {
 
   useEffect(() => {
     const participantConnected = (participant: RemoteParticipant) => {
-      if (ParticipantIdentity.Parse(participant.identity).partyType === DOE_PARTICIPANT_TYPES.REPORTER) {
+      if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
         setIsHostIn(true);
         setReporterIn(true);
       }
     };
 
     const participantDisconnected = (participant: RemoteParticipant) => {
-      if (ParticipantIdentity.Parse(participant.identity).partyType === DOE_PARTICIPANT_TYPES.REPORTER) {
+      if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
         setReporterIn(false);
         if (!checkIsHostIn(room)) setIsHostIn(false);
       }
@@ -45,13 +45,13 @@ export default function useIsHostIn() {
     if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
       let flag = false;
       theRoom.participants.forEach(participant => {
-        if (ParticipantIdentity.Parse(participant.identity).partyType === DOE_PARTICIPANT_TYPES.REPORTER) {
+        if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
           flag = true;
         }
       });
       if (
-        ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === DOE_PARTICIPANT_TYPES.REPORTER ||
-        ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === DOE_PARTICIPANT_TYPES.HEARING_OFFICER
+        ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIPANT_TYPES.REPORTER ||
+        ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER
       ) {
         flag = true;
       }
@@ -66,11 +66,11 @@ export default function useIsHostIn() {
     if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
       let flagIsReporterIn = false;
       theRoom.participants.forEach(participant => {
-        if (ParticipantIdentity.Parse(participant.identity).partyType === DOE_PARTICIPANT_TYPES.REPORTER) {
+        if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
           flagIsReporterIn = true;
         }
       });
-      if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === DOE_PARTICIPANT_TYPES.REPORTER) {
+      if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
         flagIsReporterIn = true;
       }
 
