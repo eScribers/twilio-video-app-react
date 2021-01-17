@@ -28,7 +28,7 @@ export default function ParticipantDropDown({ localParticipantType, participant 
         remoteParticipantPartyType
       )
     )
-      options[0] = MUTE;
+      options.push(MUTE);
     if (
       roleChecker.doesRoleHavePermission(
         ROLE_PERMISSIONS.REMOVE_PARTICIPANT,
@@ -36,7 +36,7 @@ export default function ParticipantDropDown({ localParticipantType, participant 
         remoteParticipantPartyType
       )
     )
-      options[1] = REMOVE;
+      options.push(REMOVE);
     return options;
   };
   const options = initOption();
