@@ -2,7 +2,8 @@ import { TRACK_TYPE } from '../../utils/displayStrings';
 import { LocalDataTrack, LocalDataTrackOptions, LocalParticipant } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { useState } from 'react';
-import isModerator from '../../utils/rbac/roleChecker';
+import roleChecker from '../../utils/rbac/roleChecker';
+import { ROLE_PERMISSIONS } from '../../utils/rbac/rolePermissions';
 import { ParticipantInformation } from 'state';
 
 export default function usePublishDataTrack(participantInfo: ParticipantInformation | null) {
@@ -16,7 +17,7 @@ export default function usePublishDataTrack(participantInfo: ParticipantInformat
     return;
   }
 
-  if (isModerator(participantInfo.partyType)) {
+  if (roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.START_ROOM, participantInfo.partyType)) {
     publishDataTrack(localParticipant);
   }
   setHavePublishedLocalModeratorDataTrack(true);

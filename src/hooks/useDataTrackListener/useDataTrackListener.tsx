@@ -3,7 +3,8 @@ import { useEffect } from 'react';
 import { RemoteParticipant, Track } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import isModerator from '../../utils/rbac/roleChecker';
+import roleChecker from '../../utils/rbac/roleChecker';
+import { ROLE_PERMISSIONS } from '../../utils/rbac/rolePermissions';
 import { IMuteRemoteParticipantMessage } from '../../utils/muteRemoteParticipantMessage';
 
 export default function useDataTrackListener() {
@@ -11,7 +12,12 @@ export default function useDataTrackListener() {
 
   useEffect(() => {
     const handleRemoteParticipant = (participant: RemoteParticipant) => {
-      if (isModerator(ParticipantIdentity.Parse(participant.identity).partyType)) {
+      if (
+        roleChecker.doesRoleHavePermission(
+          ROLE_PERMISSIONS.START_ROOM,
+          ParticipantIdentity.Parse(participant.identity).partyType
+        )
+      ) {
         participant.on('trackSubscribed', track => {
           console.log(`Participant "${participant.identity}" added ${track.kind} Track ${track.sid}`);
           if (track.kind === 'data') {
