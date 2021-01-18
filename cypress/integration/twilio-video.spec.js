@@ -52,8 +52,8 @@ const caseRef = uuid();
             let caseRef = '1313';
             cy.fillConferenceLoginPage(userName,userPass,caseRef);
 
-            cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
-            cy.get('span').contains('The case number you entered does not have a hearing scheduled for today. Please re-enter your case number.').should('be.visible');
+            cy.url().should('include', `${loginUrlPath}/login/-2?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
+            cy.get('p').contains('The case number you entered does not have a hearing scheduled for today. Please re-enter your case number.').should('be.visible');
           })
       
       it('should fill login form and redirect to twilio video app', () => {
