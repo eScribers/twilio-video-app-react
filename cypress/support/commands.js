@@ -27,11 +27,20 @@ Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hear
         
 });
 
-Cypress.Commands.add('fillConferenceLoginPage', (userName,pass, caseNumber) => {
+Cypress.Commands.add('fillConferenceLoginPage', (userName,password, caseNumber) => {
 
   cy.get('input[name="name"]').type(userName).should('have.value', userName);
   cy.get('input[name="passPin"]').type(password).should('have.value', password);
-  cy.get('[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
+  cy.get('input[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
+  cy.get('form').submit();
+
+});
+
+Cypress.Commands.add('deleteExistingConference', (caseReference) => {
+
+  cy.get('input[name="name"]').type(userName).should('have.value', userName);
+  cy.get('input[name="passPin"]').type(password).should('have.value', password);
+  cy.get('input[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
   cy.get('form').submit();
 
 });

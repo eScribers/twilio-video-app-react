@@ -6,9 +6,9 @@ function getRandomInt(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min) + min); 
 }
-
-const loginUrlPath = Cypress.env('baseUrl') + "/welcome";
-const conferenceUrlPath = Cypress.env('baseUrl') + "/conference/newconference";
+const baseUrl = Cypress.env('baseUrl');
+const loginUrlPath = baseUrl + "/welcome";
+const conferenceUrlPath = baseUrl + "/conference/newconference";
 const getRoomName = () =>
     Math.random()
         .toString(36)
@@ -23,7 +23,7 @@ const caseRef = uuid();
     
       before(() => { 
            
-                  cy.tabulaLogin(conferenceUrlPath,Cypress.env('loginUserName'),Cypress.env('loginPassword'));
+                  cy.tabulaLogin(conferenceUrlPath,Cypress.env('loginAdminUserName'),Cypress.env('loginAdminPassword'));
                   const nowDate = Cypress.moment();
                   cy.createNewConference(conferenceUrlPath,caseRef,`caseName-${caseRef}`,nowDate.format('yyyy-MM-DD') ,
                   nowDate.format('HH:mm:ss'), nowDate.add(1000000).format('HH:mm:ss'),providers[0],
@@ -32,28 +32,40 @@ const caseRef = uuid();
                 });
 
       beforeEach(() => {  
-                   cy.visit(`${loginUrlPath}/login/`);
+                  cy.visit(`${baseUrl}/auth/logout`);
+                   cy.visit(`${loginUrlPath}/login?UserIdentifier=&Language=en-us&CaseReference=&Password=`);
                 });
-     
-      it('should fill login form and get error of "no active hearing for the case number"', () => {
 
-            cy.fillConferenceLoginPage('abfhg','123$567','1313');
+          it('should fill login form and get error of "The username/password is incorrect."', () => {
+            let userName = 'abfhg';
+            let userPass = '123$567';
+            let caseRef = '1313';
+            cy.fillConferenceLoginPage(userName,userPass,caseRef);
 
-            cy.url().should('include', `${loginUrlPath}/login/nohearing`);
-            cy.get('p').contains('There is no active hearing for the case number you entered.').should('be.visible');
+            cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
+            cy.get('p').contains('The username/password is incorrect.').should('be.visible');
+          })
+
+          it('should fill login form and get error of "The case number you entered does not have a hearing scheduled for today. Please re-enter your case number."', () => {
+            let userName = Cypress.env('loginHOUserName');
+            let userPass = Cypress.env('loginHOPassword');
+            let caseRef = '1313';
+            cy.fillConferenceLoginPage(userName,userPass,caseRef);
+
+            cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
+            cy.get('span').contains('The case number you entered does not have a hearing scheduled for today. Please re-enter your case number.').should('be.visible');
           })
       
       it('should fill login form and redirect to twilio video app', () => {
-
-            cy.fillConferenceLoginPage('bhaidar','123$567',caseRef);
-            cy.url().should('include', `${loginUrlPath}/chooseRole`);
-            cy.get('select[name="roleId"]').select(roles[getRandomInt(0,statusValues.length - 1)]);
-            cy.get('form').submit();
-
+            let userName = Cypress.env('loginHOUserName');
+            let userPass = Cypress.env('loginHOPassword');
+            cy.fillConferenceLoginPage(userName,userPass,caseRef);
             cy.url().should('include', '.cloudfront.net/');
             cy.log("url" + cy.url());
       })
-           
+      after(() => { 
+        
+      });   
     }); 
 
 
