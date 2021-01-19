@@ -21,8 +21,7 @@ const roles = ['Parent','Parent Representative','District Representative','Other
 const caseRef = uuid();
 
  context('Startup', () => {
-    
-      before(() => { 
+   before(() => { 
                   let userName = Cypress.env('loginAdminUserName');
                   let password = Cypress.env('loginAdminPassword');
                   cy.login(conferenceUrlPath, userName, password);
