@@ -1,6 +1,7 @@
 /// <reference types="Cypress" />
 import moment from 'moment';
 import 'moment-timezone';
+
 // If you are on MacOS and have many popups about Chromium when these tests run, please see: https://stackoverflow.com/questions/54545193/puppeteer-chromium-on-mac-chronically-prompting-accept-incoming-network-connect
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -63,8 +64,6 @@ const caseRef = uuid();
           })
       
       it('should fill login form and redirect to twilio video app', () => {
-        const nowTime = moment.tz('Asia/Jerusalem');
-                  cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
             let userName = Cypress.env('loginHOUserName');
             let userPass = Cypress.env('loginHOPassword');
             cy.fillConferenceLoginPage(userName,userPass,caseRef);
