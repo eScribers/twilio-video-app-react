@@ -3,7 +3,6 @@
   "defaultCommandTimeout": 10000,
   "chromeWebSecurity": false,
   "reporter": "cypress-multi-reporters",
-  "envFile":"cypress/config/mt-intg-01.json",
   "reporterOptions": {
     "configFile": "cypress/reporter-config.json"
   },

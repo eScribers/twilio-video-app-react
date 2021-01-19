@@ -1,6 +1,6 @@
 import detectSound from './detectSound';
 
-Cypress.Commands.add('tabulaLogin', (targetUrl,userName, password) => {
+Cypress.Commands.add('login', (targetUrl,userName, password) => {
   cy.visit(targetUrl);
   cy.get('input[name="name"]').type(userName).should('have.value', userName);
   cy.get('input[name="passPin"]').type(password).should('have.value', password);

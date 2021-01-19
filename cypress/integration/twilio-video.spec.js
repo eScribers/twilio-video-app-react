@@ -22,13 +22,18 @@ const caseRef = uuid();
  context('Startup', () => {
     
       before(() => { 
-           
-                  cy.tabulaLogin(conferenceUrlPath,Cypress.env('loginAdminUserName'),Cypress.env('loginAdminPassword'));
+          cy.login({ targetUrl : conferenceUrlPath,
+                     userName : Cypress.env('loginAdminUserName'),
+                     password : Cypress.env('loginAdminPassword')});
                   const nowDate = Cypress.moment();
-                  cy.createNewConference(conferenceUrlPath,caseRef,`caseName-${caseRef}`,nowDate.format('yyyy-MM-DD') ,
-                  nowDate.format('HH:mm:ss'), nowDate.add(1000000).format('HH:mm:ss'),providers[0],
-                  statusValues[ getRandomInt(0,statusValues.length - 1)],`reporter-${caseRef}`,
-                  getRandomInt(48,90).toString());
+                  cy.createNewConference({ conferenceUrl: conferenceUrlPath,
+                    caseRef: caseRef, caseName: `caseName-${caseRef}`,
+                    hearingDate: nowDate.format('yyyy-MM-DD'), startTime: nowDate.format('HH:mm:ss'),
+                    endTime: nowDate.add(1000000).format('HH:mm:ss'),
+                    provider: providers[0], 
+                    status: statusValues[getRandomInt(0,statusValues.length - 1)],
+                    hearingOfficer: `reporter-${caseRef}`,
+                    reporterPerson: getRandomInt(48,90).toString()});
                 });
 
       beforeEach(() => {  
@@ -37,23 +42,23 @@ const caseRef = uuid();
                 });
 
           it('should fill login form and get error of "The username/password is incorrect."', () => {
-            let userName = 'abfhg';
-            let userPass = '123$567';
-            let caseRef = '1313';
+            let userName = generatePassword(4);
+            let userPass = generatePassword(8);
+            let caseRef = generateNumber(3);
             cy.fillConferenceLoginPage(userName,userPass,caseRef);
 
             cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
             cy.get('p').contains('The username/password is incorrect.').should('be.visible');
           })
 
-          it('should fill login form and get error of "The case number you entered does not have a hearing scheduled for today. Please re-enter your case number."', () => {
+          it('should fill login form and get error of "The case number you entered is invalid. Please re-enter your case number."', () => {
             let userName = Cypress.env('loginHOUserName');
             let userPass = Cypress.env('loginHOPassword');
-            let caseRef = '1313';
+            let caseRef = generateNumber(3);
             cy.fillConferenceLoginPage(userName,userPass,caseRef);
 
-            cy.url().should('include', `${loginUrlPath}/login/-2?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
-            cy.get('p').contains('The case number you entered does not have a hearing scheduled for today. Please re-enter your case number.').should('be.visible');
+            cy.url().should('include', `${loginUrlPath}/login/-1?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
+            cy.get('p').contains('The case number you entered is invalid. Please re-enter your case number.').should('be.visible');
           })
       
       it('should fill login form and redirect to twilio video app', () => {
@@ -67,8 +72,24 @@ const caseRef = uuid();
         
       });   
     }); 
+function generateNumber(length)
+{
+  let numberSet = "123456789";
+  return generateStringFromRandomString(numberSet,length);
+}
 
-
+function generatePassword(length)
+{
+  let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  return generateStringFromRandomString(charset,length);
+}
+function generateStringFromRandomString(randomString, length) {
+  let retVal = "";
+  for (var i = 0, n = randomString.length; i < length; ++i) {
+     retVal += randomString.charAt(Math.floor(Math.random() * n));
+    }
+    return retVal;
+  }
 
 
     // context('A video app user', () => {
