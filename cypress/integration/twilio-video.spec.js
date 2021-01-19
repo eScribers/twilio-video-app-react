@@ -63,6 +63,8 @@ const caseRef = uuid();
           })
       
       it('should fill login form and redirect to twilio video app', () => {
+        const nowTime = moment.tz('Asia/Jerusalem');
+                  cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
             let userName = Cypress.env('loginHOUserName');
             let userPass = Cypress.env('loginHOPassword');
             cy.fillConferenceLoginPage(userName,userPass,caseRef);
