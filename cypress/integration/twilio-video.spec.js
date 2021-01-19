@@ -1,5 +1,6 @@
 /// <reference types="Cypress" />
-
+import moment from 'moment';
+import 'moment-timezone';
 // If you are on MacOS and have many popups about Chromium when these tests run, please see: https://stackoverflow.com/questions/54545193/puppeteer-chromium-on-mac-chronically-prompting-accept-incoming-network-connect
 function getRandomInt(min, max) {
   min = Math.ceil(min);
@@ -22,18 +23,19 @@ const caseRef = uuid();
  context('Startup', () => {
     
       before(() => { 
-          cy.login({ targetUrl : conferenceUrlPath,
-                     userName : Cypress.env('loginAdminUserName'),
-                     password : Cypress.env('loginAdminPassword')});
-                  const nowDate = Cypress.moment();
-                  cy.createNewConference({ conferenceUrl: conferenceUrlPath,
-                    caseRef: caseRef, caseName: `caseName-${caseRef}`,
-                    hearingDate: nowDate.format('yyyy-MM-DD'), startTime: nowDate.format('HH:mm:ss'),
-                    endTime: nowDate.add(1000000).format('HH:mm:ss'),
-                    provider: providers[0], 
-                    status: statusValues[getRandomInt(0,statusValues.length - 1)],
-                    hearingOfficer: `reporter-${caseRef}`,
-                    reporterPerson: getRandomInt(48,90).toString()});
+                  let userName = Cypress.env('loginAdminUserName');
+                  let password = Cypress.env('loginAdminPassword');
+                  cy.login(conferenceUrlPath, userName, password);
+                  const nowTime = moment.tz('Asia/Jerusalem');
+                  cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
+                  let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
+                  startTime = nowTime.format('HH:mm:ss'), endTime = nowTime.add(2,'hours').format('HH:mm:ss'),
+                  provider = providers[0], status = statusValues[getRandomInt(0,statusValues.length - 1)],
+                  hearingOfficer = `reporter-${caseRef}`,
+                  reporterPerson = getRandomInt(48,90).toString();
+
+                  cy.createNewConference(conferenceUrlPath,caseRef, caseName, hearingDate, 
+                    startTime,endTime, provider, status,hearingOfficer, reporterPerson);
                 });
 
       beforeEach(() => {  
