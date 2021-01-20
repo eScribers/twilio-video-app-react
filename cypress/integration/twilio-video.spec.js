@@ -29,7 +29,7 @@ const caseRef = uuid();
                   const nowTime = moment.tz('Asia/Jerusalem');
                   cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
                   let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
-                  startTime = nowTime.format('HH:mm:ss'), endTime = nowTime.add(2,'hours').format('HH:mm:ss'),
+                  startTime = nowTime.subtract(30, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2,'hours').format('HH:mm:ss'),
                   provider = providers[0], status = statusValues[getRandomInt(0,statusValues.length - 1)],
                   hearingOfficer = `reporter-${caseRef}`,
                   reporterPerson = getRandomInt(48,90).toString();
@@ -67,6 +67,8 @@ const caseRef = uuid();
             let userName = Cypress.env('loginHOUserName');
             let userPass = Cypress.env('loginHOPassword');
             cy.fillConferenceLoginPage(userName,userPass,caseRef);
+            const nowTime = moment.tz('Asia/Jerusalem');
+            cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
             cy.url().should('include', '.cloudfront.net/');
             cy.log("url" + cy.url());
       })
