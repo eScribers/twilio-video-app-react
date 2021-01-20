@@ -29,7 +29,7 @@ const caseRef = uuid();
                   const nowTime = moment.tz('Asia/Jerusalem');
                   cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
                   let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
-                  startTime = nowTime.subtract(30, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2,'hours').format('HH:mm:ss'),
+                  startTime = nowTime.subtract(5, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2,'hours').format('HH:mm:ss'),
                   provider = providers[0], status = statusValues[getRandomInt(0,statusValues.length - 1)],
                   hearingOfficer = `reporter-${caseRef}`,
                   reporterPerson = getRandomInt(48,90).toString();
