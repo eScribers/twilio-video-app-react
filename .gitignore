@@ -13,7 +13,7 @@ coverage
 src/debug.log
 # production
 build
-
+debug.log
 # misc
 .DS_Store
 .env.local

@@ -1,13 +1,13 @@
 import detectSound from './detectSound';
 
-Cypress.Commands.add('tabulaLogin', (conferenceUrl,userName, password) => {
-       cy.visit(conferenceUrl);
-       cy.get('input[id="username"]').type(userName).should('have.value', userName);
-       cy.get('input[id="password"]').type(password).should('have.value', password);
-      
-       cy.get('[id="loginform"]').submit();
-       cy.url().should('include', conferenceUrl);
-           
+Cypress.Commands.add('login', (targetUrl,userName, password) => {
+  console.log(targetUrl);
+  cy.visit(targetUrl);
+  cy.get('input[name="name"]').type(userName).should('have.value', userName);
+  cy.get('input[name="passPin"]').type(password).should('have.value', password);
+
+  cy.get('form[action*="auth/loginApp"]').submit();
+  cy.url().should('include', targetUrl);
 });
 
 Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hearingDate,startTime,endTime,
@@ -28,11 +28,20 @@ Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hear
         
 });
 
-Cypress.Commands.add('fillConferenceLoginPage', (userName,pass, caseNumber) => {
+Cypress.Commands.add('fillConferenceLoginPage', (userName,password, caseNumber) => {
 
-  cy.get('[name="name"]').type(userName).should('have.value', userName);
-  cy.get('[name="passPin"]').type(pass).should('have.value', pass);
-  cy.get('[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
+  cy.get('input[name="name"]').type(userName).should('have.value', userName);
+  cy.get('input[name="passPin"]').type(password).should('have.value', password);
+  cy.get('input[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
+  cy.get('form').submit();
+
+});
+
+Cypress.Commands.add('deleteExistingConference', (caseReference) => {
+
+  cy.get('input[name="name"]').type(userName).should('have.value', userName);
+  cy.get('input[name="passPin"]').type(password).should('have.value', password);
+  cy.get('input[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
   cy.get('form').submit();
 
 });
