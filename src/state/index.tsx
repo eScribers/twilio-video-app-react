@@ -3,7 +3,7 @@ import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
-
+import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
 
@@ -37,6 +37,10 @@ export interface StateContextType {
   participantInfo: ParticipantInformation;
   getToken(participantInformation: ParticipantInformation): Promise<string>;
   removeParticipant: any;
+  activeSinkId: string;
+  setActiveSinkId(sinkId: string): void;
+  settings: Settings;
+  dispatchSetting: React.Dispatch<SettingsAction>;
 }
 
 export const StateContext = createContext<StateContextType>(null!);
@@ -50,6 +54,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [waitingNotification, setWaitingNotification] = useState(null);
   // eslint-disable-next-line no-unused-vars
   const [user, setUser] = useState(null);
+  const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
+  const [activeSinkId, setActiveSinkId] = useState('default');
   const [gridView, setGridView] = useState(true);
   const [userToken, setUserToken] = useState('');
   const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
@@ -136,6 +142,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setSelectedSpeakerOutput,
     gridView,
     setGridView,
+    activeSinkId,
+    setActiveSinkId,
+    settings,
+    dispatchSetting,
     authoriseParticipant: async () => {
       if (!(await ensureEnvironmentFromConfigInitialised())) return null;
 
