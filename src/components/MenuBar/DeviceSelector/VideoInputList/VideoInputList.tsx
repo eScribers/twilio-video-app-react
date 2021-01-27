@@ -24,10 +24,11 @@ export default function VideoInputList() {
   const mediaStreamTrack = useMediaStreamTrack(localVideoTrack);
   const localVideoInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 
-  function replaceTrack(newDeviceId: string) {
+  function replaceTrack(newDevice: any) {
     localVideoTrack.restart({
       ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-      deviceId: { exact: newDeviceId },
+      deviceId: { exact: newDevice.deviceId },
+      groupId: { exact: newDevice.groupId },
     });
   }
 
@@ -36,7 +37,7 @@ export default function VideoInputList() {
       {videoInputDevices.length > 1 ? (
         <FormControl>
           <Typography variant="h6">Video Input:</Typography>
-          <Select onChange={e => replaceTrack(e.target.value as string)} value={localVideoInputDeviceId || ''}>
+          <Select onChange={e => replaceTrack(e.target.value as any)} value={localVideoInputDeviceId || ''}>
             {videoInputDevices.map(device => (
               <MenuItem value={device.deviceId} key={device.deviceId}>
                 {device.label}

@@ -23,8 +23,8 @@ export default function AudioInputList() {
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);
   const localAudioInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 
-  function replaceTrack(newDeviceId: string) {
-    localAudioTrack?.restart({ deviceId: { exact: newDeviceId } });
+  function replaceTrack(newDevice: MediaDeviceInfo) {
+    localAudioTrack?.restart({ deviceId: { exact: newDevice.deviceId }, groupId: { exact: newDevice.groupId } });
   }
 
   return (
@@ -33,7 +33,10 @@ export default function AudioInputList() {
         {audioInputDevices.length > 1 ? (
           <FormControl fullWidth>
             <Typography variant="h6">Audio Input:</Typography>
-            <Select onChange={e => replaceTrack(e.target.value as string)} value={localAudioInputDeviceId || ''}>
+            <Select
+              onChange={e => replaceTrack(e.target.value as MediaDeviceInfo)}
+              value={localAudioInputDeviceId || ''}
+            >
               {audioInputDevices.map(device => (
                 <MenuItem value={device.deviceId} key={device.deviceId}>
                   {device.label}
