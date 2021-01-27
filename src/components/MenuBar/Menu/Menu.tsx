@@ -35,6 +35,7 @@ export default function Menu() {
         {user?.displayName && <MenuItem disabled>{user.displayName}</MenuItem>}
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
+        {/* TODO - check if Twilio repository do the same function (handleSignOut) when the end call called  */}
         {/* {user && <MenuItem onClick={handleSignOut}>Logout</MenuItem>} */}
       </MenuContainer>
       <AboutDialog
