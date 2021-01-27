@@ -3,14 +3,14 @@ import MenuBar from './MenuBar';
 import { MemoryRouter, Route } from 'react-router-dom';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { VideoContext } from '../VideoProvider/VideoProvider';
+import { VideoContext } from '../VideoProvider/index';
 // Line below gave an error on IVideoContext and suggested using VideoContext, as above
 //import { IVideoContext } from '../VideoProvider/VideoProvider';
 import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { useAppState } from '../../state';
 import { useAlert } from 'react-alert';
-import SettingsButton from './SettingsButton/SettingsButton';
+import SettingsButton from './SettingsDialog/SettingsDialog';
 import useMediaDevices from '../../hooks/useMediaDevices/useMediaDevices';
 import selectEvent from '@material-ui/core/Select';
 

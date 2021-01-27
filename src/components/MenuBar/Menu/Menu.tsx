@@ -5,7 +5,6 @@ import MenuContainer from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
-import UserAvatar from '../UserAvatar/UserAvatar';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { useAppState } from '../../../state';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
@@ -20,18 +19,17 @@ export default function Menu() {
 
   const anchorRef = useRef<HTMLDivElement>(null);
 
-  const handleSignOut = useCallback(() => {
-    room.disconnect?.();
-    localTracks.forEach(track => track.stop());
-    signOut?.();
-  }, [room.disconnect, localTracks, signOut]);
+  // const handleSignOut = useCallback(() => {
+  //   room.disconnect?.();
+  //   localTracks.forEach(track => track.stop());
+  //   signOut?.();
+  // }, [room.disconnect, localTracks, signOut]);
 
   return (
     <div ref={anchorRef}>
       <IconButton color="inherit" onClick={() => setMenuOpen(state => !state)}>
         {/* <SettingsIcon /> */}
         <MoreIcon />
-        {/* {user ? <UserAvatar user={user} /> : <MoreIcon />} */}
       </IconButton>
       <MenuContainer open={menuOpen} onClose={() => setMenuOpen(state => !state)} anchorEl={anchorRef.current}>
         {user?.displayName && <MenuItem disabled>{user.displayName}</MenuItem>}
