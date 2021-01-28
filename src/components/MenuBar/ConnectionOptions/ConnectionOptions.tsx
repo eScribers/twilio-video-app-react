@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import {
   DialogContent,
   FormControl,
@@ -50,43 +50,58 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
     },
     [dispatchSetting]
   );
-  const handleDisplayChange = useCallback(
-    (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
-      dispatchSetting({ name: e.target.name as keyof Settings, value: e.target.value as string });
-    },
-    [dispatchSetting]
-  );
   const handleNumberChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
       if (!/[^\d]/.test(e.target.value as string)) handleChange(e);
     },
     [handleChange]
   );
-
+  const [showAdvanceSettingMode, setShowAdvanceSettingMode] = useState(false);
   return (
     <DialogContent className={className} hidden={hidden}>
       <Grid container spacing={2}>
         <Grid item sm={6} xs={12}>
           <FormControl className={classes.formControl}>
+            <InputLabel id={inputLabels.viewMode}>Mode:</InputLabel>
+            <Select
+              fullWidth
+              name={inputLabels.viewMode}
+              label={inputLabels.viewMode}
+              value={withDefault(settings.viewMode)}
+              onChange={handleChange}
+            >
+              <MenuItem value="grid 3x3">Grid 3X3</MenuItem>
+              <MenuItem value="grid 4x4">Grid 4X4</MenuItem>
+              <MenuItem value="grid 5x5">Grid 5X5</MenuItem>
+              <MenuItem value="collaboration">Collaboration</MenuItem>
+              {/* <MenuItem value="presentation">Presentation</MenuItem> */}
+              {/* <MenuItem value="default">Server Default</MenuItem> */}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item sm={6} xs={12}>
+          <FormControl className={classes.formControl}>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={withDefault(settings.displayParticipants) == 'true'}
-                  onChange={handleDisplayChange}
+                  checked={showAdvanceSettingMode}
+                  onChange={e => {
+                    setShowAdvanceSettingMode(e.target.checked);
+                  }}
                 />
               }
-              label={inputLabels.displayParticipants}
+              label="Show Advance Setting"
             />
           </FormControl>
         </Grid>
-        <Grid item xs={12}>
+        <Grid item xs={12} hidden={!showAdvanceSettingMode}>
           <Typography variant="body2">Bandwidth Profile Settings:</Typography>
           <Typography hidden={!isDisabled} variant="body2">
             These settings cannot be changed when connected to a room.
           </Typography>
         </Grid>
 
-        <Grid item sm={6} xs={12}>
+        <Grid item sm={6} xs={12} hidden={!showAdvanceSettingMode}>
           <FormControl className={classes.formControl}>
             <InputLabel id={inputLabels.dominantSpeakerPriority}>Dominant Speaker Priority:</InputLabel>
             <Select
@@ -122,23 +137,6 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
           </FormControl>
 
           <FormControl className={classes.formControl}>
-            <InputLabel id={inputLabels.bandwidthProfileMode}>Mode:</InputLabel>
-            <Select
-              fullWidth
-              disabled={isDisabled}
-              name={inputLabels.bandwidthProfileMode}
-              label={inputLabels.bandwidthProfileMode}
-              value={withDefault(settings.bandwidthProfileMode)}
-              onChange={handleChange}
-            >
-              <MenuItem value="grid">Grid</MenuItem>
-              <MenuItem value="collaboration">Collaboration</MenuItem>
-              <MenuItem value="presentation">Presentation</MenuItem>
-              <MenuItem value="default">Server Default</MenuItem>
-            </Select>
-          </FormControl>
-
-          <FormControl className={classes.formControl}>
             <TextField
               disabled={isDisabled}
               fullWidth
@@ -164,7 +162,7 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
             />
           </FormControl>
         </Grid>
-        <Grid item sm={6} xs={12}>
+        <Grid item sm={6} xs={12} hidden={!showAdvanceSettingMode}>
           <FormControl fullWidth className={classes.formControl}>
             <InputLabel id={inputLabels.renderDimensionLow} className={classes.label}>
               Render Dimension (Low Priority):

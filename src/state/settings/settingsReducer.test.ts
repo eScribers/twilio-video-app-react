@@ -5,7 +5,7 @@ describe('the settingsReducer', () => {
   it('should set a setting from the name/value pair provided', () => {
     const result = settingsReducer(initialSettings, { name: 'renderDimensionHigh', value: 'test' });
     expect(result).toEqual({
-      bandwidthProfileMode: 'collaboration',
+      viewMode: 'collaboration',
       dominantSpeakerPriority: 'standard',
       maxAudioBitrate: '16000',
       maxTracks: '10',
@@ -17,9 +17,9 @@ describe('the settingsReducer', () => {
   });
 
   it('should set undefined when the value is "default"', () => {
-    const result = settingsReducer(initialSettings, { name: 'bandwidthProfileMode', value: 'default' });
+    const result = settingsReducer(initialSettings, { name: 'viewMode', value: 'default' });
     expect(result).toEqual({
-      bandwidthProfileMode: undefined,
+      viewMode: undefined,
       dominantSpeakerPriority: 'standard',
       maxAudioBitrate: '16000',
       maxTracks: '10',

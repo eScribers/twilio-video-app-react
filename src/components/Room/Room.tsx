@@ -3,10 +3,11 @@ import ParticipantStrip from '../ParticipantStrip/ParticipantStrip';
 import { styled } from '@material-ui/core/styles';
 import MainParticipant from '../MainParticipant/MainParticipant';
 import { useAppState } from '../../state';
+import { VIEW_MODE } from '../../state/settings/settingsReducer';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
-  height: '100%',
+  height: '70%',
   display: 'grid',
   gridTemplateColumns: `${theme.sidebarWidth}px 1fr`,
   gridTemplateAreas: '". participantList"',
@@ -20,15 +21,15 @@ const Container = styled('div')(({ theme }) => ({
 }));
 
 export default function Room() {
-    const { gridView } = useAppState();
+  const { settings } = useAppState();
 
-    if (gridView) {
-        return <ParticipantStrip gridView />
-    }
+  if (settings.viewMode === VIEW_MODE.grid) {
+    return <ParticipantStrip viewMode={settings.viewMode} />;
+  }
 
   return (
     <Container>
-          <ParticipantStrip gridView/>
+      <ParticipantStrip viewMode={settings.viewMode} />
       <MainParticipant />
     </Container>
   );

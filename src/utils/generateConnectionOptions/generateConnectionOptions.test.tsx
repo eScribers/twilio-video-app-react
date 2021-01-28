@@ -6,7 +6,7 @@ describe('the generateConnectionOptions function', () => {
     const settings: Settings = {
       trackSwitchOffMode: undefined,
       dominantSpeakerPriority: undefined,
-      bandwidthProfileMode: undefined,
+      viewMode: undefined,
       maxTracks: '',
       maxAudioBitrate: '',
       renderDimensionLow: undefined,
@@ -34,7 +34,7 @@ describe('the generateConnectionOptions function', () => {
     const settings: Settings = {
       trackSwitchOffMode: 'detected',
       dominantSpeakerPriority: 'high',
-      bandwidthProfileMode: 'collaboration',
+      viewMode: 'collaboration',
       maxTracks: '100',
       maxAudioBitrate: '0',
       renderDimensionLow: 'low',

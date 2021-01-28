@@ -107,15 +107,15 @@ exports[`the ConnectionOptions component when connected to a room should render 
         className="makeStyles-formControl-1"
       >
         <WithStyles(ForwardRef(InputLabel))
-          id="bandwidthProfileMode"
+          id="viewMode"
         >
           Mode:
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
           disabled={true}
           fullWidth={true}
-          label="bandwidthProfileMode"
-          name="bandwidthProfileMode"
+          label="viewMode"
+          name="viewMode"
           onChange={[Function]}
           value="collaboration"
         >
@@ -527,15 +527,15 @@ exports[`the ConnectionOptions component when not connected to a room should ren
         className="makeStyles-formControl-1"
       >
         <WithStyles(ForwardRef(InputLabel))
-          id="bandwidthProfileMode"
+          id="viewMode"
         >
           Mode:
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
           disabled={true}
           fullWidth={true}
-          label="bandwidthProfileMode"
-          name="bandwidthProfileMode"
+          label="viewMode"
+          name="viewMode"
           onChange={[Function]}
           value="collaboration"
         >

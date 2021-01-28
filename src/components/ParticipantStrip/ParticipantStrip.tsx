@@ -3,7 +3,7 @@ import { styled } from '@material-ui/core/styles';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-
+import { VIEW_MODE } from '../../state/settings/settingsReducer';
 import useParticipants from '../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
@@ -37,23 +37,25 @@ const ScrollContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function ParticipantStrip(gridView: any) {
+interface ParticipantStripProps {
+  viewMode: string;
+}
+export default function ParticipantStrip({ viewMode }: ParticipantStripProps) {
   const {
     room: { localParticipant },
   } = useVideoContext();
   const participants = useParticipants();
-  const numParticipants: number = participants.length;
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const classes = useStyles();
 
-  return participants.length < 20 ? (
+  return viewMode === VIEW_MODE.grid ? (
     <div className={classes.root}>
       <Grid container spacing={3}>
         <Grid item xs={4} sm={4} md={4} lg={4}>
           <Paper className={classes.paper}>
             <Participant
-              gridView={gridView}
+              gridView={true}
               participant={localParticipant}
               isSelected={selectedParticipant === localParticipant}
               onClick={() => setSelectedParticipant(localParticipant)}
@@ -63,13 +65,15 @@ export default function ParticipantStrip(gridView: any) {
         {participants.map((participant: any) => (
           <Grid key={participant.sid} item xs={4} sm={4} md={4} lg={4}>
             <Paper className={classes.paper}>
-              <Participant
-                gridView={gridView}
-                key={participant.sid}
-                participant={participant}
-                isSelected={selectedParticipant === participant}
-                onClick={() => setSelectedParticipant(participant)}
-              />
+              <ScrollContainer>
+                <Participant
+                  gridView={true}
+                  key={participant.sid}
+                  participant={participant}
+                  isSelected={selectedParticipant === participant}
+                  onClick={() => setSelectedParticipant(participant)}
+                />
+              </ScrollContainer>
             </Paper>
           </Grid>
         ))}

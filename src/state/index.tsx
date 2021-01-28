@@ -56,7 +56,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [user, setUser] = useState(null);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
   const [activeSinkId, setActiveSinkId] = useState('default');
-  const [gridView, setGridView] = useState(settings.displayParticipants);
   const [userToken, setUserToken] = useState('');
   const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
@@ -69,6 +68,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   var endpoint = '';
   var environmentName = '';
   var domainName = '';
+
   async function fetchConfigFile() {
     if (endpoint !== '' || environmentName != '' || domainName != '') return;
 
@@ -140,8 +140,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setSelectedVideoInput,
     selectedSpeakerOutput,
     setSelectedSpeakerOutput,
-    gridView,
-    setGridView,
     activeSinkId,
     setActiveSinkId,
     settings,
