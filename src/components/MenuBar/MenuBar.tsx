@@ -15,11 +15,12 @@ import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
-import SettingsButton from './SettingsButton/SettingsButton';
+//import SettingsButton from './SettingsButton/SettingsButton';
+import Menu from './Menu/Menu';
 import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { ParticipantInformation } from '../../state/index';
+import { ParticipantInformation } from 'state';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
@@ -281,11 +282,12 @@ export default function MenuBar() {
         )}
         <div className={classes.rightButtonContainer}>
           <ToggleGridViewButton />
-          {!mobileAndTabletCheck() && (
+          {/* {!mobileAndTabletCheck() && (
             <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
-          )}
+          )} */}
           <LocalAudioLevelIndicator />
           <ToggleFullscreenButton />
+          <Menu />
         </div>
       </Toolbar>
     </AppBar>

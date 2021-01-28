@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react-hooks';
-import useLocalTracks, { useLocalAudioTrack, useLocalVideoTrack } from './useLocalTracks';
+import useLocalTracks from './useLocalTracks';
 import { EventEmitter } from 'events';
 import Video from 'twilio-video';
 import useMediaDevices from '../../../hooks/useMediaDevices/useMediaDevices';

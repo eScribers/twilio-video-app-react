@@ -1,77 +1,96 @@
-import { DEFAULT_VIDEO_CONSTRAINTS } from '../../constants';
-import { useCallback, useEffect, useState } from 'react';
-import Video, { LocalVideoTrack, LocalAudioTrack, CreateLocalTrackOptions } from 'twilio-video';
-import { TRACK_TYPE } from '../../utils/displayStrings';
+import React, { createContext, ReactNode } from 'react';
+import { Callback, ErrorCallback } from '../../types';
+import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
+import useHandleRoomDisconnectionEvents from './useHandleRoomDisconnectionEvents/useHandleRoomDisconnectionEvents';
+import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
+import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
+import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
+import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
+import useLocalTracks from './useLocalTracks/useLocalTracks';
+import useRoom from './useRoom/useRoom';
+import Video, {
+  ConnectOptions,
+  Room,
+  TwilioError,
+  LocalVideoTrack,
+  LocalAudioTrack,
+  CreateLocalTrackOptions,
+} from 'twilio-video';
+/*
+ *  The hooks used by the VideoProvider component are different than the hooks found in the 'hooks/' directory. The hooks
+ *  in the 'hooks/' directory can be used anywhere in a video application, and they can be used any number of times.
+ *  the hooks in the 'VideoProvider/' directory are intended to be used by the VideoProvider component only. Using these hooks
+ *  elsewhere in the application may cause problems as these hooks should not be used more than once in an application.
+ */
 
-export default function useLocalTracks() {
-  const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();
-  const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
-  const [isAcquiringLocalTracks, setIsAcquiringLocalTracks] = useState(false);
+export interface IVideoContext {
+  room: Room;
+  localTracks: (LocalAudioTrack | LocalVideoTrack)[];
+  isConnecting: boolean;
+  connect: (token: string) => Promise<void>;
+  onError: ErrorCallback;
+  onDisconnect: (isRegistered?: boolean) => void;
+  getLocalVideoTrack: (newOptions?: CreateLocalTrackOptions) => Promise<LocalVideoTrack>;
+  getLocalAudioTrack: (deviceId?: string, groupId?: string) => Promise<void | LocalAudioTrack>;
+  isAcquiringLocalTracks: boolean;
+  removeLocalVideoTrack: () => void;
+}
+export const VideoContext = createContext<IVideoContext>(null!);
 
-  const getLocalAudioTrack = useCallback((deviceId?: string) => {
-    const options: CreateLocalTrackOptions = {};
+interface VideoProviderProps {
+  options?: ConnectOptions;
+  onError: ErrorCallback;
+  onDisconnect?: Callback;
+  children: ReactNode;
+}
 
-    if (deviceId) {
-      options.deviceId = { exact: deviceId };
-    }
+export function VideoProvider({
+  options,
+  children,
+  onError = () => {},
+  onNotification = () => {},
+  onDisconnect = () => {},
+}: any) {
+  const onErrorCallback = (error: TwilioError) => {
+    console.log(`ERROR: ${error.message}`, error);
+    onError(error);
+  };
 
-    return Video.createLocalAudioTrack(options).then(newTrack => {
-      setAudioTrack(newTrack);
-      return newTrack;
-    });
-  }, []);
+  const {
+    localTracks,
+    getLocalVideoTrack,
+    getLocalAudioTrack,
+    isAcquiringLocalTracks,
+    removeLocalVideoTrack,
+  } = useLocalTracks();
+  const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
-  const getLocalVideoTrack = useCallback((newOptions?: CreateLocalTrackOptions) => {
-    // In the DeviceSelector and FlipCameraButton components, a new video track is created,
-    // then the old track is unpublished and the new track is published. Unpublishing the old
-    // track and publishing the new track at the same time sometimes causes a conflict when the
-    // track name is 'camera', so here we append a timestamp to the track name to avoid the
-    // conflict.
-    const options: CreateLocalTrackOptions = {
-      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-      name: `camera-${Date.now()}`,
-      ...newOptions,
-    };
+  // Register onError and onDisconnect callback functions.
+  useHandleRoomDisconnectionEvents(room, onError, onNotification);
+  useHandleTrackPublicationFailed(room, onError);
+  useHandleOnDisconnect(room, onDisconnect);
 
-    return Video.createLocalVideoTrack(options).then(newTrack => {
-      setVideoTrack(newTrack);
-      return newTrack;
-    });
-  }, []);
-
-  const removeLocalVideoTrack = useCallback(() => {
-    if (videoTrack) {
-      videoTrack.stop();
-      setVideoTrack(undefined);
-    }
-  }, [videoTrack]);
-
-  useEffect(() => {
-    setIsAcquiringLocalTracks(true);
-    Video.createLocalTracks({
-      video: {
-        ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-        name: `camera-${Date.now()}`,
-      },
-      audio: true,
-    })
-      .then(tracks => {
-        const videoTrack = tracks.find(track => track.kind === TRACK_TYPE.VIDEO);
-        const audioTrack = tracks.find(track => track.kind === TRACK_TYPE.AUDIO);
-        if (videoTrack) {
-          setVideoTrack(videoTrack as LocalVideoTrack);
-        }
-        if (audioTrack) {
-          setAudioTrack(audioTrack as LocalAudioTrack);
-        }
-      })
-      .finally(() => setIsAcquiringLocalTracks(false));
-  }, []);
-
-  const localTracks = [audioTrack, videoTrack].filter(track => track !== undefined) as (
-    | LocalAudioTrack
-    | LocalVideoTrack
-  )[];
-
-  return { localTracks, getLocalVideoTrack, getLocalAudioTrack, isAcquiringLocalTracks, removeLocalVideoTrack };
+  return (
+    <VideoContext.Provider
+      value={{
+        room,
+        localTracks,
+        isConnecting,
+        onError: onErrorCallback,
+        onDisconnect,
+        getLocalVideoTrack,
+        getLocalAudioTrack,
+        connect,
+        isAcquiringLocalTracks,
+        removeLocalVideoTrack,
+      }}
+    >
+      <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>
+      {/* 
+        The AttachVisibilityHandler component is using the useLocalVideoToggle hook
+        which must be used within the VideoContext Provider.
+      */}
+      <AttachVisibilityHandler />
+    </VideoContext.Provider>
+  );
 }
