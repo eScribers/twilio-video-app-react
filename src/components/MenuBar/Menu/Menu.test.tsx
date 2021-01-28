@@ -17,7 +17,7 @@ describe('the Menu component', () => {
   const mockTrack = { stop: jest.fn() };
   mockUseVideoContext.mockImplementation(() => ({ room: { disconnect: mockDisconnect }, localTracks: [mockTrack] }));
 
-  describe('when there is not a user', () => {
+  describe('when there is not user', () => {
     it('should render the "More" icon', () => {
       mockUseAppState.mockImplementation(() => ({ user: null, signOut: jest.fn() }));
       const wrapper = shallow(<Menu />);
