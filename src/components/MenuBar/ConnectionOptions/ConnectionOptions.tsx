@@ -3,10 +3,12 @@ import {
   DialogContent,
   FormControl,
   Grid,
+  FormControlLabel,
   InputLabel,
   MenuItem,
   Select,
   TextField,
+  Checkbox,
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -48,7 +50,12 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
     },
     [dispatchSetting]
   );
-
+  const handleDisplayChange = useCallback(
+    (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
+      dispatchSetting({ name: e.target.name as keyof Settings, value: e.target.value as string });
+    },
+    [dispatchSetting]
+  );
   const handleNumberChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
       if (!/[^\d]/.test(e.target.value as string)) handleChange(e);
@@ -59,6 +66,19 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
   return (
     <DialogContent className={className} hidden={hidden}>
       <Grid container spacing={2}>
+        <Grid item sm={6} xs={12}>
+          <FormControl className={classes.formControl}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={withDefault(settings.displayParticipants) == 'true'}
+                  onChange={handleDisplayChange}
+                />
+              }
+              label={inputLabels.displayParticipants}
+            />
+          </FormControl>
+        </Grid>
         <Grid item xs={12}>
           <Typography variant="body2">Bandwidth Profile Settings:</Typography>
           <Typography hidden={!isDisabled} variant="body2">

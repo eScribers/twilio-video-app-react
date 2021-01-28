@@ -9,7 +9,7 @@ interface ParticipantProps {
   enableScreenShare?: boolean;
   onClick: () => void;
   isSelected: boolean;
-  gridView: any;
+  gridView?: any;
 }
 
 export default function Participant({

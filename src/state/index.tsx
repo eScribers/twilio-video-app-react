@@ -56,7 +56,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [user, setUser] = useState(null);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
   const [activeSinkId, setActiveSinkId] = useState('default');
-  const [gridView, setGridView] = useState(true);
+  const [gridView, setGridView] = useState(settings.displayParticipants);
   const [userToken, setUserToken] = useState('');
   const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
