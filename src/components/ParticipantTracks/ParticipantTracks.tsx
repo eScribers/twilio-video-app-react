@@ -31,11 +31,11 @@ export default function ParticipantTracks({
   const isLocal = participant === room.localParticipant;
   let filteredPublications;
 
-  // if (enableScreenShare && publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN))) {
-  //   filteredPublications = publications.filter(p => !p.trackName.includes(TRACK_TYPE.CAMERA));
-  // } else {
-  filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.SCREEN);
-  //}
+  if (enableScreenShare && publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN))) {
+    filteredPublications = publications.filter(p => !p.trackName.includes(TRACK_TYPE.CAMERA));
+  } else {
+    filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.SCREEN);
+  }
 
   return (
     <>

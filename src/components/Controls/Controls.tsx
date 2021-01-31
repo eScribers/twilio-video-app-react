@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
-
+import ToggleScreenShareButton from './ToogleScreenShareButton/ToggleScreenShareButton';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
@@ -52,6 +52,7 @@ export default function Controls(props: { disabled?: boolean }) {
       <ToggleVideoButton disabled={isReconnecting} />
       {roomState !== ROOM_STATE.DISCONNECTED && (
         <>
+          <ToggleScreenShareButton disabled={isReconnecting} />
           <EndCallButton />
         </>
       )}
