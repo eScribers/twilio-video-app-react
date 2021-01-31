@@ -15,10 +15,11 @@ export interface Settings {
 
 type SettingsKeys = keyof Settings;
 export const VIEW_MODE = {
-  grid: 'grid',
-  presentation: 'presentation',
+  grid_2_2: 'grid 2X2',
+  grid_3_3: 'grid 3X3',
+  grid_4_4: 'grid 4X4',
   collaboration: 'collaboration',
-  default: 'default',
+  default: 'default_grid',
 };
 export interface SettingsAction {
   name: SettingsKeys;
@@ -28,7 +29,7 @@ export interface SettingsAction {
 export const initialSettings: Settings = {
   trackSwitchOffMode: undefined,
   dominantSpeakerPriority: 'standard',
-  viewMode: VIEW_MODE.grid,
+  viewMode: VIEW_MODE.default,
   maxTracks: isMobile ? '5' : '10',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',

@@ -1,13 +1,13 @@
 import React from 'react';
-import ParticipantStrip from '../ParticipantStrip/ParticipantStrip';
+import ParticipantStripCollaboration from '../ParticipantStrip/ParticipantStripCollaboration';
+import ParticipantStripGrid from '../ParticipantStrip/ParticipantStripGrid';
 import { styled } from '@material-ui/core/styles';
 import MainParticipant from '../MainParticipant/MainParticipant';
 import { useAppState } from '../../state';
-import { VIEW_MODE } from '../../state/settings/settingsReducer';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
-  height: '70%',
+  height: '90%',
   display: 'grid',
   gridTemplateColumns: `${theme.sidebarWidth}px 1fr`,
   gridTemplateAreas: '". participantList"',
@@ -23,13 +23,13 @@ const Container = styled('div')(({ theme }) => ({
 export default function Room() {
   const { settings } = useAppState();
 
-  if (settings.viewMode === VIEW_MODE.grid) {
-    return <ParticipantStrip viewMode={settings.viewMode} />;
+  if (settings.viewMode.includes('grid')) {
+    return <ParticipantStripGrid viewMode={settings.viewMode} />;
   }
 
   return (
     <Container>
-      <ParticipantStrip viewMode={settings.viewMode} />
+      <ParticipantStripCollaboration />
       <MainParticipant />
     </Container>
   );

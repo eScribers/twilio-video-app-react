@@ -19,111 +19,62 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useHeight from '../../hooks/useHeight/useHeight';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
-export default function ParticipantInfo({ participant, onClick, isSelected, children, gridView }) {
-  const useStyles = gridView
-    ? makeStyles(theme =>
-        createStyles({
-          container: {
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            overflow: 'hidden',
-            cursor: 'pointer',
-            '& video': {
-              filter: 'none',
-            },
-            '& svg': {
-              stroke: 'black',
-              strokeWidth: '0.8px',
-            },
-          },
-          isVideoSwitchedOff: {
-            '& video': {
-              filter: 'blur(4px) grayscale(1) brightness(0.5)',
-            },
-          },
-          infoContainer: {
-            position: 'absolute',
-            zIndex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '100%',
-            padding: '0.4em',
-            width: '100%',
-            background: 'transparent',
-          },
-          hideVideo: {
-            background: 'black',
-          },
-          identity: {
-            background: 'rgba(0, 0, 0, 0.7)',
-            padding: '0.1em 0.3em',
-            margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-          },
-          infoRow: {
-            display: 'flex',
-            justifyContent: 'space-between',
-          },
-        })
-      )
-    : makeStyles(theme =>
-        createStyles({
-          container: {
-            position: 'relative',
-            display: 'flex',
-            alignItems: 'center',
-            height: `${(theme.sidebarWidth * 9) / 16}px`,
-            overflow: 'hidden',
-            cursor: 'pointer',
-            '& video': {
-              filter: 'none',
-            },
-            '& svg': {
-              stroke: 'black',
-              strokeWidth: '0.8px',
-            },
-            [theme.breakpoints.down('xs')]: {
-              height: theme.sidebarMobileHeight,
-              width: `${(theme.sidebarMobileHeight * 16) / 9}px`,
-              marginRight: '3px',
-              fontSize: '10px',
-            },
-          },
-          isVideoSwitchedOff: {
-            '& video': {
-              filter: 'blur(4px) grayscale(1) brightness(0.5)',
-            },
-          },
-          infoContainer: {
-            position: 'absolute',
-            zIndex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-            height: '100%',
-            padding: '0.4em',
-            width: '100%',
-            background: 'transparent',
-          },
-          hideVideo: {
-            background: 'black',
-          },
-          identity: {
-            background: 'rgba(0, 0, 0, 0.7)',
-            padding: '0.1em 0.3em',
-            margin: 0,
-            display: 'flex',
-            alignItems: 'center',
-          },
-          infoRow: {
-            display: 'flex',
-            justifyContent: 'space-between',
-          },
-        })
-      );
+export default function ParticipantInfo({ participant, onClick, isSelected, children }) {
+  const useStyles = makeStyles(theme =>
+    createStyles({
+      container: {
+        position: 'relative',
+        display: 'flex',
+        alignItems: 'center',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        '& video': {
+          filter: 'none',
+        },
+        '& svg': {
+          stroke: 'black',
+          strokeWidth: '0.8px',
+        },
+        height: `${(theme.sidebarWidth * 9) / 16}px`,
+        [theme.breakpoints.down('xs')]: {
+          height: theme.sidebarMobileHeight,
+          width: `${(theme.sidebarMobileHeight * 16) / 9}px`,
+          marginRight: '3px',
+          fontSize: '10px',
+        },
+      },
+      isVideoSwitchedOff: {
+        '& video': {
+          filter: 'blur(4px) grayscale(1) brightness(0.5)',
+        },
+      },
+      infoContainer: {
+        position: 'absolute',
+        zIndex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        height: '100%',
+        padding: '0.4em',
+        width: '100%',
+        background: 'transparent',
+      },
+      hideVideo: {
+        background: 'black',
+      },
+      identity: {
+        background: 'rgba(0, 0, 0, 0.7)',
+        padding: '0.1em 0.3em',
+        margin: 0,
+        display: 'flex',
+        alignItems: 'center',
+      },
+      infoRow: {
+        display: 'flex',
+        justifyContent: 'space-between',
+      },
+    })
+  );
 
   const publications = usePublications(participant);
 
@@ -164,13 +115,6 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
       className={clsx(classes.container, {
         [classes.isVideoSwitchedOff]: isVideoSwitchedOff,
       })}
-      style={
-        gridView
-          ? {
-              height: getHeight(),
-            }
-          : {}
-      }
       onClick={onClick}
       data-cy-participant={participant.identity}
     >
