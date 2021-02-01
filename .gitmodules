@@ -1,0 +1,3 @@
+[submodule "submodules/authentication"]
+	path = submodules/authentication
+	url = https://github.com/eScribers/authentication.git

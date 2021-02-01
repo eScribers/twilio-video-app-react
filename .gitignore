@@ -31,3 +31,5 @@ yarn-error.log*
 test-reports
 junit.xml
 public/config.json
+cypress.env.json
+submodules/authentication
