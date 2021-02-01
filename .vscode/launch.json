@@ -12,7 +12,7 @@
             ],
           "internalConsoleOptions": "openOnSessionStart",
           "outFiles": [
-              "${workspaceRoot}/src/hooks/useIsHostIn"
+              "${workspaceRoot}/src/components/MenuBar/ConnectionOptions/ConnectionOptions.test.tsx"
           ],
           "envFile": "${workspaceRoot}/.env"
       },

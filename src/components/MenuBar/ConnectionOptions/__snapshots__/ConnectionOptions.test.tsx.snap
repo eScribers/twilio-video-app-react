@@ -1,12 +1,77 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`the ConnectionOptions component when connected to a room should render correctly 1`] = `
+exports[`the ConnectionOptions component when connected to a room should render correctly and click on  1`] = `
 <WithStyles(ForwardRef(DialogContent))>
   <WithStyles(ForwardRef(Grid))
     container={true}
     spacing={2}
   >
     <WithStyles(ForwardRef(Grid))
+      item={true}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(FormControl))
+        className="makeStyles-formControl-1"
+      >
+        <WithStyles(ForwardRef(InputLabel))
+          id="viewMode"
+        >
+          Mode:
+        </WithStyles(ForwardRef(InputLabel))>
+        <WithStyles(ForwardRef(Select))
+          fullWidth={true}
+          label="viewMode"
+          name="viewMode"
+          onChange={[Function]}
+          value="default_grid"
+        >
+          <WithStyles(ForwardRef(MenuItem))
+            value="grid 2X2"
+          >
+            Grid 2X2
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="grid 3X3"
+          >
+            Grid 3X3
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="grid 4X4"
+          >
+            Grid 4X4
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="collaboration"
+          >
+            Collaboration
+          </WithStyles(ForwardRef(MenuItem))>
+        </WithStyles(ForwardRef(Select))>
+      </WithStyles(ForwardRef(FormControl))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(FormControl))
+        className="makeStyles-formControl-1"
+      >
+        <WithStyles(ForwardRef(FormControlLabel))
+          control={
+            <input
+              checked={false}
+              id="showAdvanceSetting"
+              onChange={[Function]}
+              type="checkbox"
+            />
+          }
+          label="Show Advance Setting"
+        />
+      </WithStyles(ForwardRef(FormControl))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      hidden={true}
       item={true}
       xs={12}
     >
@@ -23,6 +88,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
       </WithStyles(ForwardRef(Typography))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
+      hidden={true}
       item={true}
       sm={6}
       xs={12}
@@ -106,44 +172,6 @@ exports[`the ConnectionOptions component when connected to a room should render 
       <WithStyles(ForwardRef(FormControl))
         className="makeStyles-formControl-1"
       >
-        <WithStyles(ForwardRef(InputLabel))
-          id="viewMode"
-        >
-          Mode:
-        </WithStyles(ForwardRef(InputLabel))>
-        <WithStyles(ForwardRef(Select))
-          disabled={true}
-          fullWidth={true}
-          label="viewMode"
-          name="viewMode"
-          onChange={[Function]}
-          value="collaboration"
-        >
-          <WithStyles(ForwardRef(MenuItem))
-            value="grid"
-          >
-            Grid
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="collaboration"
-          >
-            Collaboration
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="presentation"
-          >
-            Presentation
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="default"
-          >
-            Server Default
-          </WithStyles(ForwardRef(MenuItem))>
-        </WithStyles(ForwardRef(Select))>
-      </WithStyles(ForwardRef(FormControl))>
-      <WithStyles(ForwardRef(FormControl))
-        className="makeStyles-formControl-1"
-      >
         <WithStyles(ForwardRef(TextField))
           disabled={true}
           fullWidth={true}
@@ -171,6 +199,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
+      hidden={true}
       item={true}
       sm={6}
       xs={12}
@@ -428,6 +457,71 @@ exports[`the ConnectionOptions component when not connected to a room should ren
   >
     <WithStyles(ForwardRef(Grid))
       item={true}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(FormControl))
+        className="makeStyles-formControl-1"
+      >
+        <WithStyles(ForwardRef(InputLabel))
+          id="viewMode"
+        >
+          Mode:
+        </WithStyles(ForwardRef(InputLabel))>
+        <WithStyles(ForwardRef(Select))
+          fullWidth={true}
+          label="viewMode"
+          name="viewMode"
+          onChange={[Function]}
+          value="default_grid"
+        >
+          <WithStyles(ForwardRef(MenuItem))
+            value="grid 2X2"
+          >
+            Grid 2X2
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="grid 3X3"
+          >
+            Grid 3X3
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="grid 4X4"
+          >
+            Grid 4X4
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="collaboration"
+          >
+            Collaboration
+          </WithStyles(ForwardRef(MenuItem))>
+        </WithStyles(ForwardRef(Select))>
+      </WithStyles(ForwardRef(FormControl))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(FormControl))
+        className="makeStyles-formControl-1"
+      >
+        <WithStyles(ForwardRef(FormControlLabel))
+          control={
+            <input
+              checked={false}
+              id="showAdvanceSetting"
+              onChange={[Function]}
+              type="checkbox"
+            />
+          }
+          label="Show Advance Setting"
+        />
+      </WithStyles(ForwardRef(FormControl))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      hidden={true}
+      item={true}
       xs={12}
     >
       <WithStyles(ForwardRef(Typography))
@@ -443,6 +537,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
       </WithStyles(ForwardRef(Typography))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
+      hidden={true}
       item={true}
       sm={6}
       xs={12}
@@ -526,44 +621,6 @@ exports[`the ConnectionOptions component when not connected to a room should ren
       <WithStyles(ForwardRef(FormControl))
         className="makeStyles-formControl-1"
       >
-        <WithStyles(ForwardRef(InputLabel))
-          id="viewMode"
-        >
-          Mode:
-        </WithStyles(ForwardRef(InputLabel))>
-        <WithStyles(ForwardRef(Select))
-          disabled={true}
-          fullWidth={true}
-          label="viewMode"
-          name="viewMode"
-          onChange={[Function]}
-          value="collaboration"
-        >
-          <WithStyles(ForwardRef(MenuItem))
-            value="grid"
-          >
-            Grid
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="collaboration"
-          >
-            Collaboration
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="presentation"
-          >
-            Presentation
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="default"
-          >
-            Server Default
-          </WithStyles(ForwardRef(MenuItem))>
-        </WithStyles(ForwardRef(Select))>
-      </WithStyles(ForwardRef(FormControl))>
-      <WithStyles(ForwardRef(FormControl))
-        className="makeStyles-formControl-1"
-      >
         <WithStyles(ForwardRef(TextField))
           disabled={true}
           fullWidth={true}
@@ -591,6 +648,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
+      hidden={true}
       item={true}
       sm={6}
       xs={12}

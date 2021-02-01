@@ -102,7 +102,7 @@
     "dev": "react-scripts start",
     "server": "node server.js",
     "build": "node ./scripts/build.js",
-    "test": "jest",
+    "test": "jest src/components/MenuBar/ConnectionOptions/ConnectionOptions.test.tsx",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{ts,tsx}",
     "start:ci": "serve --no-clipboard --listen ${PORT:-8080}",

@@ -81,7 +81,9 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
           <FormControl className={classes.formControl}>
             <FormControlLabel
               control={
-                <Checkbox
+                <input
+                  type="checkbox"
+                  id="showAdvanceSetting"
                   checked={showAdvanceSettingMode}
                   onChange={e => {
                     setShowAdvanceSettingMode(e.target.checked);
