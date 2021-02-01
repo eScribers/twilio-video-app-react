@@ -5,7 +5,7 @@ describe('the settingsReducer', () => {
   it('should set a setting from the name/value pair provided', () => {
     const result = settingsReducer(initialSettings, { name: 'renderDimensionHigh', value: 'test' });
     expect(result).toEqual({
-      viewMode: 'collaboration',
+      viewMode: 'default_grid',
       dominantSpeakerPriority: 'standard',
       maxAudioBitrate: '16000',
       maxTracks: '10',
