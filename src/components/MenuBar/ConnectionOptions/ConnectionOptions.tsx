@@ -81,8 +81,7 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
           <FormControl className={classes.formControl}>
             <FormControlLabel
               control={
-                <input
-                  type="checkbox"
+                <Checkbox
                   id="showAdvanceSetting"
                   checked={showAdvanceSettingMode}
                   onChange={e => {
@@ -94,14 +93,15 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
             />
           </FormControl>
         </Grid>
-        <Grid item xs={12} hidden={!showAdvanceSettingMode}>
+      </Grid>
+      <div id="advanceSettingGrid" hidden={!showAdvanceSettingMode}>
+        <Grid item xs={12}>
           <Typography variant="body2">Bandwidth Profile Settings:</Typography>
           <Typography hidden={!isDisabled} variant="body2">
             These settings cannot be changed when connected to a room.
           </Typography>
         </Grid>
-
-        <Grid item sm={6} xs={12} hidden={!showAdvanceSettingMode}>
+        <Grid id={inputLabels.dominantSpeakerPriority} item sm={6} xs={12}>
           <FormControl className={classes.formControl}>
             <InputLabel id={inputLabels.dominantSpeakerPriority}>Dominant Speaker Priority:</InputLabel>
             <Select
@@ -162,7 +162,7 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
             />
           </FormControl>
         </Grid>
-        <Grid item sm={6} xs={12} hidden={!showAdvanceSettingMode}>
+        <Grid id={inputLabels.renderDimensionLow} item sm={6} xs={12}>
           <FormControl fullWidth className={classes.formControl}>
             <InputLabel id={inputLabels.renderDimensionLow} className={classes.label}>
               Render Dimension (Low Priority):
@@ -211,7 +211,7 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
             </Select>
           </FormControl>
         </Grid>
-      </Grid>
+      </div>
     </DialogContent>
   );
 }

@@ -52,7 +52,7 @@ export default function Controls(props: { disabled?: boolean }) {
       <ToggleVideoButton disabled={isReconnecting} />
       {roomState !== ROOM_STATE.DISCONNECTED && (
         <>
-          <ToggleScreenShareButton disabled={isReconnecting} />
+          {/* <ToggleScreenShareButton disabled={isReconnecting} /> */}
           <EndCallButton />
         </>
       )}

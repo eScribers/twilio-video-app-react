@@ -70,8 +70,12 @@ exports[`the ConnectionOptions component when connected to a room should render 
         />
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(Grid))>
+  <div
+    hidden={true}
+    id="advanceSettingGrid"
+  >
     <WithStyles(ForwardRef(Grid))
-      hidden={true}
       item={true}
       xs={12}
     >
@@ -88,7 +92,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
       </WithStyles(ForwardRef(Typography))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
-      hidden={true}
+      id="dominantSpeakerPriority"
       item={true}
       sm={6}
       xs={12}
@@ -199,7 +203,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
-      hidden={true}
+      id="renderDimensionLow"
       item={true}
       sm={6}
       xs={12}
@@ -445,7 +449,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
         </WithStyles(ForwardRef(Select))>
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
-  </WithStyles(ForwardRef(Grid))>
+  </div>
 </WithStyles(ForwardRef(DialogContent))>
 `;
 
@@ -519,8 +523,12 @@ exports[`the ConnectionOptions component when not connected to a room should ren
         />
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(Grid))>
+  <div
+    hidden={true}
+    id="advanceSettingGrid"
+  >
     <WithStyles(ForwardRef(Grid))
-      hidden={true}
       item={true}
       xs={12}
     >
@@ -537,7 +545,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
       </WithStyles(ForwardRef(Typography))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
-      hidden={true}
+      id="dominantSpeakerPriority"
       item={true}
       sm={6}
       xs={12}
@@ -648,7 +656,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
     <WithStyles(ForwardRef(Grid))
-      hidden={true}
+      id="renderDimensionLow"
       item={true}
       sm={6}
       xs={12}
@@ -894,6 +902,6 @@ exports[`the ConnectionOptions component when not connected to a room should ren
         </WithStyles(ForwardRef(Select))>
       </WithStyles(ForwardRef(FormControl))>
     </WithStyles(ForwardRef(Grid))>
-  </WithStyles(ForwardRef(Grid))>
+  </div>
 </WithStyles(ForwardRef(DialogContent))>
 `;

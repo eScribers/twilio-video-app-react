@@ -1,10 +1,11 @@
 import React from 'react';
 import ConnectionOptions from './ConnectionOptions';
 import { initialSettings } from '../../../state/settings/settingsReducer';
-import { Select, TextField, Checkbox } from '@material-ui/core';
+import { Select, TextField, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import { useAppState } from '../../../state';
 import useRoomState from '../../../hooks/useRoomState/useRoomState';
+import { getByTestId } from '@testing-library/dom';
 
 jest.mock('../../../hooks/useRoomState/useRoomState');
 jest.mock('../../../state');
@@ -18,6 +19,46 @@ mockUseAppState.mockImplementation(() => ({ settings: initialSettings, dispatchS
 describe('the ConnectionOptions component', () => {
   afterEach(jest.clearAllMocks);
 
+  it('when change view mode should dispatch settings changes', () => {
+    const wrapper = shallow(<ConnectionOptions />);
+    wrapper
+      .find(Select)
+      .find({ name: 'viewMode' })
+      .simulate('change', { target: { value: 'grid 2X2', name: 'viewMode' } });
+    expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'grid 2X2', name: 'viewMode' });
+  });
+
+  it('when select advance setting, it shows advanced settings.', () => {
+    const wrapper = shallow(<ConnectionOptions />);
+    let checkbox = wrapper
+      .find(FormControlLabel)
+      .findWhere(c => c.prop('label') === 'Show Advance Setting')
+      .first();
+    checkbox.simulate('change', { target: { checked: true } });
+    expect(
+      wrapper
+        .find('[id="advanceSettingGrid"]')
+        .first()
+        .exists()
+    ).toBeTruthy();
+  });
+
+  it('when not select advance setting, it not shows advanced settings.', () => {
+    const wrapper = shallow(<ConnectionOptions />);
+    let checkbox = wrapper
+      .find(FormControlLabel)
+      .findWhere(c => c.prop('label') === 'Show Advance Setting')
+      .first();
+    checkbox.simulate('change', { target: { checked: false } });
+
+    expect(
+      wrapper
+        .find('[id="advanceSettingGrid"]')
+        .first()
+        .exists()
+    ).toBeFalsy();
+  });
+
   describe('when not connected to a room', () => {
     mockUseRoomState.mockImplementation(() => 'disconnected');
 
@@ -26,15 +67,9 @@ describe('the ConnectionOptions component', () => {
       expect(wrapper).toMatchSnapshot();
     });
 
-    describe('when choose advance setting', () => {});
-
     describe('when choose advance setting', () => {
       it('should dispatch settings changes', () => {
         const wrapper = shallow(<ConnectionOptions />);
-        var x = wrapper.find('input');
-        var y = wrapper.find('#showAdvanceSetting');
-        wrapper.find('#showAdvanceSetting').simulate('change', { target: { checked: true } });
-
         wrapper
           .find(Select)
           .find({ name: 'dominantSpeakerPriority' })
@@ -42,29 +77,23 @@ describe('the ConnectionOptions component', () => {
         expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'testValue', name: 'dominantSpeakerPriority' });
       });
 
-      // it('should not dispatch settings changes from a number field when there are non-digits in the value', () => {
-      //   const wrapper = shallow(<ConnectionOptions />);
-      //   wrapper
-      //   .find(Checkbox).find({ name: 'showAdvanceSetting' })
-      //   .simulate('change', {target: {checked: true}});
-      //   wrapper
-      //     .find(TextField)
-      //     .find({ name: 'maxTracks' })
-      //     .simulate('change', { target: { value: '123456a', name: 'maxTracks' } });
-      //   expect(mockDispatchSetting).not.toHaveBeenCalled();
-      // });
+      it('should not dispatch settings changes from a number field when there are non-digits in the value', () => {
+        const wrapper = shallow(<ConnectionOptions />);
+        wrapper
+          .find(TextField)
+          .find({ name: 'maxTracks' })
+          .simulate('change', { target: { value: '123456a', name: 'maxTracks' } });
+        expect(mockDispatchSetting).not.toHaveBeenCalled();
+      });
 
-      // it('should dispatch settings changes from a number field when there are only digits in the value', () => {
-      //   const wrapper = shallow(<ConnectionOptions />);
-      //   wrapper
-      //   .find(Checkbox).find({ name: 'showAdvanceSetting' })
-      //   .simulate('change', {target: {checked: true}});
-      //   wrapper
-      //     .find(TextField)
-      //     .find({ name: 'maxTracks' })
-      //     .simulate('change', { target: { value: '123456', name: 'maxTracks' } });
-      //   expect(mockDispatchSetting).toHaveBeenCalledWith({ value: '123456', name: 'maxTracks' });
-      // });
+      it('should dispatch settings changes from a number field when there are only digits in the value', () => {
+        const wrapper = shallow(<ConnectionOptions />);
+        wrapper
+          .find(TextField)
+          .find({ name: 'maxTracks' })
+          .simulate('change', { target: { value: '123456', name: 'maxTracks' } });
+        expect(mockDispatchSetting).toHaveBeenCalledWith({ value: '123456', name: 'maxTracks' });
+      });
     });
   });
 
