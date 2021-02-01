@@ -39,8 +39,8 @@ describe('the ConnectionOptions component', () => {
       wrapper
         .find('[id="advanceSettingGrid"]')
         .first()
-        .exists()
-    ).toBeTruthy();
+        .props().visibility
+    ).toBeUndefined();
   });
 
   it('when not select advance setting, it not shows advanced settings.', () => {
@@ -55,7 +55,7 @@ describe('the ConnectionOptions component', () => {
       wrapper
         .find('[id="advanceSettingGrid"]')
         .first()
-        .exists()
+        .props().visibility
     ).toBeFalsy();
   });
 

@@ -59,11 +59,10 @@ exports[`the ConnectionOptions component when connected to a room should render 
       >
         <WithStyles(ForwardRef(FormControlLabel))
           control={
-            <input
+            <ForwardRef(WithStyles)
               checked={false}
               id="showAdvanceSetting"
               onChange={[Function]}
-              type="checkbox"
             />
           }
           label="Show Advance Setting"
@@ -512,11 +511,10 @@ exports[`the ConnectionOptions component when not connected to a room should ren
       >
         <WithStyles(ForwardRef(FormControlLabel))
           control={
-            <input
+            <ForwardRef(WithStyles)
               checked={false}
               id="showAdvanceSetting"
               onChange={[Function]}
-              type="checkbox"
             />
           }
           label="Show Advance Setting"

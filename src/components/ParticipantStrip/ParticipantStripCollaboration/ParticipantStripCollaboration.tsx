@@ -1,9 +1,9 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
-import useParticipants from '../../hooks/useParticipants/useParticipants';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import Participant from '../Participant/Participant';
+import useParticipants from '../../../hooks/useParticipants/useParticipants';
+import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import Participant from '../../Participant/Participant';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',

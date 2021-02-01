@@ -1,6 +1,6 @@
 import React from 'react';
-import ParticipantStripCollaboration from '../ParticipantStrip/ParticipantStripCollaboration';
-import ParticipantStripGrid from '../ParticipantStrip/ParticipantStripGrid';
+import ParticipantStripCollaboration from '../ParticipantStrip/ParticipantStripCollaboration/ParticipantStripCollaboration';
+import ParticipantStripGrid from '../ParticipantStrip/ParticipantStripGrid/ParticipantStripGrid';
 import { styled } from '@material-ui/core/styles';
 import MainParticipant from '../MainParticipant/MainParticipant';
 import { useAppState } from '../../state';

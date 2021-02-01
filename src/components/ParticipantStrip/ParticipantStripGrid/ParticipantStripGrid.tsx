@@ -3,10 +3,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
-import useParticipants from '../../hooks/useParticipants/useParticipants';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useSelectedParticipant from '../VideoProvider/useSelectedParticipant/useSelectedParticipant';
-import Participant from '../Participant/Participant';
+import useParticipants from '../../../hooks/useParticipants/useParticipants';
+import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
+import Participant from '../../Participant/Participant';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-interface ParticipantStripGridProps {
+export interface ParticipantStripGridProps {
   viewMode: string;
 }
 export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridProps) {
@@ -34,14 +34,11 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
     room: { localParticipant },
   } = useVideoContext();
   const [currViewMode, setCurrViewMode] = useState('');
-  const [lgState, setLgState] = useState<
-    boolean | 2 | 1 | 'auto' | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | undefined
-  >(4);
-  const [mdState, setMdState] = useState<
-    boolean | 2 | 1 | 'auto' | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | undefined
-  >(3);
+  const [lgState, setLgState] = useState<any>(4);
+  const [mdState, setMdState] = useState<any>(3);
   const participants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+
   useEffect(() => {
     if (currViewMode != viewMode) {
       if (viewMode.includes('3X3')) {
