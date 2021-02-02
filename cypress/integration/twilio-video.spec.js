@@ -25,7 +25,9 @@ const caseRef = uuid();
    before(() => { 
                   let userName = Cypress.env('loginAdminUserName');
                   let password = Cypress.env('loginAdminPassword');
-                  cy.login(conferenceUrlPath, userName, password);
+                  cy.visit(conferenceUrlPath);
+                  cy.login(userName, password);
+                  cy.url().should('include', conferenceUrlPath);
                   const nowTime = moment.tz('Asia/Jerusalem');
                   cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
                   let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
@@ -47,7 +49,7 @@ const caseRef = uuid();
             let userName = generatePassword(4);
             let userPass = generatePassword(8);
             let caseRef = generateNumber(3);
-            cy.fillConferenceLoginPage(userName,userPass,caseRef);
+            cy.login(userName,userPass,caseRef);
 
             cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
             cy.get('p').contains('The username/password is incorrect.').should('be.visible');
@@ -57,7 +59,7 @@ const caseRef = uuid();
             let userName = Cypress.env('loginHOUserName');
             let userPass = Cypress.env('loginHOPassword');
             let caseRef = generateNumber(3);
-            cy.fillConferenceLoginPage(userName,userPass,caseRef);
+            cy.login(userName,userPass,caseRef);
 
             cy.url().should('include', `${loginUrlPath}/login/-1?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
             cy.get('p').contains('The case number you entered is invalid. Please re-enter your case number.').should('be.visible');
@@ -66,7 +68,7 @@ const caseRef = uuid();
       it('should fill login form and redirect to twilio video app', () => {
             let userName = Cypress.env('loginHOUserName');
             let userPass = Cypress.env('loginHOPassword');
-            cy.fillConferenceLoginPage(userName,userPass,caseRef);
+            cy.login(userName,userPass,caseRef);
             const nowTime = moment.tz('Asia/Jerusalem');
             cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
             cy.url().should('include', '.cloudfront.net/');
