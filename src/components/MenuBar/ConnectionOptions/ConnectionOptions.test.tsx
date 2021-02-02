@@ -99,7 +99,7 @@ describe('the ConnectionOptions component', () => {
 
   describe('when connected to a room', () => {
     mockUseRoomState.mockImplementation(() => 'connected');
-    it('should render correctly and click on ', () => {
+    it('should render correctly', () => {
       const wrapper = shallow(<ConnectionOptions />);
       expect(wrapper).toMatchSnapshot();
     });

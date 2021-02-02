@@ -41,15 +41,15 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
 
   useEffect(() => {
     if (currViewMode != viewMode) {
-      if (viewMode.includes('3X3')) {
+      if (viewMode.includes('2X2')) {
+        setMdState(6);
+        setLgState(6);
+      } else if (viewMode.includes('3X3')) {
         setMdState(4);
         setLgState(4);
       } else if (viewMode.includes('4X4')) {
         setMdState(3);
         setLgState(3);
-      } else if (viewMode.includes('2X2')) {
-        setMdState(6);
-        setLgState(6);
       }
       setCurrViewMode(viewMode);
     }

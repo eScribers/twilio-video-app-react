@@ -5,7 +5,7 @@ import { Track, VideoBandwidthProfileOptions } from 'twilio-video';
 export interface Settings {
   trackSwitchOffMode: VideoBandwidthProfileOptions['trackSwitchOffMode'];
   dominantSpeakerPriority?: Track.Priority;
-  viewMode: string; //VideoBandwidthProfileOptions['mode'];
+  viewMode: string;
   maxTracks: string;
   maxAudioBitrate: string;
   renderDimensionLow?: RenderDimensionValue;
