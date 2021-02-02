@@ -17,7 +17,7 @@ const Container = styled('div')({
 });
 
 const Main = styled('main')({
-  overflow: 'hidden',
+  overflowX: 'hidden',
 });
 
 export default function App() {
