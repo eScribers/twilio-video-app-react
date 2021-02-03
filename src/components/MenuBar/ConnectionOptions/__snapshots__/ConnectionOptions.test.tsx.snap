@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`the ConnectionOptions component when connected to a room should render correctly and click on  1`] = `
+exports[`the ConnectionOptions component when connected to a room should render correctly 1`] = `
 <WithStyles(ForwardRef(DialogContent))>
   <WithStyles(ForwardRef(Grid))
     container={true}
