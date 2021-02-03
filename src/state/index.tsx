@@ -6,6 +6,7 @@ import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
 import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
+import useSync from 'hooks/useSync/useSync';
 
 export interface ParticipantInformation {
   caseReference: string;
@@ -61,6 +62,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
+  const [syncRoom, setSyncRoom] = useSync();
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
@@ -144,6 +146,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
+    syncRoom,
+    setSyncRoom,
     authoriseParticipant: async () => {
       if (!(await ensureEnvironmentFromConfigInitialised())) return null;
 

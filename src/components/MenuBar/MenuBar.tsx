@@ -96,6 +96,8 @@ export default function MenuBar() {
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
     logger,
+    syncRoom,
+    setSyncRoom,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
   const roomState = useRoomState();
@@ -140,7 +142,7 @@ export default function MenuBar() {
     } else {
       setWaitingNotification(null);
       await connect(response);
-
+      setSyncRoom(participantInformation.caseReference);
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
   }
