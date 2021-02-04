@@ -33,4 +33,5 @@ test-reports
 junit.xml
 public/config.json
 .env
+cypress.env.json
 submodules/authentication
