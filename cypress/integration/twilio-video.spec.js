@@ -4,7 +4,7 @@ import moment from 'moment';
 import 'moment-timezone';
 
 // If you are on MacOS and have many popups about Chromium when these tests run, please see: https://stackoverflow.com/questions/54545193/puppeteer-chromium-on-mac-chronically-prompting-accept-incoming-network-connect
-const baseUrl = Cypress.env('baseUrl');
+const baseUrl = Cypress.env('BASE_URL');
 const loginUrlPath = baseUrl + "/welcome";
 const conferenceUrlPath = baseUrl + "/conference/newconference";
 const uuid = () => Cypress._.random(0, 1e6)
@@ -40,8 +40,8 @@ context('Startup', () => {
   })
 
   it('should fill login form and get error of "The case number you entered is invalid. Please re-enter your case number."', () => {
-    let userName = Cypress.env('loginHOUserName');
-    let userPass = Cypress.env('loginHOPassword');
+    let userName = Cypress.env('LOGIN_HO_USERNAME');
+    let userPass = Cypress.env('LOGIN_HO_PASSWORD');
     let caseRef = generateNumber(3);
     cy.loginAsHearingOfficer(caseRef, userName, userPass);
     cy.url().should('include', `${loginUrlPath}/login/-1?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
