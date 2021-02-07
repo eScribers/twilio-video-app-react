@@ -4,11 +4,13 @@ import { ROOM_STATE } from '../../../utils/displayStrings';
 import { Callback } from '../../../types';
 import { NOTIFICATION_MESSAGE } from '../../../utils/displayStrings';
 
+const ROOM_COMPLETED_ERROR = '53118';
+
 export default function useHandleRoomDisconnectionEvents(room: Room, onError: Callback, onNotification: Callback) {
   useEffect(() => {
     const onDisconnected = (room: Room, error: TwilioError) => {
       if (error) {
-        if (`${error.code}` === '53118') onNotification({ message: NOTIFICATION_MESSAGE.ROOM_COMPLETED });
+        if (`${error.code}` === ROOM_COMPLETED_ERROR) onNotification({ message: NOTIFICATION_MESSAGE.ROOM_COMPLETED });
       }
     };
 
