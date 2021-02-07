@@ -40,7 +40,7 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   useEffect(() => {
-    if (currViewMode != viewMode) {
+    if (currViewMode !== viewMode) {
       if (viewMode.includes('2X2')) {
         setMdState(6);
         setLgState(6);
@@ -53,7 +53,7 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
       }
       setCurrViewMode(viewMode);
     }
-  }, [viewMode]);
+  }, [viewMode, currViewMode]);
 
   const classes = useStyles();
 

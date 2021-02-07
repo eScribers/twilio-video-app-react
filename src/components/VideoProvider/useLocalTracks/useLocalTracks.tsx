@@ -3,15 +3,6 @@ import { useCallback, useEffect, useState } from 'react';
 import Video, { LocalVideoTrack, LocalAudioTrack, CreateLocalTrackOptions } from 'twilio-video';
 import { TRACK_TYPE } from '../../../utils/displayStrings';
 
-function isSameDevice(prevDefaultDevice, newDefaultDevice) {
-  if (!prevDefaultDevice) return false;
-  return (
-    prevDefaultDevice.deviceId === newDefaultDevice.deviceId &&
-    prevDefaultDevice.groupId === newDefaultDevice.groupId &&
-    prevDefaultDevice.label === newDefaultDevice.label
-  );
-}
-
 export default function useLocalTracks() {
   const [audioTrack, setAudioTrack] = useState<LocalAudioTrack>();
   const [videoTrack, setVideoTrack] = useState<LocalVideoTrack>();
