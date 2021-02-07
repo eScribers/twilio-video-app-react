@@ -6,7 +6,6 @@ import VideocamOff from '@material-ui/icons/VideocamOff';
 import AudioLevelIndicator from '../AudioLevelIndicator/AudioLevelIndicator';
 import BandwidthWarning from '../BandwidthWarning/BandwidthWarning';
 import NetworkQualityLevel from '../MenuBar/NewtorkQualityLevel/NetworkQualityLevel';
-import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 import PinIcon from './PinIcon/PinIcon';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 import useParticipantNetworkQualityLevel from '../../hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
@@ -16,6 +15,7 @@ import useTrack from '../../hooks/useTrack/useTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
+import ParticipantNameTag from './ParticipantNameTag/ParticipantNameTag';
 
 export default function ParticipantInfo({ participant, onClick, isSelected, children }) {
   const useStyles = makeStyles(theme =>
@@ -60,13 +60,6 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
       hideVideo: {
         background: 'black',
       },
-      identity: {
-        background: 'rgba(0, 0, 0, 0.7)',
-        padding: '0.1em 0.3em',
-        margin: 0,
-        display: 'flex',
-        alignItems: 'center',
-      },
       infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
@@ -94,7 +87,6 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
   } = useVideoContext();
   const localParticipantType: string = ParticipantIdentity.Parse(localParticipant.identity).partyType;
 
-  var participantIdentity = ParticipantIdentity.Parse(participant.identity);
   return (
     <div
       className={clsx(classes.container, {
@@ -109,11 +101,7 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
         })}
       >
         <div className={classes.infoRow}>
-          <h4 className={classes.identity}>
-            <ParticipantConnectionIndicator participant={participant} />
-            {participantIdentity.partyName} ({participantIdentity.partyType}
-            {participantIdentity.isRegisteredUser ? '*' : ''})
-          </h4>
+          <ParticipantNameTag participant={participant} />
           <NetworkQualityLevel qualityLevel={networkQualityLevel} />
         </div>
         <div>

@@ -24,6 +24,7 @@ import { ParticipantInformation } from 'state';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
+import Chat from 'components/Chat/Chat';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
 
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
@@ -79,8 +80,6 @@ export default function MenuBar() {
     setNotification,
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
-    // syncRoom,
-    setSyncRoom,
     // logger,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
@@ -258,9 +257,12 @@ export default function MenuBar() {
             {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
         ) : (
-          <h3 style={{ paddingLeft: '10px' }}>
-            Case Reference: {participantInfo ? participantInfo.caseReference : ''}
-          </h3>
+          <>
+            <h3 style={{ paddingLeft: '10px' }}>
+              Case Reference: {participantInfo ? participantInfo.caseReference : ''}
+            </h3>
+            <Chat />
+          </>
         )}
         <div className={classes.rightButtonContainer}>
           <ToggleGridViewButton />

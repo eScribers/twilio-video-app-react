@@ -48,22 +48,18 @@ export default function useChat(roomName: string, accessToken: string, identity:
   };
 
   useEffect(() => {
-    console.log({ accessToken });
+    if (!accessToken.length) return;
     setSyncClient(new SyncClient(accessToken, { logLevel: 'debug' }));
   }, [accessToken]);
 
   useEffect(() => {
-    console.log(1, { accessToken });
-
     if (!syncClient) return;
 
     syncClient
-      // .document(roomName)
-      .document('roomName')
+      .document(roomName)
       .then(function(document) {
-        console.log('test');
         // Listen to updates on the Document
-        document.on('updated', e => setChats(e.value));
+        document.on('updated', e => setChats(e.value || initial_rooms));
         setDocument(document);
         const getChats: IChatRooms | any = document.data;
         setChats(getChats);

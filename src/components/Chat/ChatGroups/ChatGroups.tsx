@@ -3,6 +3,7 @@ import { Button } from '@material-ui/core';
 import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import { xor } from 'lodash';
+import ParticipantNameTag from 'components/ParticipantInfo/ParticipantNameTag/ParticipantNameTag';
 
 interface IChatGroupsProps {
   groupChat: string;
@@ -48,7 +49,7 @@ const ChatGroups = ({ groupChat, setGroupChat, relevantGroups }: IChatGroupsProp
                 color={markedParticipants.includes(participant.identity) ? 'primary' : undefined}
                 variant={markedParticipants.includes(participant.identity) ? 'contained' : undefined}
               >
-                {participant.identity}
+                <ParticipantNameTag participant={participant} />
               </Button>
             );
           })}

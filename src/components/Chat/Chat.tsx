@@ -35,12 +35,11 @@ function Chat() {
     accessToken,
     room.localParticipant.identity
   );
-  console.log('chat is rendered!');
 
   return (
     <div className={classes.chat_container}>
       <h3>{groupChat || room.name} Chat!</h3>
-      <ChatContent chat={chat} />
+      <ChatContent chat={chat} me={room.localParticipant} />
       <MessageInput sendMessage={sendMessage} />
       <ChatGroups groupChat={groupChat} setGroupChat={setGroupChat} relevantGroups={relevantGroups} />
     </div>

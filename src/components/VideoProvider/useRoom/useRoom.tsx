@@ -23,12 +23,24 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
 
   const connect = useCallback(
     token => {
-      setAccessToken(token);
       setIsConnecting(true);
+
       return Video.connect(token, { ...options, tracks: [] }).then(
         newRoom => {
           setRoom(newRoom);
           const disconnect = () => newRoom.disconnect();
+
+          const getSyncToken = async (identity: string, roomName: string) => {
+            const headers = new window.Headers();
+            const endpoint = process.env.REACT_APP_TOKEN_ENDPOINT || '/token';
+            const params = new window.URLSearchParams({ identity, roomName });
+
+            const syncToken = await fetch(`${endpoint}?${params}`, { headers });
+            console.log(syncToken);
+
+            setAccessToken(await syncToken.text());
+          };
+          getSyncToken('gal', 'test'); /// TODO don't forget to fill with real room id and user identity
 
           newRoom.once(ROOM_STATE.DISCONNECTED, () => {
             // Reset the room only after all other `disconnected` listeners have been called.
