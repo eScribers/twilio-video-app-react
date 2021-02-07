@@ -3,6 +3,7 @@ const app = express();
 const path = require('path');
 const AccessToken = require('twilio').jwt.AccessToken;
 const VideoGrant = AccessToken.VideoGrant;
+const SyncGrant = AccessToken.SyncGrant;
 require('dotenv').config();
 
 const MAX_ALLOWED_SESSION_DURATION = 14400;
@@ -19,7 +20,11 @@ app.get('/token', (req, res) => {
   });
   token.identity = identity;
   const videoGrant = new VideoGrant({ room: roomName });
+  const syncGrant = new SyncGrant({
+    serviceSid: process.env.TWILIO_SYNC_SERVICE_SID,
+});
   token.addGrant(videoGrant);
+  token.addGrant(syncGrant);
   res.send(token.toJwt());
   console.log(`issued token for ${identity} in room ${roomName}`);
 });

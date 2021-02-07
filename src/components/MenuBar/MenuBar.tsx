@@ -126,7 +126,7 @@ export default function MenuBar() {
     } else {
       setWaitingNotification(null);
       await connect(response);
-      setSyncRoom(participantInformation.caseReference);
+      // setSyncRoom(participantInformation.caseReference);
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
   }

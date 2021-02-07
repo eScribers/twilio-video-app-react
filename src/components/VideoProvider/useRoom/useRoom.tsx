@@ -12,6 +12,7 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
   const [room, setRoom] = useState<Room>(new EventEmitter() as Room);
   const [isConnecting, setIsConnecting] = useState(false);
   const localTracksRef = useRef<LocalTrack[]>([]);
+  const [accessToken, setAccessToken] = useState('');
 
   useEffect(() => {
     // It can take a moment for Video.connect to connect to a room. During this time, the user may have enabled or disabled their
@@ -22,6 +23,7 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
 
   const connect = useCallback(
     token => {
+      setAccessToken(token);
       setIsConnecting(true);
       return Video.connect(token, { ...options, tracks: [] }).then(
         newRoom => {
@@ -71,5 +73,5 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
     [options, onError]
   );
 
-  return { room, isConnecting, connect };
+  return { room, isConnecting, connect, accessToken };
 }

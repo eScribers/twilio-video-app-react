@@ -9,6 +9,7 @@ import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 import { TRACK_TYPE } from '../../utils/displayStrings';
+import Chat from 'components/Chat/Chat';
 
 const useStyles = makeStyles({
   container: {
@@ -63,6 +64,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
       className={clsx(classes.container, { [classes.isVideoSwitchedOff]: isVideoSwitchedOff })}
     >
       <div className={classes.infoContainer}>
+        <Chat />
         <h4 className={classes.identity}>
           {participant.identity}
           {!isVideoEnabled && <VideocamOff />}

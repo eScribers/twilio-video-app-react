@@ -3,11 +3,12 @@ import { Callback, ErrorCallback } from '../../types';
 import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
 import useHandleRoomDisconnectionEvents from './useHandleRoomDisconnectionEvents/useHandleRoomDisconnectionEvents';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
+import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
 import useRoom from './useRoom/useRoom';
-import {
+import Video, {
   ConnectOptions,
   Room,
   TwilioError,
@@ -33,6 +34,7 @@ export interface IVideoContext {
   getLocalAudioTrack: (deviceId?: string, groupId?: string) => Promise<void | LocalAudioTrack>;
   isAcquiringLocalTracks: boolean;
   removeLocalVideoTrack: () => void;
+  accessToken: string;
 }
 export const VideoContext = createContext<IVideoContext>(null!);
 
@@ -62,7 +64,7 @@ export function VideoProvider({
     isAcquiringLocalTracks,
     removeLocalVideoTrack,
   } = useLocalTracks();
-  const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
+  const { room, isConnecting, connect, accessToken } = useRoom(localTracks, onErrorCallback, options);
 
   // Register onError and onDisconnect callback functions.
   useHandleRoomDisconnectionEvents(room, onError, onNotification);
@@ -82,6 +84,7 @@ export function VideoProvider({
         connect,
         isAcquiringLocalTracks,
         removeLocalVideoTrack,
+        accessToken,
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>
