@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { Room } from 'twilio-video';
-import { Callback } from '../../../types';
 import { ROOM_STATE } from '../../../utils/displayStrings';
 import { ParticipantIdentity } from '../../../utils/participantIdentity';
 export default function useHandleOnDisconnect(room: Room, onDisconnect: (isRegistered?: boolean) => void) {

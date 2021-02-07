@@ -1,24 +1,22 @@
 import React from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import ScreenShare from '@material-ui/icons/ScreenShare';
+// import ScreenShare from '@material-ui/icons/ScreenShare';
 import VideocamOff from '@material-ui/icons/VideocamOff';
-
 import AudioLevelIndicator from '../AudioLevelIndicator/AudioLevelIndicator';
 import BandwidthWarning from '../BandwidthWarning/BandwidthWarning';
 import NetworkQualityLevel from '../MenuBar/NewtorkQualityLevel/NetworkQualityLevel';
 import ParticipantConnectionIndicator from './ParticipantConnectionIndicator/ParticipantConnectionIndicator';
 import PinIcon from './PinIcon/PinIcon';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
-
 import useParticipantNetworkQualityLevel from '../../hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel';
 import usePublications from '../../hooks/usePublications/usePublications';
 import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useTrack from '../../hooks/useTrack/useTrack';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useHeight from '../../hooks/useHeight/useHeight';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
+
 export default function ParticipantInfo({ participant, onClick, isSelected, children }) {
   const useStyles = makeStyles(theme =>
     createStyles({
@@ -83,7 +81,7 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
 
   const networkQualityLevel = useParticipantNetworkQualityLevel(participant);
   const isVideoEnabled = Boolean(videoPublication);
-  const isScreenShareEnabled = publications.find(p => p.trackName === TRACK_TYPE.SCREEN);
+  // const isScreenShareEnabled = publications.find(p => p.trackName === TRACK_TYPE.SCREEN);
 
   const videoTrack = useTrack(videoPublication);
   const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack);
@@ -96,19 +94,6 @@ export default function ParticipantInfo({ participant, onClick, isSelected, chil
   } = useVideoContext();
   const localParticipantType: string = ParticipantIdentity.Parse(localParticipant.identity).partyType;
 
-  const height = useHeight();
-  const getHeight = () => {
-    // get height in int
-    let h = height.split('px')[0];
-    let h1 = parseInt(h, 10);
-    // adjust the height of menu bar 64px
-    h1 -= 70;
-    // adjust the bottom margin 70px
-    h1 -= 70;
-    // get height of one row
-    h = (h1 / 3).toString();
-    return `${h}px`;
-  };
   var participantIdentity = ParticipantIdentity.Parse(participant.identity);
   return (
     <div

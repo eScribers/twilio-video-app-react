@@ -1,4 +1,3 @@
-import { TRACK_TYPE } from '../../utils/displayStrings';
 import { LocalDataTrack, LocalDataTrackOptions, LocalParticipant } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { useState } from 'react';
