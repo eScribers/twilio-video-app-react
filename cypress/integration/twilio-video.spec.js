@@ -19,7 +19,7 @@ context('Startup', () => {
   });
 
   it('should log in as a manager and create a conference', () => {
-    cy.loginAsManager();
+    cy.loginAsManager(conferenceUrlPath);
     const nowTime = moment.tz('Asia/Jerusalem');
     cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
     let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
