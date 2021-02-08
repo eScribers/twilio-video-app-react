@@ -27,12 +27,7 @@ describe('the ParticipantInfo component', () => {
       () => ({ isConnecting: false, room: { localParticipant: { identity: 'mockIdentity' } }, localTracks: [] } as any)
     );
     const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={false}
-        gridView={true}
-        participant={{ identity: 'mockIdentity' } as any}
-      >
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -48,7 +43,6 @@ describe('the ParticipantInfo component', () => {
   //     <ParticipantInfo
   //       onClick={() => {}}
   //       isSelected={false}
-  //       gridView={false}
   //       participant={{ identity: 'mockIdentity' } as any}
   //     >
   //       mock children
@@ -66,7 +60,6 @@ describe('the ParticipantInfo component', () => {
   //     <ParticipantInfo
   //       onClick={() => {}}
   //       isSelected={false}
-  //       gridView={false}
   //       participant={{ identity: 'mockIdentity' } as any}
   //     >
   //       mock children
@@ -78,12 +71,7 @@ describe('the ParticipantInfo component', () => {
   it('should not render a VideoCamOff icon when a video track is published', () => {
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456', kind: 'video' }]);
     const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={false}
-        gridView={false}
-        participant={{ identity: 'mockIdentity' } as any}
-      >
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -100,7 +88,6 @@ describe('the ParticipantInfo component', () => {
   //     <ParticipantInfo
   //       onClick={() => {}}
   //       isSelected={false}
-  //       gridView={true}
   //       participant={{ identity: 'mockIdentity' } as any}
   //     >
   //       mock children
@@ -116,7 +103,6 @@ describe('the ParticipantInfo component', () => {
   //     <ParticipantInfo
   //       onClick={() => {}}
   //       isSelected={false}
-  //       gridView={false}
   //       participant={{ identity: 'mockIdentity' } as any}
   //     >
   //       mock children
@@ -131,12 +117,7 @@ describe('the ParticipantInfo component', () => {
       () => ({ isConnecting: false, room: { localParticipant: { identity: 'mockIdentity' } }, localTracks: [] } as any)
     );
     const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={true}
-        gridView={false}
-        participant={{ identity: 'mockIdentity' } as any}
-      >
+      <ParticipantInfo onClick={() => {}} isSelected={true} participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -150,12 +131,7 @@ describe('the ParticipantInfo component', () => {
     );
 
     const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={false}
-        gridView={false}
-        participant={{ identity: 'mockIdentity' } as any}
-      >
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );

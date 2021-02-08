@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useState, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useState } from 'react';
 import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
@@ -53,10 +53,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
   // eslint-disable-next-line no-unused-vars
-  const [user, setUser] = useState(null);
+  const [, setUser] = useState(null);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
   const [activeSinkId, setActiveSinkId] = useState('default');
-  const [gridView, setGridView] = useState(true);
   const [userToken, setUserToken] = useState('');
   const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
@@ -69,8 +68,9 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   var endpoint = '';
   var environmentName = '';
   var domainName = '';
+
   async function fetchConfigFile() {
-    if (endpoint !== '' || environmentName != '' || domainName != '') return;
+    if (endpoint !== '' || environmentName !== '' || domainName !== '') return;
 
     console.log(
       `fetching endpoint. process.env: ${
@@ -140,8 +140,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setSelectedVideoInput,
     selectedSpeakerOutput,
     setSelectedSpeakerOutput,
-    gridView,
-    setGridView,
     activeSinkId,
     setActiveSinkId,
     settings,
