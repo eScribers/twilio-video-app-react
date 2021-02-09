@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     backdropFilter: 'blur(5px)',
     borderRadius: '0px 5px 5px 0px',
     '&:hover, &:focus': {
-      background: 'rgba(255,255,255,0.8)',
+      background: 'rgba(100,100,100,0.8)',
     },
   },
 }));

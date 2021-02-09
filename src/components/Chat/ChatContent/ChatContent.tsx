@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { makeStyles, Theme } from '@material-ui/core';
 import { IMessage } from '../../../hooks/useChat/useChat';
 import { IChatRoom } from '../../../hooks/useChat/useChat';
@@ -23,6 +23,7 @@ interface IChatContentProps {
 
 const ChatContent = ({ chat, me }: IChatContentProps) => {
   const classes = useStyles();
+  const chatDivRef = useRef<HTMLDivElement>(null);
   const participants = useParticipants();
 
   const getParticipantByIdentity = (identity: string) => {
@@ -30,8 +31,15 @@ const ChatContent = ({ chat, me }: IChatContentProps) => {
     return all.find(v => v.identity === identity) || identity;
   };
 
+  // Scroll down in the chat when there are new messages
+  const messages = chat.messages;
+  useEffect(() => {
+    if (!chatDivRef || !chatDivRef.current) return;
+    chatDivRef.current.scrollTop += 100000;
+  }, [messages]);
+
   return (
-    <div className={classes.chat_content} id="chatContent">
+    <div className={classes.chat_content} id="chatContent" ref={chatDivRef}>
       {(chat.messages as IMessage[]).map((v: IMessage, k: number) => (
         <React.Fragment key={k}>
           <div>
