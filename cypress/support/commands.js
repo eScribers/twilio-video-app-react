@@ -1,15 +1,5 @@
 import detectSound from './detectSound';
 
-Cypress.Commands.add('login', (targetUrl,userName, password) => {
-  console.log(targetUrl);
-  cy.visit(targetUrl);
-  cy.get('input[name="name"]').type(userName).should('have.value', userName);
-  cy.get('input[name="passPin"]').type(password).should('have.value', password);
-
-  cy.get('form[action*="auth/loginApp"]').submit();
-  cy.url().should('include', targetUrl);
-});
-
 Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hearingDate,startTime,endTime,
   provider,status,hearingOfficer,reporterPerson) => {
   cy.get('input[id="case_reference"]').type(caseRef).should('have.value', caseRef);
@@ -26,15 +16,6 @@ Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hear
   cy.get('p').contains('Conference created OK.').should('be.visible');
   cy.url().should('include', conferenceUrl);
         
-});
-
-Cypress.Commands.add('fillConferenceLoginPage', (userName,password, caseNumber) => {
-
-  cy.get('input[name="name"]').type(userName).should('have.value', userName);
-  cy.get('input[name="passPin"]').type(password).should('have.value', password);
-  cy.get('input[name="legalCaseReference"]').type(caseNumber).should('have.value', caseNumber);
-  cy.get('form').submit();
-
 });
 
 Cypress.Commands.add('deleteExistingConference', (caseReference) => {

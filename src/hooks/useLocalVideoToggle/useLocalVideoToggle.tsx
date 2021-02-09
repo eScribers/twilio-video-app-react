@@ -11,19 +11,19 @@ export default function useLocalVideoToggle() {
     removeLocalVideoTrack,
     onError,
   } = useVideoContext();
-  const videoTrack = localTracks.find(track => track.kind === TRACK_TYPE.VIDEO);
+  const videoTrack = localTracks.find(track => track.kind === TRACK_TYPE.VIDEO) as LocalVideoTrack;
   const [isPublishing, setIspublishing] = useState(false);
   const previousDeviceIdRef = useRef<string>();
 
   const toggleVideoEnabled = useCallback(() => {
-    if (videoTrack) {
+    if (!isPublishing && videoTrack) {
       if (localParticipant) {
         previousDeviceIdRef.current = videoTrack.mediaStreamTrack.getSettings().deviceId;
         // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
 
         const localTrackPublication = localParticipant.unpublishTrack(videoTrack);
         localParticipant?.emit('trackUnpublished', localTrackPublication);
-        // removeLocalVideoTrack();
+        removeLocalVideoTrack();
       }
       videoTrack!.stop();
     } else {
@@ -33,7 +33,7 @@ export default function useLocalVideoToggle() {
         .catch(onError)
         .finally(() => setIspublishing(false));
     }
-  }, [videoTrack, localParticipant, getLocalVideoTrack, isPublishing, onError]);
+  }, [videoTrack, localParticipant, getLocalVideoTrack, isPublishing, onError, removeLocalVideoTrack]);
 
   return [!!videoTrack, toggleVideoEnabled] as const;
 }

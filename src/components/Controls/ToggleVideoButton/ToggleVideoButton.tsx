@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 
 import Fab from '@material-ui/core/Fab';
@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function ToggleVideoButton(props: { disabled?: boolean }) {
   const classes = useStyles();
   const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
-  const [disabled, setDisabled] = useState(false);
+  const [, setDisabled] = useState(false);
   const {
     room: { localParticipant },
   } = useVideoContext();
@@ -38,11 +38,7 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
   }, [localParticipant]);
 
   return (
-    <Tooltip
-      title={isVideoEnabled ? 'Mute Video' : 'Unmute Video'}
-      placement="top"
-      PopperProps={{ disablePortal: true }}
-    >
+    <Tooltip title={isVideoEnabled ? 'Video off' : 'Video on'} placement="top" PopperProps={{ disablePortal: true }}>
       <Fab
         className={classes.fab}
         onClick={() => {

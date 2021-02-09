@@ -13,7 +13,6 @@ export default function generateConnectionOptions(settings: Settings) {
     // Twilio Console: https://www.twilio.com/console/video/configure
     bandwidthProfile: {
       video: {
-        mode: settings.bandwidthProfileMode,
         dominantSpeakerPriority: settings.dominantSpeakerPriority,
         renderDimensions: {
           low: getResolution(settings.renderDimensionLow),

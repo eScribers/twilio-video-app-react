@@ -5,6 +5,9 @@ import MicOff from '@material-ui/icons/MicOff';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import { PLAYER_STATE } from '../../utils/displayStrings';
+import { IconButton } from '@material-ui/core';
+import useLocalAudioToggle from '../../hooks/useLocalAudioToggle/useLocalAudioToggle';
+
 let clipId = 0;
 const getUniqueClipId = () => clipId++;
 
@@ -38,6 +41,7 @@ function AudioLevelIndicator({
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
+  let [, toggleAudioEnabled] = useLocalAudioToggle();
 
   useEffect(() => {
     if (audioTrack && mediaStreamTrack) {
@@ -103,30 +107,35 @@ function AudioLevelIndicator({
   // Each instance of this component will need a unique HTML ID
   const clipPathId = `audio-level-clip-${getUniqueClipId()}`;
 
-  return isTrackEnabled ? (
-    <svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" height={`${SIZE}px`} width={`${SIZE}px`}>
-      <defs>
-        <clipPath id={clipPathId}>
-          <rect ref={SVGRectRef} x="0" y="21" width="24" height="24" />
-        </clipPath>
-      </defs>
-      <path
-        fill={background || 'rgba(255, 255, 255, 0.1)'}
-        d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"
-      ></path>
-      <path
-        fill="#0c0"
-        clipPath={`url(#${clipPathId})`}
-        d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"
-      ></path>
-    </svg>
-  ) : (
-    <MicOff
-      height={`${SIZE}px`}
-      width={`${SIZE}px`}
-      style={{ width: 'initial', height: 'initial' }}
-      data-cy-audio-mute-icon
-    />
+  return (
+    <IconButton onClick={toggleAudioEnabled}>
+      {' '}
+      {isTrackEnabled ? (
+        <svg focusable="false" viewBox="0 0 24 24" aria-hidden="true" height={`${SIZE}px`} width={`${SIZE}px`}>
+          <defs>
+            <clipPath id={clipPathId}>
+              <rect ref={SVGRectRef} x="0" y="21" width="24" height="24" />
+            </clipPath>
+          </defs>
+          <path
+            fill={background || 'rgba(255, 255, 255, 0.1)'}
+            d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"
+          ></path>
+          <path
+            fill="#0c0"
+            clipPath={`url(#${clipPathId})`}
+            d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"
+          ></path>
+        </svg>
+      ) : (
+        <MicOff
+          height={`${SIZE}px`}
+          width={`${SIZE}px`}
+          style={{ width: 'initial', height: 'initial' }}
+          data-cy-audio-mute-icon
+        />
+      )}
+    </IconButton>
   );
 }
 
