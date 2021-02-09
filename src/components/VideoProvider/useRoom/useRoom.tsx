@@ -36,11 +36,10 @@ export default function useRoom(localTracks: any, onError: Callback, options?: C
             const params = new window.URLSearchParams({ identity, roomName });
 
             const syncToken = await fetch(`${endpoint}?${params}`, { headers });
-            console.log(syncToken);
 
             setAccessToken(await syncToken.text());
           };
-          getSyncToken('gal', 'test'); /// TODO don't forget to fill with real room id and user identity
+          getSyncToken(newRoom.localParticipant.identity, newRoom.name);
 
           newRoom.once(ROOM_STATE.DISCONNECTED, () => {
             // Reset the room only after all other `disconnected` listeners have been called.
