@@ -4,9 +4,12 @@ import { Howl } from 'howler';
 import useDominantSpeaker from '../useDominantSpeaker/useDominantSpeaker';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
+// Free to use sounds:
+//https://freesound.org/people/FoolBoyMedia/sounds/352656/
 const logInSound = new Howl({
   src: ['assets/sounds/logIn.mp3'],
 });
+//https://freesound.org/people/FoolBoyMedia/sounds/352656/
 const logOutSound = new Howl({
   src: ['assets/sounds/logOut.mp3'],
 });
