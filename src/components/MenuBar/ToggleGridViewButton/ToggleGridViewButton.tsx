@@ -17,11 +17,7 @@ export default function ToggleGridViewButton() {
   };
 
   return (
-    <IconButton
-      onClick={() => {
-        handleChange();
-      }}
-    >
+    <IconButton onClick={handleChange}>
       <GridOnIcon />
     </IconButton>
   );
