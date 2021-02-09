@@ -50,6 +50,9 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
       } else if (viewMode.includes('4X4')) {
         setMdState(3);
         setLgState(3);
+      } else {
+        setMdState(3);
+        setLgState(4);
       }
       setCurrViewMode(viewMode);
     }

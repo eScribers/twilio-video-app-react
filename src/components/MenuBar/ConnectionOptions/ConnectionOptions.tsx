@@ -74,6 +74,7 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
               <MenuItem value="grid 3X3">3 Column</MenuItem>
               <MenuItem value="grid 4X4">4 Column</MenuItem>
               <MenuItem value="collaboration">Collaboration</MenuItem>
+              <MenuItem value="default_grid">Default</MenuItem>
             </Select>
           </FormControl>
         </Grid>
