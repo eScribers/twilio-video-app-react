@@ -5,7 +5,7 @@ import { Track, VideoBandwidthProfileOptions } from 'twilio-video';
 export interface Settings {
   trackSwitchOffMode: VideoBandwidthProfileOptions['trackSwitchOffMode'];
   dominantSpeakerPriority?: Track.Priority;
-  bandwidthProfileMode: VideoBandwidthProfileOptions['mode'];
+  viewMode: string;
   maxTracks: string;
   maxAudioBitrate: string;
   renderDimensionLow?: RenderDimensionValue;
@@ -14,7 +14,20 @@ export interface Settings {
 }
 
 type SettingsKeys = keyof Settings;
-
+export const VIEW_MODE = {
+  grid_2_2: 'grid 2X2',
+  grid_3_3: 'grid 3X3',
+  grid_4_4: 'grid 4X4',
+  collaboration: 'collaboration',
+  default: 'default_grid',
+};
+export const ViewModeArray = [
+  VIEW_MODE.grid_2_2,
+  VIEW_MODE.grid_3_3,
+  VIEW_MODE.grid_4_4,
+  VIEW_MODE.collaboration,
+  VIEW_MODE.default,
+];
 export interface SettingsAction {
   name: SettingsKeys;
   value: string;
@@ -23,7 +36,7 @@ export interface SettingsAction {
 export const initialSettings: Settings = {
   trackSwitchOffMode: undefined,
   dominantSpeakerPriority: 'standard',
-  bandwidthProfileMode: 'collaboration',
+  viewMode: VIEW_MODE.default,
   maxTracks: isMobile ? '5' : '10',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
