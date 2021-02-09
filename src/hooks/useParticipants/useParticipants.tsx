@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react';
 import { RemoteParticipant } from 'twilio-video';
+import { Howl } from 'howler';
 import useDominantSpeaker from '../useDominantSpeaker/useDominantSpeaker';
 import useVideoContext from '../useVideoContext/useVideoContext';
+
+const logInSound = new Howl({
+  src: ['assets/sounds/logIn.mp3'],
+});
+const logOutSound = new Howl({
+  src: ['assets/sounds/logOut.mp3'],
+});
 
 export default function useParticipants() {
   const { room } = useVideoContext();
@@ -24,10 +32,14 @@ export default function useParticipants() {
   }, [dominantSpeaker, useDominantSpeakerEffect]);
 
   useEffect(() => {
-    const participantConnected = (participant: RemoteParticipant) =>
+    const participantConnected = (participant: RemoteParticipant) => {
+      logInSound.play();
       setParticipants(prevParticipants => [...prevParticipants, participant]);
-    const participantDisconnected = (participant: RemoteParticipant) =>
+    };
+    const participantDisconnected = (participant: RemoteParticipant) => {
+      logOutSound.play();
       setParticipants(prevParticipants => prevParticipants.filter(p => p !== participant));
+    };
     room.on('participantConnected', participantConnected);
     room.on('participantDisconnected', participantDisconnected);
     return () => {
