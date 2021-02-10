@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`the ToggleGridViewButton should render correctly 1`] = `
+<WithStyles(ForwardRef(Tooltip))
+  aria-label="add"
+  title="default_grid"
+>
+  <WithStyles(ForwardRef(IconButton))
+    onClick={[Function]}
+  >
+    <Memo([object Object]) />
+  </WithStyles(ForwardRef(IconButton))>
+</WithStyles(ForwardRef(Tooltip))>
+`;
