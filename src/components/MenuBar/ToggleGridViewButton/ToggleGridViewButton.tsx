@@ -3,6 +3,7 @@ import GridOnIcon from '@material-ui/icons/GridOn';
 import IconButton from '@material-ui/core/IconButton';
 import { ViewModeArray, Settings } from '../../../state/settings/settingsReducer';
 import { useAppState } from '../../../state';
+import Tooltip from '@material-ui/core/Tooltip';
 
 export default function ToggleGridViewButton() {
   const { settings, dispatchSetting } = useAppState();
@@ -17,8 +18,10 @@ export default function ToggleGridViewButton() {
   };
 
   return (
-    <IconButton onClick={handleChange}>
-      <GridOnIcon />
-    </IconButton>
+    <Tooltip title={settings.viewMode} aria-label="add">
+      <IconButton onClick={handleChange}>
+        <GridOnIcon />
+      </IconButton>
+    </Tooltip>
   );
 }

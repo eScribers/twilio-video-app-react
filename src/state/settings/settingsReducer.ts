@@ -15,16 +15,16 @@ export interface Settings {
 
 type SettingsKeys = keyof Settings;
 export const VIEW_MODE = {
-  grid_2_2: 'grid 2X2',
-  grid_3_3: 'grid 3X3',
-  grid_4_4: 'grid 4X4',
+  grid_2Column: 'grid 2 column',
+  grid_3Column: 'grid 3 column',
+  grid_4Column: 'grid 4 column',
   collaboration: 'collaboration',
   default: 'default_grid',
 };
 export const ViewModeArray = [
-  VIEW_MODE.grid_2_2,
-  VIEW_MODE.grid_3_3,
-  VIEW_MODE.grid_4_4,
+  VIEW_MODE.grid_2Column,
+  VIEW_MODE.grid_3Column,
+  VIEW_MODE.grid_4Column,
   VIEW_MODE.collaboration,
   VIEW_MODE.default,
 ];

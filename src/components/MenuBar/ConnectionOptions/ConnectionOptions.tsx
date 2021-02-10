@@ -70,9 +70,9 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
               value={withDefault(settings.viewMode)}
               onChange={handleChange}
             >
-              <MenuItem value="grid 2X2">2 Column</MenuItem>
-              <MenuItem value="grid 3X3">3 Column</MenuItem>
-              <MenuItem value="grid 4X4">4 Column</MenuItem>
+              <MenuItem value="grid 2 column">2 Column</MenuItem>
+              <MenuItem value="grid 3 column">3 Column</MenuItem>
+              <MenuItem value="grid 4 column">4 Column</MenuItem>
               <MenuItem value="collaboration">Collaboration</MenuItem>
               <MenuItem value="default_grid">Default</MenuItem>
             </Select>

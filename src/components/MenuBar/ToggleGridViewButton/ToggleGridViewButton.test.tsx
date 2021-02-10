@@ -21,6 +21,6 @@ describe('the ToggleGridViewButton', () => {
   it('should render the next view mode', () => {
     const wrapper = shallow(<ToggleGridViewButton />);
     wrapper.find(IconButton).simulate('click');
-    expect(mockDispatchSetting).toHaveBeenCalledWith({ name: 'viewMode', value: 'grid 2X2' });
+    expect(mockDispatchSetting).toHaveBeenCalledWith({ name: 'viewMode', value: 'grid 2 column' });
   });
 });
