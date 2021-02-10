@@ -1,15 +1,16 @@
 import React from 'react';
+import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '../../../../constants';
 import { Select, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import { useVideoInputDevices } from '../deviceHooks/deviceHooks';
 import VideoInputList from './VideoInputList';
+import useDevices from '../deviceHooks/deviceHooks';
 
-jest.mock('../../../../hooks/useVideoContext/useVideoContext');
-jest.mock('../deviceHooks/deviceHooks');
+jest.mock('../../../hooks/useVideoContext/useVideoContext');
+jest.mock('../../../hooks/useDevices/useDevices');
 
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
-const mockUseVideoInputDevices = useVideoInputDevices as jest.Mock<any>;
+const mockUseDevices = useDevices as jest.Mock<any>;
 const mockGetLocalVideotrack = jest.fn(() => Promise.resolve);
 
 const mockDevice = {
@@ -23,6 +24,7 @@ const mockLocalTrack = {
     label: 'mock local video track',
     getSettings: () => ({ deviceId: '234' }),
   },
+  restart: jest.fn(),
 };
 
 mockUseVideoContext.mockImplementation(() => ({
@@ -32,9 +34,14 @@ mockUseVideoContext.mockImplementation(() => ({
 }));
 
 describe('the VideoInputList component', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+    window.localStorage.clear();
+  });
+
   describe('with only one video input device', () => {
     it('should not display a Select menu and instead display the name of the local video track', () => {
-      mockUseVideoInputDevices.mockImplementation(() => [mockDevice]);
+      mockUseDevices.mockImplementation(() => ({ videoInputDevices: [mockDevice] }));
       const wrapper = shallow(<VideoInputList />);
       expect(wrapper.find(Select).exists()).toBe(false);
       expect(
@@ -46,7 +53,7 @@ describe('the VideoInputList component', () => {
     });
 
     it('should display "No Local Video" when there is no local video track', () => {
-      mockUseVideoInputDevices.mockImplementation(() => [mockDevice]);
+      mockUseDevices.mockImplementation(() => ({ videoInputDevices: [mockDevice] }));
       mockUseVideoContext.mockImplementationOnce(() => ({
         room: {},
         getLocalVideoTrack: mockGetLocalVideotrack,
@@ -63,7 +70,7 @@ describe('the VideoInputList component', () => {
   });
 
   it('should render a Select menu when there are multiple video input devices', () => {
-    mockUseVideoInputDevices.mockImplementation(() => [mockDevice, mockDevice]);
+    mockUseDevices.mockImplementation(() => ({ videoInputDevices: [mockDevice, mockDevice] }));
     const wrapper = shallow(<VideoInputList />);
     expect(wrapper.find(Select).exists()).toBe(true);
     expect(
@@ -72,5 +79,35 @@ describe('the VideoInputList component', () => {
         .at(1)
         .exists()
     ).toBe(false);
+  });
+
+  it('should save the deviceId in localStorage when the video input device is changed', () => {
+    mockUseDevices.mockImplementation(() => ({ videoInputDevices: [mockDevice, mockDevice] }));
+    const wrapper = shallow(<VideoInputList />);
+    expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe(undefined);
+    wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
+    expect(window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)).toBe('mockDeviceID');
+  });
+
+  it('should call track.restart with the new deviceId when the video input device is changed', () => {
+    mockUseDevices.mockImplementation(() => ({ videoInputDevices: [mockDevice, mockDevice] }));
+    const wrapper = shallow(<VideoInputList />);
+    wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
+    expect(mockLocalTrack.restart).toHaveBeenCalledWith({
+      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+      deviceId: { exact: 'mockDeviceID' },
+    });
+  });
+
+  it('should not call track.restart when no video track is present', () => {
+    mockUseDevices.mockImplementation(() => ({ videoInputDevices: [mockDevice, mockDevice] }));
+    mockUseVideoContext.mockImplementationOnce(() => ({
+      room: {},
+      getLocalVideoTrack: mockGetLocalVideotrack,
+      localTracks: [],
+    }));
+    const wrapper = shallow(<VideoInputList />);
+    wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
+    expect(mockLocalTrack.restart).not.toHaveBeenCalled();
   });
 });

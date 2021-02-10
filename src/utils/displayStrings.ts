@@ -19,12 +19,12 @@ export const PLAYER_STATE = {
   stopped: 'stopped',
 };
 
-export const ROOM_STATE = {
-  RECONNECTING: 'reconnecting',
-  RECONNECTED: 'reconnected',
-  DISCONNECTED: 'disconnected',
-  CONNECTED: 'connected',
-};
+export enum ROOM_STATE {
+  RECONNECTING = 'reconnecting',
+  RECONNECTED = 'reconnected',
+  DISCONNECTED = 'disconnected',
+  CONNECTED = 'connected',
+}
 
 export const TRACK_TYPE = {
   CAMERA: 'camera',

@@ -8,7 +8,7 @@ export default function useHandleRoomDisconnectionEvents(room: Room, onError: Ca
   useEffect(() => {
     const onDisconnected = (room: Room, error: TwilioError) => {
       if (error) {
-        if (error.code == 53118) onNotification({ message: NOTIFICATION_MESSAGE.ROOM_COMPLETED });
+        if (`${error.code}` === '53118') onNotification({ message: NOTIFICATION_MESSAGE.ROOM_COMPLETED });
       }
     };
 
@@ -16,5 +16,5 @@ export default function useHandleRoomDisconnectionEvents(room: Room, onError: Ca
     return () => {
       room.off(ROOM_STATE.DISCONNECTED, onDisconnected);
     };
-  }, [room, onError]);
+  }, [room, onError, onNotification]);
 }
