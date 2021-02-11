@@ -12,7 +12,7 @@ import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackS
 import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
-import { TRACK_TYPE } from 'utils/displayStrings';
+import { TRACK_TYPE } from '../../utils/displayStrings';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

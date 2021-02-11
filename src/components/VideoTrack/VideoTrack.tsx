@@ -4,7 +4,7 @@ import { styled } from '@material-ui/core/styles';
 import { Track } from 'twilio-video';
 import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoTrackDimensions from '../../hooks/useVideoTrackDimensions/useVideoTrackDimensions';
-import { TRACK_TYPE } from 'utils/displayStrings';
+import { TRACK_TYPE } from '../../utils/displayStrings';
 
 const Video = styled('video')({
   width: '100%',
