@@ -5,12 +5,11 @@ import { FormControl, MenuItem, Typography, Select, Grid } from '@material-ui/co
 import { SELECTED_AUDIO_INPUT_KEY } from '../../../../constants';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import useDevices from '../deviceHooks/deviceHooks';
+import useDevices from '../../../../hooks/useDevices/useDevices';
 
 export default function AudioInputList() {
   const { audioInputDevices } = useDevices();
   const { localTracks } = useVideoContext();
-  console.log('!!!Devices changed', audioInputDevices);
 
   const localAudioTrack = localTracks.find(track => track.kind === 'audio') as LocalAudioTrack;
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);

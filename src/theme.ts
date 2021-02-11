@@ -4,12 +4,14 @@ declare module '@material-ui/core/styles/createMuiTheme' {
   interface Theme {
     sidebarWidth: number;
     sidebarMobileHeight: number;
+    participantBorderWidth: number;
   }
 
   // allow configuration using `createMuiTheme`
   interface ThemeOptions {
     sidebarWidth?: number;
     sidebarMobileHeight?: number;
+    participantBorderWidth: number;
   }
 }
 
@@ -22,4 +24,5 @@ export default createMuiTheme({
   },
   sidebarWidth: 260,
   sidebarMobileHeight: 90,
+  participantBorderWidth: 2,
 });

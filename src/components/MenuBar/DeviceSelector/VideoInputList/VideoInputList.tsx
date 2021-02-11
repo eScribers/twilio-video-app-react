@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import VideoTrack from '../../../VideoTrack/VideoTrack';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import useDevices from '../deviceHooks/deviceHooks';
+import useDevices from '../../../../hooks/useDevices/useDevices';
 
 const useStyles = makeStyles({
   preview: {

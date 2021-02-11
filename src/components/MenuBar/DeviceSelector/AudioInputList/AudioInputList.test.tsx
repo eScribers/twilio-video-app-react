@@ -4,10 +4,10 @@ import { SELECTED_AUDIO_INPUT_KEY } from '../../../../constants';
 import { Select, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import useDevices from '../deviceHooks/deviceHooks';
+import useDevices from '../../../../hooks/useDevices/useDevices';
 
-jest.mock('../../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../../hooks/useDevices/useDevices');
+jest.mock('../../../../hooks/useVideoContext/useVideoContext');
+jest.mock('../../../../hooks/useDevices/useDevices');
 
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseDevices = useDevices as jest.Mock<any>;
@@ -77,7 +77,7 @@ describe('the AudioInputList component', () => {
   it('should save the deviceId in localStorage when the audio input device is changed', () => {
     mockUseDevices.mockImplementation(() => ({ audioInputDevices: [mockDevice, mockDevice] }));
     const wrapper = shallow(<AudioInputList />);
-    expect(window.localStorage.getItem(SELECTED_AUDIO_INPUT_KEY)).toBe(undefined);
+    expect(window.localStorage.getItem(SELECTED_AUDIO_INPUT_KEY)).toBeFalsy();
     wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
     expect(window.localStorage.getItem(SELECTED_AUDIO_INPUT_KEY)).toBe('mockDeviceID');
   });

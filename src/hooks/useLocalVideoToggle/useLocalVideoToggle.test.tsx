@@ -7,10 +7,9 @@ import { LocalParticipant } from 'twilio-video';
 jest.mock('../useVideoContext/useVideoContext');
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 
-function getMockTrack(name: string, kind: string, deviceId?: string) {
+function getMockTrack(name: string, deviceId?: string) {
   return {
     name,
-    kind,
     mediaStreamTrack: {
       getSettings: () => ({
         deviceId,
@@ -22,7 +21,7 @@ function getMockTrack(name: string, kind: string, deviceId?: string) {
 describe('the useLocalVideoToggle hook', () => {
   it('should return true when a localVideoTrack exists', () => {
     mockUseVideoContext.mockImplementation(() => ({
-      localTracks: [getMockTrack('camera-123456', 'video')],
+      localTracks: [getMockTrack('camera-123456')],
       room: { localParticipant: {} },
     }));
 
@@ -32,7 +31,7 @@ describe('the useLocalVideoToggle hook', () => {
 
   it('should return false when a localVideoTrack does not exist', () => {
     mockUseVideoContext.mockImplementation(() => ({
-      localTracks: [getMockTrack('microphone', 'microphone')],
+      localTracks: [getMockTrack('microphone')],
       room: { localParticipant: {} },
     }));
 
@@ -41,23 +40,23 @@ describe('the useLocalVideoToggle hook', () => {
   });
 
   describe('toggleVideoEnabled function', () => {
-    // it('should call removeLocalVideoTrack when a localVideoTrack exists', () => {
-    //   const mockRemoveLocalVideoTrack = jest.fn();
+    it('should call removeLocalVideoTrack when a localVideoTrack exists', () => {
+      const mockRemoveLocalVideoTrack = jest.fn();
 
-    //   mockUseVideoContext.mockImplementation(() => ({
-    //     localTracks: [getMockTrack('camera','video')],
-    //     room: { localParticipant: null },
-    //     removeLocalVideoTrack: mockRemoveLocalVideoTrack,
-    //   }));
+      mockUseVideoContext.mockImplementation(() => ({
+        localTracks: [getMockTrack('camera')],
+        room: { localParticipant: null },
+        removeLocalVideoTrack: mockRemoveLocalVideoTrack,
+      }));
 
-    //   const { result } = renderHook(useLocalVideoToggle);
-    //   result.current[1]();
-    //   expect(mockRemoveLocalVideoTrack).toHaveBeenCalled();
-    // });
+      const { result } = renderHook(useLocalVideoToggle);
+      result.current[1]();
+      expect(mockRemoveLocalVideoTrack).toHaveBeenCalled();
+    });
 
     it('should call localParticipant.unpublishTrack when a localVideoTrack and localParticipant exists', () => {
       const mockLocalTrack = {
-        ...getMockTrack('camera-123456', 'video'),
+        ...getMockTrack('camera-123456'),
         stop: jest.fn(),
       };
 
@@ -114,26 +113,26 @@ describe('the useLocalVideoToggle hook', () => {
       });
     });
 
-    // it('should not call mockLocalParticipant.publishTrack when isPublishing is true', async () => {
-    //   const mockGetLocalVideoTrack = jest.fn(() => Promise.resolve('mockTrack'));
+    it('should not call mockLocalParticipant.publishTrack when isPublishing is true', async () => {
+      const mockGetLocalVideoTrack = jest.fn(() => Promise.resolve('mockTrack'));
 
-    //   const mockLocalParticipant = new EventEmitter() as LocalParticipant;
-    //   mockLocalParticipant.publishTrack = jest.fn();
+      const mockLocalParticipant = new EventEmitter() as LocalParticipant;
+      mockLocalParticipant.publishTrack = jest.fn();
 
-    //   mockUseVideoContext.mockImplementation(() => ({
-    //     localTracks: [],
-    //     getLocalVideoTrack: mockGetLocalVideoTrack,
-    //     room: { localParticipant: mockLocalParticipant },
-    //   }));
+      mockUseVideoContext.mockImplementation(() => ({
+        localTracks: [],
+        getLocalVideoTrack: mockGetLocalVideoTrack,
+        room: { localParticipant: mockLocalParticipant },
+      }));
 
-    //   const { result, waitForNextUpdate } = renderHook(useLocalVideoToggle);
-    //   act(() => {
-    //     result.current[1]();
-    //   });
-    //   result.current[1](); // Should be ignored because isPublishing is true
-    //   expect(mockGetLocalVideoTrack).toHaveBeenCalledTimes(1);
-    //   await waitForNextUpdate();
-    // });
+      const { result, waitForNextUpdate } = renderHook(useLocalVideoToggle);
+      act(() => {
+        result.current[1]();
+      });
+      result.current[1](); // Should be ignored because isPublishing is true
+      expect(mockGetLocalVideoTrack).toHaveBeenCalledTimes(1);
+      await waitForNextUpdate();
+    });
 
     it('should call onError when publishTrack throws an error', async () => {
       const mockGetLocalVideoTrack = jest.fn(() => Promise.resolve('mockTrack'));
@@ -156,37 +155,5 @@ describe('the useLocalVideoToggle hook', () => {
       await waitForNextUpdate();
       expect(mockOnError).toHaveBeenCalledWith('mockError');
     });
-
-    // it('should call getLocalVideoTrack with the deviceId of the previously active track', async () => {
-    //   const mockGetLocalVideoTrack = jest.fn(() => Promise.resolve('mockTrack'));
-    //   const mockLocalParticipant = new EventEmitter() as LocalParticipant;
-    //   mockUseVideoContext.mockImplementation(() => ({
-    //     localTracks: [getMockTrack('camera','video','testDeviceID')],
-    //     room: { localParticipant: mockLocalParticipant },
-    //     removeLocalVideoTrack: jest.fn(),
-    //     getLocalVideoTrack: mockGetLocalVideoTrack,
-    //   }));
-
-    //   const { result, rerender, waitForNextUpdate } = renderHook(useLocalVideoToggle);
-
-    //   // Remove existing track
-    //   result.current[1]();
-
-    //   mockUseVideoContext.mockImplementation(() => ({
-    //     localTracks: [],
-    //     room: { localParticipant: null },
-    //     removeLocalVideoTrack: jest.fn(),
-    //     getLocalVideoTrack: mockGetLocalVideoTrack,
-    //   }));
-    //   rerender();
-
-    //   await act(async () => {
-    //     // Get new video track
-    //     result.current[1]();
-    //     await waitForNextUpdate();
-    //   });
-
-    //   expect(mockGetLocalVideoTrack).toHaveBeenCalledWith({ deviceId: { exact: 'testDeviceID' } });
-    // });
   });
 });

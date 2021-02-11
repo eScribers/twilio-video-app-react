@@ -34,7 +34,7 @@ export default function App() {
     <Container style={{ height }}>
       <MenuBar />
       <Main>
-        {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview /> : <Room />}
+        {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
         <Controls />
       </Main>
       <ReconnectingNotification />

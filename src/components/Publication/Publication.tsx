@@ -15,21 +15,27 @@ import {
 interface PublicationProps {
   publication: LocalTrackPublication | RemoteTrackPublication;
   participant: Participant;
-  isLocal: boolean;
-  disableAudio?: boolean;
+  isLocalParticipant?: boolean;
+  videoOnly?: boolean;
   videoPriority?: Track.Priority | null;
 }
 
-export default function Publication({ publication, isLocal, disableAudio, videoPriority }: PublicationProps) {
+export default function Publication({ publication, isLocalParticipant, videoOnly, videoPriority }: PublicationProps) {
   const track = useTrack(publication);
 
   if (!track) return null;
 
   switch (track.kind) {
     case TRACK_TYPE.VIDEO:
-      return <VideoTrack track={track as IVideoTrack} priority={videoPriority} isLocal={isLocal} />;
+      return (
+        <VideoTrack
+          track={track as IVideoTrack}
+          priority={videoPriority}
+          isLocal={track.name.includes(TRACK_TYPE.CAMERA) && isLocalParticipant}
+        />
+      );
     case TRACK_TYPE.AUDIO:
-      return disableAudio ? null : <AudioTrack track={track as IAudioTrack} />;
+      return videoOnly ? null : <AudioTrack track={track as IAudioTrack} />;
     default:
       return null;
   }
