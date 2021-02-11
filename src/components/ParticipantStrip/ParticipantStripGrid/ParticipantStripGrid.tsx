@@ -29,6 +29,7 @@ const useStyles = makeStyles(theme => ({
 export interface ParticipantStripGridProps {
   viewMode: string;
 }
+
 export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridProps) {
   const {
     room: { localParticipant },
