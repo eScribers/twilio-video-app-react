@@ -5,7 +5,6 @@ import useVideoContext from '../useVideoContext/useVideoContext';
 
 export default function useLocalAudioToggle() {
   const { localTracks } = useVideoContext();
-  console.log(localTracks);
 
   const audioTrack = localTracks.find(track => track.kind === 'audio') as LocalAudioTrack;
   const isEnabled = useIsTrackEnabled(audioTrack);

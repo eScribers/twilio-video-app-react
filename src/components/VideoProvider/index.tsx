@@ -7,7 +7,7 @@ import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
 import useRoom from './useRoom/useRoom';
-// import useScreenShareToggle from './useScreenShareToggle/useScreenShareToggle';
+import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
 import {
   CreateLocalTrackOptions,
   ConnectOptions,
@@ -35,8 +35,9 @@ export interface IVideoContext {
   isAcquiringLocalTracks: boolean;
   removeLocalAudioTrack: () => void;
   removeLocalVideoTrack: () => void;
-  // isSharingScreen: boolean;
-  // toggleScreenShare: () => void;
+  getAudioAndVideoTracks: () => Promise<void>;
+  isSharingScreen: boolean;
+  toggleScreenShare: () => void;
 }
 
 export const VideoContext = createContext<IVideoContext>(null!);
@@ -67,6 +68,7 @@ export function VideoProvider({
     isAcquiringLocalTracks,
     removeLocalAudioTrack,
     removeLocalVideoTrack,
+    getAudioAndVideoTracks,
   } = useLocalTracks();
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
@@ -74,7 +76,7 @@ export function VideoProvider({
   useHandleRoomDisconnectionErrors(room, onError, onNotification);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
-  // const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
+  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
 
   return (
     <VideoContext.Provider
@@ -90,8 +92,9 @@ export function VideoProvider({
         isAcquiringLocalTracks,
         removeLocalAudioTrack,
         removeLocalVideoTrack,
-        // isSharingScreen,
-        // toggleScreenShare,
+        isSharingScreen,
+        toggleScreenShare,
+        getAudioAndVideoTracks,
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>

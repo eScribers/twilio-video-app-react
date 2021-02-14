@@ -7,7 +7,7 @@ import { useAppState } from '../../state';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
-  height: '90%',
+  height: 'calc(100vh - 70px)',
   display: 'grid',
   gridTemplateColumns: `${theme.sidebarWidth}px 1fr`,
   gridTemplateAreas: '". participantList"',

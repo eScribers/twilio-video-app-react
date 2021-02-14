@@ -13,6 +13,8 @@ import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import { TRACK_TYPE } from '../../utils/displayStrings';
+import { ParticipantIdentity } from 'utils/participantIdentity';
+import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -103,6 +105,7 @@ const useStyles = makeStyles((theme: Theme) =>
       margin: 0,
       display: 'flex',
       alignItems: 'center',
+      paddingRight: '20px',
     },
     infoRowBottom: {
       display: 'flex',
@@ -165,6 +168,8 @@ export default function ParticipantInfo({
   const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
+  const parsedIdentity = ParticipantIdentity.Parse(participant.identity);
+
   const classes = useStyles();
 
   return (
@@ -189,12 +194,13 @@ export default function ParticipantInfo({
           <span className={classes.identity}>
             <AudioLevelIndicator audioTrack={audioTrack} />
             <Typography variant="body1" className={classes.typeography} component="span">
-              {participant.identity}
+              {parsedIdentity.partyType} {parsedIdentity.isRegisteredUser ? '*' : null}
               {isLocalParticipant && ' (You)'}
             </Typography>
           </span>
         </div>
         <div>{isSelected && <PinIcon />}</div>
+        <ParticipantDropDown participant={participant} localParticipantType={parsedIdentity.partyType} />
       </div>
       <div className={classes.innerContainer}>
         {(!isVideoEnabled || isVideoSwitchedOff) && (

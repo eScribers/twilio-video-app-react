@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import AvatarIcon from '../../icons/AvatarIcon';
 import { makeStyles, Theme, Typography } from '@material-ui/core';
 import { LocalVideoTrack } from 'twilio-video';
@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     margin: 0,
     display: 'flex',
     alignItems: 'center',
+    paddingRight: '30px',
   },
   avatarContainer: {
     display: 'flex',
@@ -55,9 +56,15 @@ const useStyles = makeStyles((theme: Theme) => ({
 
 export default function LocalVideoPreview({ identity = 'You' }: { identity: string }) {
   const classes = useStyles();
-  const { localTracks } = useVideoContext();
-
+  const { localTracks, getAudioAndVideoTracks } = useVideoContext();
   const videoTrack = localTracks.find(track => track.name.includes('camera')) as LocalVideoTrack;
+
+  useEffect(() => {
+    getAudioAndVideoTracks().catch(error => {
+      console.log('Error acquiring local media:');
+      console.dir(error);
+    });
+  }, [getAudioAndVideoTracks]);
 
   return (
     <div className={classes.container}>

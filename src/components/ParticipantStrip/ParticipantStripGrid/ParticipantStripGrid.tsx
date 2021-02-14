@@ -38,6 +38,7 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
   const [mdState, setMdState] = useState<any>(4);
   const participants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const classes = useStyles();
 
   useEffect(() => {
     if (currViewMode !== viewMode) {
@@ -57,8 +58,6 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
       setCurrViewMode(viewMode);
     }
   }, [viewMode, currViewMode]);
-
-  const classes = useStyles();
 
   return (
     <div className={classes.root}>

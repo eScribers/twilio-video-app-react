@@ -65,7 +65,7 @@ export default function ParticipantDropDown({ localParticipantType, participant 
     }
   };
   return (
-    <div hidden={options.length === 0} style={{ float: 'right' }}>
+    <div hidden={options.length === 0} style={{ position: 'absolute', right: '0', bottom: '0' }}>
       <IconButton
         aria-label="more"
         aria-controls="long-menu"

@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Participant, Track } from 'twilio-video';
 import Publication from '../Publication/Publication';
 import usePublications from '../../hooks/usePublications/usePublications';
 import { TRACK_TYPE } from '../../utils/displayStrings';
+import { useAppState } from '../../state';
+import { VIEW_MODE, Settings } from '../../state/settings/settingsReducer';
 
 interface ParticipantTracksProps {
   participant: Participant;
@@ -28,6 +30,16 @@ export default function ParticipantTracks({
   isLocalParticipant,
 }: ParticipantTracksProps) {
   const publications = usePublications(participant);
+  const { dispatchSetting } = useAppState();
+  let somebodySharesScreen = false;
+  somebodySharesScreen = somebodySharesScreen || publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN));
+  useEffect(() => {
+    if (somebodySharesScreen)
+      dispatchSetting({
+        name: 'viewMode' as keyof Settings,
+        value: VIEW_MODE.collaboration,
+      });
+  }, [somebodySharesScreen, dispatchSetting]);
 
   let filteredPublications;
 

@@ -37,10 +37,6 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
     };
   }, [localParticipant]);
 
-  useEffect(() => {
-    toggleVideoEnabled();
-  }, []);
-
   return (
     <Tooltip title={isVideoEnabled ? 'Video off' : 'Video on'} placement="top" PopperProps={{ disablePortal: true }}>
       <Fab
