@@ -31,7 +31,7 @@ export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
   const classes = useStyles();
   const { room } = useVideoContext();
   const screenShareParticipant = useScreenShareParticipant();
-  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(room, () => {});
+  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(room, console.log);
   const disableScreenShareButton = screenShareParticipant && screenShareParticipant !== room.localParticipant;
   const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
   const isDisabled = props.disabled || disableScreenShareButton || !isScreenShareSupported;

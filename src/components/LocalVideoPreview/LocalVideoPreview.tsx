@@ -54,7 +54,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function LocalVideoPreview({ identity = 'You' }: { identity: string }) {
+export default function LocalVideoPreview({ identity }: { identity: string }) {
   const classes = useStyles();
   const { localTracks, getAudioAndVideoTracks } = useVideoContext();
   const videoTrack = localTracks.find(track => track.name.includes('camera')) as LocalVideoTrack;

@@ -6,12 +6,13 @@ import { SELECTED_AUDIO_INPUT_KEY } from '../../../../constants';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
 import useDevices from '../../../../hooks/useDevices/useDevices';
+import { TRACK_TYPE } from '../../../../utils/displayStrings';
 
 export default function AudioInputList() {
   const { audioInputDevices } = useDevices();
   const { localTracks } = useVideoContext();
 
-  const localAudioTrack = localTracks.find(track => track.kind === 'audio') as LocalAudioTrack;
+  const localAudioTrack = localTracks.find(track => track.kind === TRACK_TYPE.AUDIO) as LocalAudioTrack;
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);
   const localAudioInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 

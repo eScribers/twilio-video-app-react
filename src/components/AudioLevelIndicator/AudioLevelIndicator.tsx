@@ -36,6 +36,7 @@ function AudioLevelIndicator({
   background?: string;
 }) {
   const SIZE = size || 24;
+  const y = 14;
   const SVGRectRef = useRef<SVGRectElement>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
@@ -72,7 +73,7 @@ function AudioLevelIndicator({
       return () => {
         stopAllMediaStreamTracks();
         window.removeEventListener('focus', reinitializeAnalyser);
-        audioTrack.off('stopped', stopAllMediaStreamTracks);
+        audioTrack.off(PLAYER_STATE.stopped, stopAllMediaStreamTracks);
       };
     }
   }, [isTrackEnabled, mediaStreamTrack, audioTrack]);
@@ -92,13 +93,13 @@ function AudioLevelIndicator({
           values += sampleArray[i];
         }
 
-        const volume = Math.min(14, Math.max(0, Math.log10(values / length / 3) * 7));
+        const volume = Math.min(y, Math.max(0, Math.log10(values / length / 3) * 7));
 
-        SVGClipElement?.setAttribute('y', String(14 - volume));
+        SVGClipElement?.setAttribute('y', String(y - volume));
       }, 100);
 
       return () => {
-        SVGClipElement.setAttribute('y', '14');
+        SVGClipElement.setAttribute('y', `${y}`);
         timer.stop();
       };
     }
@@ -121,7 +122,7 @@ function AudioLevelIndicator({
         >
           <defs>
             <clipPath id={clipPathId}>
-              <rect ref={SVGRectRef} x="0" y="14" width="24" height="24" />
+              <rect ref={SVGRectRef} x="0" y={y} width="24" height="24" />
             </clipPath>
           </defs>
           <g fill="none" fillRule="evenodd" transform="translate(.5)">
