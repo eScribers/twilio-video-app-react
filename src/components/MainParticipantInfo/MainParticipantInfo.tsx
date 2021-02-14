@@ -38,7 +38,7 @@ const useStyles = makeStyles({
   },
   infoContainer: {
     position: 'absolute',
-    zIndex: 2,
+    zIndex: 1,
     height: '100%',
     padding: '0.4em',
     width: '100%',
