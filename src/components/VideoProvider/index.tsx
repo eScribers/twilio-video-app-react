@@ -35,9 +35,9 @@ export interface IVideoContext {
   isAcquiringLocalTracks: boolean;
   removeLocalAudioTrack: () => void;
   removeLocalVideoTrack: () => void;
-  getAudioAndVideoTracks: () => Promise<void>;
   isSharingScreen: boolean;
   toggleScreenShare: () => void;
+  getAudioAndVideoTracks: () => Promise<void>;
 }
 
 export const VideoContext = createContext<IVideoContext>(null!);
@@ -73,7 +73,7 @@ export function VideoProvider({
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
   // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionErrors(room, onError, onNotification);
+  useHandleRoomDisconnectionErrors(room, onError);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
   const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);

@@ -2,29 +2,28 @@ import React from 'react';
 import ParticipantTracks from './ParticipantTracks';
 import { shallow } from 'enzyme';
 import usePublications from '../../hooks/usePublications/usePublications';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { useAppState } from '../../state';
 
+jest.mock('../../state');
 jest.mock('../../hooks/usePublications/usePublications', () =>
   jest.fn(() => [
     { trackSid: 0, kind: 'video', trackName: '' },
     { trackSid: 1, kind: 'audio', trackName: '' },
   ])
 );
-jest.mock('../../hooks/useVideoContext/useVideoContext');
 
 const mockUsePublications = usePublications as jest.Mock<any>;
-const mockUseVideoContext = useVideoContext as jest.Mock<any>;
+const mockUseAppState = useAppState as jest.Mock<any>;
+mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the ParticipantTracks component', () => {
   it('should render an array of publications', () => {
-    mockUseVideoContext.mockImplementation(() => ({ room: {} }));
     const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} />);
     expect(usePublications).toHaveBeenCalledWith('mockParticipant');
     expect(wrapper).toMatchSnapshot();
   });
 
   it('should filter out any screen share publications', () => {
-    mockUseVideoContext.mockImplementation(() => ({ room: {} }));
     mockUsePublications.mockImplementation(() => [
       { trackName: 'screen', trackSid: 0, kind: 'video' },
       { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
@@ -41,7 +40,6 @@ describe('the ParticipantTracks component', () => {
 
   describe('with enableScreenShare prop', () => {
     it('should filter out camera publications when a screen share publication is present', () => {
-      mockUseVideoContext.mockImplementation(() => ({ room: {} }));
       mockUsePublications.mockImplementation(() => [
         { trackName: 'screen', trackSid: 0, kind: 'video' },
         { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
@@ -58,7 +56,6 @@ describe('the ParticipantTracks component', () => {
 
     it('should render camera publications when a screen share publication is absent', () => {
       mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456', trackSid: 1, kind: 'video' }]);
-      mockUseVideoContext.mockImplementation(() => ({ room: {} }));
       const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />);
       expect(wrapper.find('Publication').length).toBe(1);
       expect(

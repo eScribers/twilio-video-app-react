@@ -20,7 +20,7 @@ describe('the ParticipantInfo component', () => {
   it('should render the AvatarIcon component when no video tracks are published', () => {
     mockUsePublications.mockImplementation(() => []);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -30,7 +30,7 @@ describe('the ParticipantInfo component', () => {
   it('should not display the AvatarIcon component when a video track is published', () => {
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -41,7 +41,7 @@ describe('the ParticipantInfo component', () => {
     mockUseIsTrackSwitchedOff.mockImplementation(() => true);
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -52,7 +52,7 @@ describe('the ParticipantInfo component', () => {
     mockUseParticipantIsReconnecting.mockImplementationOnce(() => false);
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -63,7 +63,7 @@ describe('the ParticipantInfo component', () => {
     mockUseParticipantIsReconnecting.mockImplementationOnce(() => true);
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -75,7 +75,7 @@ describe('the ParticipantInfo component', () => {
       <ParticipantInfo
         onClick={() => {}}
         isSelected={false}
-        participant={{ identity: 'mockIdentity' } as any}
+        participant={{ identity: '@mockIdentity' } as any}
         hideParticipant={true}
       >
         mock children
@@ -89,7 +89,7 @@ describe('the ParticipantInfo component', () => {
       <ParticipantInfo
         onClick={() => {}}
         isSelected={false}
-        participant={{ identity: 'mockIdentity' } as any}
+        participant={{ identity: '@mockIdentity' } as any}
         hideParticipant={false}
       >
         mock children
@@ -100,7 +100,7 @@ describe('the ParticipantInfo component', () => {
 
   it('should add cursorPointer class to container component when onClick prop is present', () => {
     const wrapper = shallow(
-      <ParticipantInfo isSelected={false} participant={{ identity: 'mockIdentity' } as any} onClick={() => {}}>
+      <ParticipantInfo isSelected={false} participant={{ identity: '@mockIdentity' } as any} onClick={() => {}}>
         mock children
       </ParticipantInfo>
     );
@@ -109,7 +109,7 @@ describe('the ParticipantInfo component', () => {
 
   it('should not add cursorPointer class to container component when onClick prop is not present', () => {
     const wrapper = shallow(
-      <ParticipantInfo isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -119,7 +119,7 @@ describe('the ParticipantInfo component', () => {
   it('should render the PinIcon component when the participant is selected', () => {
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={true} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={true} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -129,7 +129,7 @@ describe('the ParticipantInfo component', () => {
   it('should not render the PinIcon component when the participant is not selected', () => {
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );
@@ -143,7 +143,7 @@ describe('the ParticipantInfo component', () => {
       <ParticipantInfo
         onClick={() => {}}
         isSelected={false}
-        participant={{ identity: 'mockIdentity' } as any}
+        participant={{ identity: '@mockIdentity' } as any}
         isLocalParticipant
       >
         mock children
@@ -156,7 +156,7 @@ describe('the ParticipantInfo component', () => {
     mockUseIsTrackSwitchedOff.mockImplementation(() => false);
     mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
     const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: 'mockIdentity' } as any}>
+      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
         mock children
       </ParticipantInfo>
     );

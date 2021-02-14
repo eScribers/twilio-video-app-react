@@ -13,7 +13,7 @@ import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import { ParticipantIdentity } from 'utils/participantIdentity';
+import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -194,7 +194,8 @@ export default function ParticipantInfo({
           <span className={classes.identity}>
             <AudioLevelIndicator audioTrack={audioTrack} />
             <Typography variant="body1" className={classes.typeography} component="span">
-              {parsedIdentity.partyType} {parsedIdentity.isRegisteredUser ? '*' : null}
+              {parsedIdentity.partyType}
+              {parsedIdentity.isRegisteredUser ? ' *' : null}
               {isLocalParticipant && ' (You)'}
             </Typography>
           </span>

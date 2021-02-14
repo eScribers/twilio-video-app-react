@@ -4,17 +4,9 @@ export default function useDevices() {
   const [devices, setDevices] = useState<MediaDeviceInfo[]>([]);
 
   useEffect(() => {
-    const getDevices = async () => {
-      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      let devices = await navigator.mediaDevices.enumerateDevices();
-      setDevices(devices);
-    };
+    const getDevices = () => navigator.mediaDevices.enumerateDevices().then(devices => setDevices(devices));
     navigator.mediaDevices.addEventListener('devicechange', getDevices);
-    try {
-      getDevices();
-    } catch (err) {
-      console.error("Couldn't fetch devices");
-    }
+    getDevices();
 
     return () => {
       navigator.mediaDevices.removeEventListener('devicechange', getDevices);
