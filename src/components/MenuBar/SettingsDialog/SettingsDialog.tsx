@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: Theme) =>
         width: 'calc(100vw - 32px)',
       },
       '& .inputSelect': {
-        width: 'calc(100% - 35px)',
+        width: 'calc(100%)',
       },
     },
     button: {

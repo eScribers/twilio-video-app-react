@@ -39,13 +39,13 @@ context('Startup', () => {
     cy.get('p').contains('The username/password is incorrect.').should('be.visible');
   })
 
-  it('should fill login form and get error of "The case number you entered is invalid. Please re-enter your case number."', () => {
+  it('should fill login form and get error of "The case number you entered is invalid or the conference has been cancelled. Please re-enter your case number."', () => {
     let userName = Cypress.env('LOGIN_HO_USERNAME');
     let userPass = Cypress.env('LOGIN_HO_PASSWORD');
     let caseRef = generateNumber(3);
     cy.loginAsHearingOfficer(caseRef, userName, userPass);
     cy.url().should('include', `${loginUrlPath}/login/-1?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
-    cy.get('p').contains('The case number you entered is invalid. Please re-enter your case number.').should('be.visible');
+    cy.get('p').contains('The case number you entered is invalid or the conference has been cancelled. Please re-enter your case number.').should('be.visible');
   })
 
   it('should fill login form and redirect to twilio video app', () => {

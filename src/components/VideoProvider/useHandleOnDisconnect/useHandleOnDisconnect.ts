@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Room } from 'twilio-video';
 import { ROOM_STATE } from '../../../utils/displayStrings';
 import { ParticipantIdentity } from '../../../utils/participantIdentity';
+
 export default function useHandleOnDisconnect(room: Room, onDisconnect: (isRegistered?: boolean) => void) {
   let isRegisteredUser = false;
   if (room?.localParticipant?.identity)

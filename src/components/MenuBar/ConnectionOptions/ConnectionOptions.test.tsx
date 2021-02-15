@@ -24,8 +24,8 @@ describe('the ConnectionOptions component', () => {
     wrapper
       .find(Select)
       .find({ name: 'viewMode' })
-      .simulate('change', { target: { value: 'grid 2X2', name: 'viewMode' } });
-    expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'grid 2X2', name: 'viewMode' });
+      .simulate('change', { target: { value: 'grid 2 column', name: 'viewMode' } });
+    expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'grid 2 column', name: 'viewMode' });
   });
 
   it('when select advance setting, it shows advanced settings.', () => {

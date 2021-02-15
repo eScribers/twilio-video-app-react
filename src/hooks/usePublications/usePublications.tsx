@@ -8,7 +8,7 @@ export default function usePublications(participant: Participant) {
 
   useEffect(() => {
     // Reset the publications when the 'participant' variable changes.
-    setPublications(Array.from(participant.tracks.values()) as TrackPublication[]);
+    setPublications(getPublications(participant));
 
     const publicationAdded = (publication: TrackPublication) =>
       setPublications(prevPublications => [...prevPublications, publication]);
@@ -25,3 +25,7 @@ export default function usePublications(participant: Participant) {
 
   return publications;
 }
+
+export const getPublications = (participant: Participant) => {
+  return Array.from(participant.tracks.values()) as TrackPublication[];
+};

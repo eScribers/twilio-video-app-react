@@ -27,17 +27,17 @@ exports[`the ConnectionOptions component when connected to a room should render 
           value="default_grid"
         >
           <WithStyles(ForwardRef(MenuItem))
-            value="grid 2X2"
+            value="grid 2 column"
           >
             2 Column
           </WithStyles(ForwardRef(MenuItem))>
           <WithStyles(ForwardRef(MenuItem))
-            value="grid 3X3"
+            value="grid 3 column"
           >
             3 Column
           </WithStyles(ForwardRef(MenuItem))>
           <WithStyles(ForwardRef(MenuItem))
-            value="grid 4X4"
+            value="grid 4 column"
           >
             4 Column
           </WithStyles(ForwardRef(MenuItem))>
@@ -45,6 +45,11 @@ exports[`the ConnectionOptions component when connected to a room should render 
             value="collaboration"
           >
             Collaboration
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="default_grid"
+          >
+            Default
           </WithStyles(ForwardRef(MenuItem))>
         </WithStyles(ForwardRef(Select))>
       </WithStyles(ForwardRef(FormControl))>
@@ -479,17 +484,17 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           value="default_grid"
         >
           <WithStyles(ForwardRef(MenuItem))
-            value="grid 2X2"
+            value="grid 2 column"
           >
             2 Column
           </WithStyles(ForwardRef(MenuItem))>
           <WithStyles(ForwardRef(MenuItem))
-            value="grid 3X3"
+            value="grid 3 column"
           >
             3 Column
           </WithStyles(ForwardRef(MenuItem))>
           <WithStyles(ForwardRef(MenuItem))
-            value="grid 4X4"
+            value="grid 4 column"
           >
             4 Column
           </WithStyles(ForwardRef(MenuItem))>
@@ -497,6 +502,11 @@ exports[`the ConnectionOptions component when not connected to a room should ren
             value="collaboration"
           >
             Collaboration
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
+            value="default_grid"
+          >
+            Default
           </WithStyles(ForwardRef(MenuItem))>
         </WithStyles(ForwardRef(Select))>
       </WithStyles(ForwardRef(FormControl))>

@@ -29,33 +29,36 @@ const useStyles = makeStyles(theme => ({
 export interface ParticipantStripGridProps {
   viewMode: string;
 }
+
 export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridProps) {
   const {
     room: { localParticipant },
   } = useVideoContext();
   const [currViewMode, setCurrViewMode] = useState('');
-  const [lgState, setLgState] = useState<any>(4);
-  const [mdState, setMdState] = useState<any>(3);
+  const [lgState, setLgState] = useState<any>(3);
+  const [mdState, setMdState] = useState<any>(4);
   const participants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const classes = useStyles();
 
   useEffect(() => {
     if (currViewMode !== viewMode) {
-      if (viewMode.includes('2X2')) {
+      if (viewMode.includes('2 column')) {
         setMdState(6);
         setLgState(6);
-      } else if (viewMode.includes('3X3')) {
+      } else if (viewMode.includes('3 column')) {
         setMdState(4);
         setLgState(4);
-      } else if (viewMode.includes('4X4')) {
+      } else if (viewMode.includes('4 column')) {
         setMdState(3);
+        setLgState(3);
+      } else {
+        setMdState(4);
         setLgState(3);
       }
       setCurrViewMode(viewMode);
     }
   }, [viewMode, currViewMode]);
-
-  const classes = useStyles();
 
   return (
     <div className={classes.root}>

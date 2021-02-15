@@ -12,6 +12,7 @@ describe('the generateConnectionOptions function', () => {
       renderDimensionLow: undefined,
       renderDimensionStandard: undefined,
       renderDimensionHigh: undefined,
+      bandwidthProfileMode: undefined,
     };
 
     const result = {
@@ -40,6 +41,7 @@ describe('the generateConnectionOptions function', () => {
       renderDimensionLow: 'low',
       renderDimensionStandard: '960p',
       renderDimensionHigh: 'wide1080p',
+      bandwidthProfileMode: 'collaboration',
     };
 
     const result = {
