@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AudioTrack, LocalAudioTrack, RemoteAudioTrack } from 'twilio-video';
+import { AudioTrack, LocalAudioTrack, Participant, RemoteAudioTrack } from 'twilio-video';
 import { interval } from 'd3-timer';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
@@ -7,6 +7,10 @@ import { PLAYER_STATE } from '../../utils/displayStrings';
 import { IconButton } from '@material-ui/core';
 import useLocalAudioToggle from '../../hooks/useLocalAudioToggle/useLocalAudioToggle';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
+import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { ParticipantIdentity } from '../../utils/participantIdentity';
+import { getParticipantOptions } from '../../components/ParticipantInfo/ParticipantDropDown/ParticipantDropDown';
+import useParticipant from '../../hooks/useParticipant/useParticipant';
 
 let clipId = 0;
 const getUniqueClipId = () => clipId++;
@@ -30,11 +34,13 @@ export function initializeAnalyser(stream: MediaStream) {
 function AudioLevelIndicator({
   size,
   audioTrack,
+  participant,
   background = 'white',
 }: {
   size?: number;
   audioTrack?: AudioTrack;
   background?: string;
+  participant?: Participant;
 }) {
   const SIZE = size || 24;
   const y = 14;
@@ -44,6 +50,14 @@ function AudioLevelIndicator({
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
   let [, toggleAudioEnabled] = useLocalAudioToggle();
   const { isHostIn } = useIsHostIn();
+  const {
+    room: { localParticipant },
+  } = useVideoContext();
+  const participantCommands = useParticipant();
+  const localParticipantType: string = !localParticipant
+    ? ''
+    : ParticipantIdentity.Parse(localParticipant.identity).partyType;
+  const participantOptions = participant ? getParticipantOptions(participant, localParticipantType) : [];
 
   useEffect(() => {
     if (audioTrack && mediaStreamTrack && isTrackEnabled) {
@@ -110,8 +124,18 @@ function AudioLevelIndicator({
   // Each instance of this component will need a unique HTML ID
   const clipPathId = `audio-level-clip-${getUniqueClipId()}`;
 
+  const muteParticipant = e => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (participantOptions.includes('Mute') && participant) {
+      participantCommands.muteParticipant(participant);
+    } else toggleAudioEnabled();
+  };
+
+  const canMute = participantOptions.includes('Mute') || localParticipant === participant;
+
   return (
-    <IconButton onClick={toggleAudioEnabled} disabled={!isHostIn}>
+    <IconButton onClick={muteParticipant} disabled={!isHostIn || !canMute}>
       {' '}
       {isTrackEnabled ? (
         <svg

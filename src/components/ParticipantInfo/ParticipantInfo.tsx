@@ -198,7 +198,7 @@ export default function ParticipantInfo({
             </span>
           )}
           <span className={classes.identity}>
-            <AudioLevelIndicator audioTrack={audioTrack} />
+            <AudioLevelIndicator audioTrack={audioTrack} participant={participant} />
             <Typography variant="body1" className={classes.typeography} component="span">
               {parsedIdentity.partyType}
               {parsedIdentity.isRegisteredUser ? ' *' : null}

@@ -16,8 +16,7 @@ const [REMOVE, MUTE] = ['Remove', 'Mute'];
 const ITEM_HEIGHT = 48;
 
 export default function ParticipantDropDown({ localParticipantType, participant }: any) {
-  const options = getOption(participant, localParticipantType);
-  console.log(options, participant, localParticipantType);
+  const options = getParticipantOptions(participant, localParticipantType);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const participantCommands = useParticipant();
 
@@ -36,7 +35,7 @@ export default function ParticipantDropDown({ localParticipantType, participant 
   };
 
   return (
-    <div hidden={options.length === 0} style={{ position: 'absolute', right: '0', bottom: '0' }}>
+    <div hidden={options.length === 0} style={{ position: 'absolute', right: '0', bottom: '10px' }}>
       <IconButton
         aria-label="more"
         aria-controls="long-menu"
@@ -71,7 +70,7 @@ export default function ParticipantDropDown({ localParticipantType, participant 
   );
 }
 
-const getOption = (participant, localParticipantType) => {
+export const getParticipantOptions = (participant: Participant, localParticipantType: string) => {
   let options: string[] = [];
   let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
   if (localParticipantType === remoteParticipantPartyType) return options;
