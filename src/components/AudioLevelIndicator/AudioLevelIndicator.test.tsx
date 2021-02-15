@@ -4,13 +4,18 @@ import AudioLevelIndicator from './AudioLevelIndicator';
 import MicOff from '@material-ui/icons/MicOff';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { useAppState } from '../../state';
 
 jest.mock('../../hooks/useIsTrackEnabled/useIsTrackEnabled');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
+jest.mock('../../state');
 
 // @ts-ignore
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 const mockUseIsTrackEnabled = useIsTrackEnabled as jest.Mock<boolean>;
+const mockUseAppState = useAppState as jest.Mock<any>;
+
+mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the AudioLevelIndicator component', () => {
   describe('when the audioTrack is not enabled', () => {

@@ -15,7 +15,7 @@ import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecti
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
-import useVideoContext from 'hooks/useVideoContext/useVideoContext';
+import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -160,7 +160,9 @@ export default function ParticipantInfo({
     room: { localParticipant },
   } = useVideoContext();
 
-  const localParticipantType: string = ParticipantIdentity.Parse(localParticipant.identity).partyType;
+  const localParticipantType: string = !localParticipant
+    ? ''
+    : ParticipantIdentity.Parse(localParticipant.identity).partyType;
 
   const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
   const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA));
