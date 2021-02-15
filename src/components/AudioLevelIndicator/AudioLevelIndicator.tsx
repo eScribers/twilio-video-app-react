@@ -6,6 +6,7 @@ import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamT
 import { PLAYER_STATE } from '../../utils/displayStrings';
 import { IconButton } from '@material-ui/core';
 import useLocalAudioToggle from '../../hooks/useLocalAudioToggle/useLocalAudioToggle';
+import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 
 let clipId = 0;
 const getUniqueClipId = () => clipId++;
@@ -42,6 +43,7 @@ function AudioLevelIndicator({
   const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
   let [, toggleAudioEnabled] = useLocalAudioToggle();
+  const { isHostIn } = useIsHostIn();
 
   useEffect(() => {
     if (audioTrack && mediaStreamTrack && isTrackEnabled) {
@@ -109,7 +111,7 @@ function AudioLevelIndicator({
   const clipPathId = `audio-level-clip-${getUniqueClipId()}`;
 
   return (
-    <IconButton onClick={toggleAudioEnabled}>
+    <IconButton onClick={toggleAudioEnabled} disabled={!isHostIn}>
       {' '}
       {isTrackEnabled ? (
         <svg

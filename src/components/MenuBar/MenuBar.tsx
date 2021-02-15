@@ -154,27 +154,6 @@ export default function MenuBar() {
   };
 
   const audioTrack = localTracks.find(x => x.kind === TRACK_TYPE.AUDIO);
-  // const videoTrack = localTracks.find(x => x.kind === TRACK_TYPE.VIDEO);
-
-  // let selectedAudioDevice = { label: '', deviceId: '', groupdId: '' };
-  // let selectedVideoDevice = { label: '', deviceId: '', groupdId: '' };
-
-  // if (audioTrack) {
-  //   selectedAudioDevice = {
-  //     label: audioTrack.mediaStreamTrack.label,
-  //     deviceId: audioTrack.mediaStreamTrack.getSettings().deviceId as string,
-  //     groupdId: audioTrack.mediaStreamTrack.getSettings().groupId as string,
-  //   };
-  // }
-
-  // if (videoTrack) {
-  //   selectedVideoDevice = {
-  //     label: videoTrack.mediaStreamTrack.label,
-  //     deviceId: videoTrack.mediaStreamTrack.getSettings().deviceId as string,
-  //     groupdId: videoTrack.mediaStreamTrack.getSettings().groupId as string,
-  //   };
-  // }
-
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
