@@ -1,15 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Participant, Track } from 'twilio-video';
 import Publication from '../Publication/Publication';
 import usePublications from '../../hooks/usePublications/usePublications';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { TRACK_TYPE } from '../../utils/displayStrings';
+import { useAppState } from '../../state';
+import { VIEW_MODE, Settings } from '../../state/settings/settingsReducer';
 
 interface ParticipantTracksProps {
   participant: Participant;
-  disableAudio?: boolean;
+  videoOnly?: boolean;
   enableScreenShare?: boolean;
   videoPriority?: Track.Priority | null;
+  isLocalParticipant?: boolean;
 }
 
 /*
@@ -22,13 +24,23 @@ interface ParticipantTracksProps {
 
 export default function ParticipantTracks({
   participant,
-  disableAudio,
+  videoOnly,
   enableScreenShare,
   videoPriority,
+  isLocalParticipant,
 }: ParticipantTracksProps) {
-  const { room } = useVideoContext();
   const publications = usePublications(participant);
-  const isLocal = participant === room.localParticipant;
+  const { dispatchSetting } = useAppState();
+  let somebodySharesScreen = false;
+  somebodySharesScreen = somebodySharesScreen || publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN));
+  useEffect(() => {
+    if (somebodySharesScreen)
+      dispatchSetting({
+        name: 'viewMode' as keyof Settings,
+        value: VIEW_MODE.collaboration,
+      });
+  }, [somebodySharesScreen, dispatchSetting]);
+
   let filteredPublications;
 
   if (enableScreenShare && publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN))) {
@@ -44,8 +56,8 @@ export default function ParticipantTracks({
           key={publication.kind}
           publication={publication}
           participant={participant}
-          isLocal={isLocal}
-          disableAudio={disableAudio}
+          isLocalParticipant={isLocalParticipant}
+          videoOnly={videoOnly}
           videoPriority={videoPriority}
         />
       ))}

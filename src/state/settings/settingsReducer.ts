@@ -6,6 +6,7 @@ export interface Settings {
   trackSwitchOffMode: VideoBandwidthProfileOptions['trackSwitchOffMode'];
   dominantSpeakerPriority?: Track.Priority;
   viewMode: string;
+  bandwidthProfileMode: VideoBandwidthProfileOptions['mode'];
   maxTracks: string;
   maxAudioBitrate: string;
   renderDimensionLow?: RenderDimensionValue;
@@ -37,6 +38,7 @@ export const initialSettings: Settings = {
   trackSwitchOffMode: undefined,
   dominantSpeakerPriority: 'standard',
   viewMode: VIEW_MODE.default,
+  bandwidthProfileMode: 'collaboration',
   maxTracks: isMobile ? '5' : '10',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
