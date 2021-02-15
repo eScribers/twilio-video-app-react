@@ -4,7 +4,11 @@ import ParticipantStripCollaboration from './ParticipantStripCollaboration';
 import { shallow } from 'enzyme';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { useAppState } from '../../../state';
+const mockUseAppState = useAppState as jest.Mock<any>;
 
+mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
+jest.mock('../../../state');
 jest.mock('../../../hooks/useVideoContext/useVideoContext');
 jest.mock('../../VideoProvider/useSelectedParticipant/useSelectedParticipant');
 const mockedVideoContext = useVideoContext as jest.Mock<any>;

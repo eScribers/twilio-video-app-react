@@ -12,34 +12,11 @@ interface ParticipantDropDownProps {
   participant: Participant;
 }
 
-const REMOVE = 'Remove';
-const MUTE = 'Mute';
+const [REMOVE, MUTE] = ['Remove', 'Mute'];
 const ITEM_HEIGHT = 48;
 
 export default function ParticipantDropDown({ localParticipantType, participant }: any) {
-  const initOption = () => {
-    let options: string[] = [];
-    let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
-    if (localParticipantType === remoteParticipantPartyType) return options;
-    if (
-      roleChecker.doesRoleHavePermission(
-        ROLE_PERMISSIONS.MUTE_PARTICIPANT,
-        localParticipantType,
-        remoteParticipantPartyType
-      )
-    )
-      options.push(MUTE);
-    if (
-      roleChecker.doesRoleHavePermission(
-        ROLE_PERMISSIONS.REMOVE_PARTICIPANT,
-        localParticipantType,
-        remoteParticipantPartyType
-      )
-    )
-      options.push(REMOVE);
-    return options;
-  };
-  const options = initOption();
+  const options = getParticipantOptions(participant, localParticipantType);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const participantCommands = useParticipant();
 
@@ -51,21 +28,14 @@ export default function ParticipantDropDown({ localParticipantType, participant 
   const handleClose = (event, option) => {
     event.stopPropagation();
     setAnchorEl(null);
-    console.log('user chose option: ' + option);
 
-    if (option === MUTE) {
-      console.log(participant.sid);
-      console.log('attempting to mute now');
-      participantCommands.muteParticipant(participant);
-    }
+    if (option === MUTE) participantCommands.muteParticipant(participant);
 
-    if (option === REMOVE) {
-      console.log(participant.sid);
-      participantCommands.removeParticipant(participant);
-    }
+    if (option === REMOVE) participantCommands.removeParticipant(participant);
   };
+
   return (
-    <div hidden={options.length === 0} style={{ position: 'absolute', right: '0', bottom: '0' }}>
+    <div hidden={options.length === 0} style={{ position: 'absolute', right: '0', bottom: '10px' }}>
       <IconButton
         aria-label="more"
         aria-controls="long-menu"
@@ -99,3 +69,24 @@ export default function ParticipantDropDown({ localParticipantType, participant 
     </div>
   );
 }
+
+export const getParticipantOptions = (participant: Participant, localParticipantType: string) => {
+  let options: string[] = [];
+  let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
+  if (localParticipantType === remoteParticipantPartyType) return options;
+
+  const canMute = roleChecker.doesRoleHavePermission(
+    ROLE_PERMISSIONS.MUTE_PARTICIPANT,
+    localParticipantType,
+    remoteParticipantPartyType
+  );
+  const canRemove = roleChecker.doesRoleHavePermission(
+    ROLE_PERMISSIONS.REMOVE_PARTICIPANT,
+    localParticipantType,
+    remoteParticipantPartyType
+  );
+
+  if (canMute) options.push(MUTE);
+  if (canRemove) options.push(REMOVE);
+  return options;
+};
