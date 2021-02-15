@@ -15,6 +15,7 @@ import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecti
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
+import useVideoContext from 'hooks/useVideoContext/useVideoContext';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -155,6 +156,11 @@ export default function ParticipantInfo({
   hideParticipant,
 }: ParticipantInfoProps) {
   const publications = usePublications(participant);
+  const {
+    room: { localParticipant },
+  } = useVideoContext();
+
+  const localParticipantType: string = ParticipantIdentity.Parse(localParticipant.identity).partyType;
 
   const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
   const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA));
@@ -201,7 +207,7 @@ export default function ParticipantInfo({
           </span>
         </div>
         <div>{isSelected && <PinIcon />}</div>
-        <ParticipantDropDown participant={participant} localParticipantType={parsedIdentity.partyType} />
+        <ParticipantDropDown participant={participant} localParticipantType={localParticipantType} />
       </div>
       <div className={classes.innerContainer}>
         {(!isVideoEnabled || isVideoSwitchedOff) && (
