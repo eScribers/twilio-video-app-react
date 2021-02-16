@@ -109,6 +109,7 @@ export default function MenuBar() {
       else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
+      return;
     }
 
     if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
