@@ -57,7 +57,9 @@ function AudioLevelIndicator({
   const localParticipantType: string = !localParticipant
     ? ''
     : ParticipantIdentity.Parse(localParticipant.identity).partyType;
-  const participantOptions = participant ? getParticipantOptions(participant, localParticipantType) : [];
+  const participantOptions = participant
+    ? getParticipantOptions(participant, localParticipantType, !isTrackEnabled)
+    : [];
 
   useEffect(() => {
     if (audioTrack && mediaStreamTrack && isTrackEnabled) {
