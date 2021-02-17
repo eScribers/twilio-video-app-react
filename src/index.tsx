@@ -16,9 +16,10 @@ import theme from './theme';
 import App from './App';
 import { detectBrowser } from './utils/index';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
+import useConnectionOptions from './utils/useConnectionOptions/useConnectionOptions';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
 
-const options = {
+const alertProviderOptions = {
   // you can also just use 'bottom center'
   position: positions.BOTTOM_CENTER,
   timeout: 10000,
@@ -27,24 +28,6 @@ const options = {
   transition: transitions.SCALE,
 };
 
-const connectionOptions = {
-  bandwidthProfile: {
-    video: {
-      mode: 'grid',
-      maxTracks: 10,
-      dominantSpeakerPriority: 'standard',
-      renderDimensions: {
-        high: { height: 1080, width: 1920 },
-        standard: { height: 720, width: 1280 },
-        low: { height: 90, width: 160 },
-      },
-    },
-  },
-  dominantSpeaker: false,
-  maxAudioBitrate: 12000,
-  networkQuality: { local: 1, remote: 1 },
-  preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
-};
 const logger: LogglyTracker = new LogglyTracker();
 const VideoApp = () => {
   const {
@@ -57,7 +40,7 @@ const VideoApp = () => {
     setWaitingNotification,
     waitingNotification,
   } = useAppState();
-
+  const connectionOptions = useConnectionOptions();
   useEffect(() => {
     logger.push({
       logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
@@ -105,7 +88,7 @@ ReactDOM.render(
       <AppStateProvider>
         <Switch>
           <Route exact path="/">
-            <AlertProvider template={AlertTemplate} {...options}>
+            <AlertProvider template={AlertTemplate} {...alertProviderOptions}>
               <VideoApp />
             </AlertProvider>
           </Route>

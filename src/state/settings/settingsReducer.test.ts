@@ -5,7 +5,6 @@ describe('the settingsReducer', () => {
   it('should set a setting from the name/value pair provided', () => {
     const result = settingsReducer(initialSettings, { name: 'renderDimensionHigh', value: 'test' });
     expect(result).toEqual({
-      viewMode: 'default_grid',
       bandwidthProfileMode: 'collaboration',
       dominantSpeakerPriority: 'standard',
       maxAudioBitrate: '16000',
@@ -13,6 +12,7 @@ describe('the settingsReducer', () => {
       renderDimensionHigh: 'test',
       renderDimensionLow: 'low',
       renderDimensionStandard: '960p',
+      viewMode: 'default_grid',
       trackSwitchOffMode: undefined,
     });
   });
@@ -20,7 +20,6 @@ describe('the settingsReducer', () => {
   it('should set undefined when the value is "default"', () => {
     const result = settingsReducer(initialSettings, { name: 'bandwidthProfileMode', value: 'default' });
     expect(result).toEqual({
-      viewMode: 'default_grid',
       bandwidthProfileMode: undefined,
       dominantSpeakerPriority: 'standard',
       maxAudioBitrate: '16000',
@@ -28,6 +27,7 @@ describe('the settingsReducer', () => {
       renderDimensionHigh: 'wide1080p',
       renderDimensionLow: 'low',
       renderDimensionStandard: '960p',
+      viewMode: 'default_grid',
       trackSwitchOffMode: undefined,
     });
   });
