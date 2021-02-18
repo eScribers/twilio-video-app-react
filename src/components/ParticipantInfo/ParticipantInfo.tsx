@@ -16,6 +16,7 @@ import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { ParticipantNameTag } from '../ParticipantNameTag/ParticipantNameTag';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -176,8 +177,6 @@ export default function ParticipantInfo({
   const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
-  const parsedIdentity = ParticipantIdentity.Parse(participant.identity);
-
   const classes = useStyles();
 
   return (
@@ -201,11 +200,7 @@ export default function ParticipantInfo({
           )}
           <span className={classes.identity}>
             <AudioLevelIndicator audioTrack={audioTrack} participant={participant} />
-            <Typography variant="body1" className={classes.typeography} component="span">
-              {parsedIdentity.partyType}
-              {parsedIdentity.isRegisteredUser ? ' *' : null}
-              {isLocalParticipant && ' (You)'}
-            </Typography>
+            <ParticipantNameTag participant={participant} />
           </span>
         </div>
         <div>{isSelected && <PinIcon />}</div>
