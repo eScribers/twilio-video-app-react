@@ -145,31 +145,4 @@ describe('the ParticipantInfo component', () => {
     );
     expect(wrapper.exists(PinIcon)).toBe(false);
   });
-
-  it('should add "(You)" to the participants identity when they are the localParticipant', () => {
-    mockUseIsTrackSwitchedOff.mockImplementation(() => false);
-    mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
-    const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={false}
-        participant={{ identity: '@mockIdentity' } as any}
-        isLocalParticipant
-      >
-        mock children
-      </ParticipantInfo>
-    );
-    expect(wrapper.text()).toContain('mockIdentity (You)');
-  });
-
-  it('should not add "(You)" to the participants identity when they are the localParticipant', () => {
-    mockUseIsTrackSwitchedOff.mockImplementation(() => false);
-    mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
-    const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
-        mock children
-      </ParticipantInfo>
-    );
-    expect(wrapper.text()).not.toContain('mockIdentity (You)');
-  });
 });
