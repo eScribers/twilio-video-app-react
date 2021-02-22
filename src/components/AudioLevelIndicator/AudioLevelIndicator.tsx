@@ -48,7 +48,7 @@ function AudioLevelIndicator({
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
-  let [, toggleAudioEnabled] = useLocalAudioToggle();
+  const [, toggleAudioEnabled] = useLocalAudioToggle();
   const { isHostIn } = useIsHostIn();
   const {
     room: { localParticipant },
