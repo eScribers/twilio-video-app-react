@@ -19,7 +19,7 @@ export default function useLocalAudioToggle() {
       console.log('No audio track discovered');
       setNotification({ message: NOTIFICATION_MESSAGE.CANNOT_RECORD_AUDIO });
     }
-  }, [audioTrack]);
+  }, [audioTrack, setNotification]);
 
   return [isEnabled, toggleAudioEnabled] as const;
 }
