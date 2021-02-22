@@ -17,19 +17,18 @@ export default function useIsHostIn() {
   }, [room]);
 
   useEffect(() => {
-    const participantConnected = (participant: RemoteParticipant) => {
+    const participantStatusChanged = (participant: RemoteParticipant) => {
       if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
         setReporterIn(checkIsReporterIn(room));
         setIsHostIn(checkIsHostIn(room));
       }
     };
-    const participantDisconnected = participantConnected;
 
-    room.on('participantConnected', participantConnected);
-    room.on('participantDisconnected', participantDisconnected);
+    room.on('participantConnected', participantStatusChanged);
+    room.on('participantDisconnected', participantStatusChanged);
     return () => {
-      room.off('participantConnected', participantConnected);
-      room.off('participantDisconnected', participantDisconnected);
+      room.off('participantConnected', participantStatusChanged);
+      room.off('participantDisconnected', participantStatusChanged);
     };
   }, [room]);
 
