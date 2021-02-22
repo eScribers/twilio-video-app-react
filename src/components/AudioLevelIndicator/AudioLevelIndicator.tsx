@@ -54,6 +54,7 @@ function AudioLevelIndicator({
     room: { localParticipant },
   } = useVideoContext();
   const participantCommands = useParticipant();
+  const isLocalParticipant = participant === localParticipant || !participant;
   const localParticipantType: string = !localParticipant
     ? ''
     : ParticipantIdentity.Parse(localParticipant.identity).partyType;
@@ -132,7 +133,7 @@ function AudioLevelIndicator({
     } else toggleAudioEnabled();
   };
 
-  const canMute = participantOptions.includes('Mute') || localParticipant === participant;
+  const canMute = participantOptions.includes('Mute') || isLocalParticipant;
 
   return (
     <IconButton onClick={muteParticipant} disabled={!isHostIn || !canMute}>
