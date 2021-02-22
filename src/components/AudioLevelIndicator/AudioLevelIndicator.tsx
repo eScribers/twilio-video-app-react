@@ -134,7 +134,6 @@ function AudioLevelIndicator({
   };
 
   const canMute = participantOptions.includes('Mute') || isLocalParticipant;
-  // console.log(isLocalParticipant);
 
   return (
     <IconButton onClick={muteParticipant} disabled={!isHostIn || !canMute}>
