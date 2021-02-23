@@ -37,20 +37,20 @@ export default function useIsHostIn() {
 
 function checkIsHostIn(theRoom: Room) {
   if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
-    let flag = false;
+    let isHostIn = false;
     theRoom.participants.forEach(participant => {
       if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
-        flag = true;
+        isHostIn = true;
       }
     });
     if (
       ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIPANT_TYPES.REPORTER ||
       ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER
     ) {
-      flag = true;
+      isHostIn = true;
     }
 
-    return flag;
+    return isHostIn;
   }
 
   return true;
@@ -58,17 +58,17 @@ function checkIsHostIn(theRoom: Room) {
 
 function checkIsReporterIn(theRoom: Room) {
   if (theRoom !== null && typeof theRoom.participants !== 'undefined') {
-    let flagIsReporterIn = false;
+    let isReporterIn = false;
     theRoom.participants.forEach(participant => {
       if (ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
-        flagIsReporterIn = true;
+        isReporterIn = true;
       }
     });
     if (ParticipantIdentity.Parse(theRoom.localParticipant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
-      flagIsReporterIn = true;
+      isReporterIn = true;
     }
 
-    return flagIsReporterIn;
+    return isReporterIn;
   }
   return true;
 }
