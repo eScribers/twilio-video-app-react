@@ -21,18 +21,3 @@ export default function useDevices() {
     hasVideoInputDevices: devices.filter(device => device.kind === 'videoinput').length > 0,
   };
 }
-
-export function useAudioInputDevices() {
-  const devices = useDevices();
-  return devices.audioInputDevices;
-}
-
-export function useVideoInputDevices() {
-  const devices = useDevices();
-  return devices.videoInputDevices;
-}
-
-export function useAudioOutputDevices() {
-  const devices = useDevices();
-  return devices.audioOutputDevices;
-}

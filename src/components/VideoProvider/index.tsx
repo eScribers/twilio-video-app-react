@@ -31,7 +31,6 @@ export interface IVideoContext {
   onError: ErrorCallback;
   onDisconnect: (isRegistered?: boolean) => void;
   getLocalVideoTrack: (newOptions?: CreateLocalTrackOptions) => Promise<LocalVideoTrack>;
-  getLocalAudioTrack: (deviceId?: string, groupId?: string) => Promise<void | LocalAudioTrack>;
   isAcquiringLocalTracks: boolean;
   removeLocalAudioTrack: () => void;
   removeLocalVideoTrack: () => void;
@@ -47,6 +46,7 @@ interface VideoProviderProps {
   onError: ErrorCallback;
   onDisconnect?: Callback;
   children: ReactNode;
+  onNotification: Callback;
 }
 
 export function VideoProvider({
@@ -55,7 +55,7 @@ export function VideoProvider({
   onError = () => {},
   onNotification = () => {},
   onDisconnect = () => {},
-}: any) {
+}: VideoProviderProps) {
   const onErrorCallback = (error: TwilioError) => {
     console.log(`ERROR: ${error.message}`, error);
     onError(error);
@@ -64,7 +64,6 @@ export function VideoProvider({
   const {
     localTracks,
     getLocalVideoTrack,
-    getLocalAudioTrack,
     isAcquiringLocalTracks,
     removeLocalAudioTrack,
     removeLocalVideoTrack,
@@ -87,7 +86,6 @@ export function VideoProvider({
         onError: onErrorCallback,
         onDisconnect,
         getLocalVideoTrack,
-        getLocalAudioTrack,
         connect,
         isAcquiringLocalTracks,
         removeLocalAudioTrack,
