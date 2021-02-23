@@ -1,11 +1,16 @@
 import { renderHook } from '@testing-library/react-hooks';
 import useLocalAudioToggle from './useLocalAudioToggle';
 import useVideoContext from '../useVideoContext/useVideoContext';
+import { useAppState } from '../../state';
 
+jest.mock('../../state');
 jest.mock('../useVideoContext/useVideoContext');
+jest.mock('../useIsTrackEnabled/useIsTrackEnabled', () => () => true);
+
+const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 
-jest.mock('../useIsTrackEnabled/useIsTrackEnabled', () => () => true);
+mockUseAppState.mockImplementation(() => ({ setNotification: () => jest.fn() }));
 
 describe('the useLocalAudioToggle hook', () => {
   it('should return the value from the useIsTrackEnabled hook', () => {

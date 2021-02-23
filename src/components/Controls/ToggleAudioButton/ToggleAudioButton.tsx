@@ -19,9 +19,11 @@ export default function ToggleAudioButton(props: { disabled?: boolean }) {
   let [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
   return (
     <Tooltip title={isAudioEnabled ? 'Mute' : 'Unmute'} placement="top" PopperProps={{ disablePortal: true }}>
-      <Fab className={classes.fab} onClick={toggleAudioEnabled} disabled={props.disabled} data-cy-audio-toggle>
-        {isAudioEnabled ? <Mic /> : <MicOff />}
-      </Fab>
+      <span>
+        <Fab className={classes.fab} onClick={toggleAudioEnabled} disabled={props.disabled} data-cy-audio-toggle>
+          {isAudioEnabled ? <Mic /> : <MicOff />}
+        </Fab>
+      </span>
     </Tooltip>
   );
 }

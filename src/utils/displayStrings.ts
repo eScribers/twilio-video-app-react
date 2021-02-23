@@ -14,6 +14,7 @@ export const NOTIFICATION_MESSAGE = {
   REPORTER_HAS_JOINED: 'Reporter has joined. Please unmute your microphone.',
   REPORTER_DROPPED_FROM_THE_CALL:
     'All participants have been muted (except you as the hearing officer).  Your reporter will be rejoined to the conference momentarily and all parties will be unmuted',
+  CANNOT_RECORD_AUDIO: `Can't access microphone, please make sure a microphone is attached and try again`,
 };
 export const PLAYER_STATE = {
   stopped: 'stopped',

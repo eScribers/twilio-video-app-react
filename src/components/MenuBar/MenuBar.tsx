@@ -93,6 +93,7 @@ export default function MenuBar() {
   const [isHostInState, setIsHostInState] = useState(isHostIn);
   const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
   useDataTrackListener();
+  usePublishDataTrack(participantInfo);
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
@@ -158,23 +159,17 @@ export default function MenuBar() {
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
-      setIsHostInState(isHostIn);
     } else {
       audioTrack?.disable();
       setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
-      setIsHostInState(isHostIn);
     }
+    setIsHostInState(isHostIn);
   }
   if (isReporterIn !== isReporterInState) {
-    if (!isReporterIn) {
-      if (participantInfo?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
-        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
-      setIsReporterInState(isReporterIn);
-    } else {
-      setIsReporterInState(isReporterIn);
-    }
+    if (!isReporterIn && participantInfo?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
+      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    setIsReporterInState(isReporterIn);
   }
-  usePublishDataTrack(participantInfo);
 
   return (
     <AppBar className={classes.container} position="static">
