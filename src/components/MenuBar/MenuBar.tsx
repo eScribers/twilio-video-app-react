@@ -15,7 +15,6 @@ import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
-//import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
 import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
@@ -24,7 +23,6 @@ import { ParticipantInformation } from 'state';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
-// import { LogglyTracker } from 'react-native-loggly-jslogger';
 
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
@@ -239,9 +237,6 @@ export default function MenuBar() {
         )}
         <div className={classes.rightButtonContainer}>
           <ToggleGridViewButton />
-          {/* {!mobileAndTabletCheck() && (
-            <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
-          )} */}
           <LocalAudioLevelIndicator />
           <ToggleFullscreenButton />
           <Menu />
@@ -250,35 +245,3 @@ export default function MenuBar() {
     </AppBar>
   );
 }
-// function detectBrowser() {
-//   // Get the user-agent string
-//   let userAgentString = navigator.userAgent;
-
-//   // Detect Chrome
-//   let chromeAgent = userAgentString.indexOf('Chrome') > -1;
-
-//   // Detect Internet Explorer
-//   let IExplorerAgent = userAgentString.indexOf('MSIE') > -1 || userAgentString.indexOf('rv:') > -1;
-
-//   // Detect Firefox
-//   let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
-
-//   // Detect Safari
-//   let safariAgent = userAgentString.indexOf('Safari') > -1;
-
-//   // Discard Safari since it also matches Chrome
-//   if (chromeAgent && safariAgent) safariAgent = false;
-
-//   // Detect Opera
-//   let operaAgent = userAgentString.indexOf('OP') > -1;
-
-//   // Discard Chrome since it also matches Opera
-//   if (chromeAgent && operaAgent) chromeAgent = false;
-
-//   if (safariAgent) return 'safariAgent';
-//   if (chromeAgent) return 'chromeAgent';
-//   if (IExplorerAgent) return 'IExplorerAgent';
-//   if (operaAgent) return 'operaAgent';
-//   if (firefoxAgent) return 'firefoxAgent';
-//   return 'no detected browser';
-// }
