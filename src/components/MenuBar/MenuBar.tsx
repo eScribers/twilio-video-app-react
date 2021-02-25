@@ -15,6 +15,7 @@ import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
+//import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
 import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
@@ -23,7 +24,7 @@ import { ParticipantInformation } from 'state';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
-
+// import { LogglyTracker } from 'react-native-loggly-jslogger';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -237,6 +238,9 @@ export default function MenuBar() {
         )}
         <div className={classes.rightButtonContainer}>
           <ToggleGridViewButton />
+          {/* {!mobileAndTabletCheck() && (
+            <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
+          )} */}
           <LocalAudioLevelIndicator />
           <ToggleFullscreenButton />
           <Menu />

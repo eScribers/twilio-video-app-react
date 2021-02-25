@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+// Taken from: https://usehooks.com/useWindowSize/
 interface IWindowSize {
   width: number | undefined;
   height: number | undefined;
