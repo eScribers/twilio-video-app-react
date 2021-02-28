@@ -39,7 +39,7 @@ export const initialSettings: Settings = {
   dominantSpeakerPriority: 'standard',
   viewMode: VIEW_MODE.default,
   bandwidthProfileMode: 'collaboration',
-  maxTracks: isMobile ? '5' : '10',
+  maxTracks: isMobile ? '8' : '20',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
   renderDimensionStandard: '960p',
