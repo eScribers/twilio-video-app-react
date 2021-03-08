@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Video, { TwilioError } from 'twilio-video';
+import UAParser from 'ua-parser-js';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ERROR_MESSAGE } from './utils/displayStrings';
@@ -55,9 +56,25 @@ const VideoApp = () => {
   }, []);
 
   if (!Video.isSupported) {
-    return (
-      <ErrorDialog dismissError={() => null} error={(ERROR_MESSAGE.UNSUPPORTED_MESSAGE as unknown) as TwilioError} />
-    );
+    // Please follow the following git issue and remove the following code if chrome on iOS is supported
+    // https://github.com/twilio/twilio-video.js/issues/1388
+    // <<<<<< START
+    const parser = new UAParser();
+    const result = parser.getResult();
+    let allowAnyway = false;
+    const osVer = result.os.version.split('.');
+
+    // forcing "allow" to iOS version 14.4 (for chrome/firefox)
+    if (result.os.name === 'iOS' && Number(osVer[0] || 0) >= 14 && Number(osVer[1] || 0) >= 5) allowAnyway = true;
+
+    if (!allowAnyway)
+      // END >>>>>>>
+      return (
+        <ErrorDialog
+          dismissError={() => null}
+          error={{ message: ERROR_MESSAGE.UNSUPPORTED_MESSAGE as string } as TwilioError}
+        />
+      );
   }
   return (
     <VideoProvider
