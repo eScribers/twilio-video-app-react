@@ -34,6 +34,7 @@ export default function ToggleGridViewButton() {
     if (forceCollaboration === true) {
       if (width && width >= 768) setForceCollaboration(false);
     }
+    // eslint-disable-next-line
   }, [width, forceCollaboration]);
 
   return forceCollaboration ? null : (
