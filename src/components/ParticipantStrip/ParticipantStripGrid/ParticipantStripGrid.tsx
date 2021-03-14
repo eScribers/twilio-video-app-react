@@ -7,6 +7,7 @@ import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
+import sortParticipants from 'utils/sortParticipants';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -37,9 +38,11 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const participants = useParticipants();
+  const unsortedParticipants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const classes = useStyles();
+
+  const participants = sortParticipants(unsortedParticipants);
 
   useEffect(() => {
     if (currViewMode !== viewMode) {

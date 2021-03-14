@@ -77,15 +77,14 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
         process.env ? 'process.env: ' + JSON.stringify(process.env) : 'not yet initialised'
       }`
     );
+    const PUBLIC_URL = process.env.PUBLIC_URL || process.env.REACT_APP_PUBLIC_URL;
     console.log(
       `fetching endpoint. process.env.PUBLIC_URL: ${
-        process.env.PUBLIC_URL
-          ? 'process.env.PUBLIC_URL: ' + JSON.stringify(process.env.PUBLIC_URL)
-          : 'not yet initialised'
+        PUBLIC_URL ? 'process.env.PUBLIC_URL: ' + JSON.stringify(PUBLIC_URL) : 'not yet initialised'
       }`
     );
 
-    await fetch(`${process.env.PUBLIC_URL}/config.json`)
+    await fetch(`${PUBLIC_URL}/config.json`)
       .then(
         response => {
           console.log('response from fetch received');
