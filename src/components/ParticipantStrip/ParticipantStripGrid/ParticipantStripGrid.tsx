@@ -7,7 +7,7 @@ import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
-import sortParticipants from 'utils/sortParticipants';
+import sortParticipants from '../../../utils/sortParticipants';
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,

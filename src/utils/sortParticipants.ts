@@ -18,6 +18,7 @@ const sortParticipants = (unsorted: Participant[]) => {
   let sorted: Participant[] = [];
   priorities.map(type => {
     bank = bank.filter(participant => {
+      if (!participant.identity) return true;
       const { partyType } = ParticipantIdentity.Parse(participant.identity);
       if (partyType === type) {
         sorted.push(participant);
