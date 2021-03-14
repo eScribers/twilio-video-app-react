@@ -1,6 +1,7 @@
 import { Participant } from 'twilio-video';
 import { ParticipantIdentity } from './participantIdentity';
 import { PARTICIPANT_TYPES } from './rbac/ParticipantTypes';
+import { orderBy } from 'lodash';
 
 const sortParticipants = (unsorted: Participant[]) => {
   if (unsorted.length === 0) return [];
@@ -27,6 +28,9 @@ const sortParticipants = (unsorted: Participant[]) => {
       return true;
     });
   });
+
+  // Sort the rest of the participants alphabetically (ASC)
+  bank = orderBy(bank, ['identity']);
 
   // Add the rest of the participants unsorted
   sorted = [...sorted, ...bank];

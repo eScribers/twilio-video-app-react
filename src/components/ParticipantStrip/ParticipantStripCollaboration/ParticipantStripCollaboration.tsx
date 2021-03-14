@@ -4,6 +4,7 @@ import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
+import sortParticipants from '../../../utils/sortParticipants';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -25,9 +26,10 @@ export default function ParticipantStripCollaboration() {
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const participants = useParticipants();
+  const unorderedParticipants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
+  const participants = sortParticipants(unorderedParticipants);
   return (
     <Container>
       <ScrollContainer>
