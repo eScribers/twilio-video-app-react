@@ -25,9 +25,9 @@ describe('the VideoTrack component', () => {
     expect(mockTrack.attach).toHaveBeenCalledWith(expect.any(window.HTMLVideoElement));
     expect(mockTrack.detach).not.toHaveBeenCalled();
   });
-  it('should have "object-fit: cover" applied when the track is a camera track', () => {
+  it('should have "object-fit: contain" applied when the track is a camera track', () => {
     const { container } = render(<VideoTrack track={mockTrack} />);
-    expect(container.querySelector('video')!.style).toMatchObject({ objectFit: 'cover' });
+    expect(container.querySelector('video')!.style).toMatchObject({ objectFit: 'contain' });
   });
 
   it('should have "object-fit: contain" applied when the track is a screen track', () => {
