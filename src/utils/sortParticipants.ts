@@ -3,18 +3,17 @@ import { ParticipantIdentity } from './participantIdentity';
 import { PARTICIPANT_TYPES } from './rbac/ParticipantTypes';
 import { orderBy } from 'lodash';
 
-const sortParticipants = (unsorted: Participant[]) => {
+const defaultPriorities = [
+  PARTICIPANT_TYPES.REPORTER,
+  PARTICIPANT_TYPES.HEARING_OFFICER,
+  PARTICIPANT_TYPES.PARENT_REPRESENTATIVE,
+  PARTICIPANT_TYPES.INTERPRETER,
+];
+
+const sortParticipants = (unsorted: Participant[], priorities: string[] = defaultPriorities) => {
   if (unsorted.length === 0) return [];
 
   let bank = [...unsorted];
-
-  // Put the desired order in this array
-  const priorities = [
-    PARTICIPANT_TYPES.REPORTER,
-    PARTICIPANT_TYPES.HEARING_OFFICER,
-    PARTICIPANT_TYPES.PARENT_REPRESENTATIVE,
-    PARTICIPANT_TYPES.INTERPRETER,
-  ];
 
   let sorted: Participant[] = [];
   priorities.map(type => {

@@ -1,10 +1,9 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
-import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
-import sortParticipants from '../../../utils/sortParticipants';
+import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -26,10 +25,9 @@ export default function ParticipantStripCollaboration() {
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const unorderedParticipants = useParticipants();
+  const participants = useSortedParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
-  const participants = sortParticipants(unorderedParticipants);
   return (
     <Container>
       <ScrollContainer>
