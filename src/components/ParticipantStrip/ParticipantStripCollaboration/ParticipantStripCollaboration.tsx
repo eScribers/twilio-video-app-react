@@ -7,7 +7,7 @@ import Participant from '../../Participant/Participant';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
-  overflowY: 'auto',
+  overflowY: 'scroll',
   [theme.breakpoints.down('xs')]: {
     overflowY: 'initial',
     overflowX: 'auto',
