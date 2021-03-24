@@ -22,6 +22,7 @@ export default function Participant({
   isSelected,
   isLocalParticipant,
   hideParticipant,
+  isDominantSpeaker,
 }: ParticipantProps) {
   return (
     <ParticipantInfo
@@ -30,6 +31,7 @@ export default function Participant({
       isSelected={isSelected}
       isLocalParticipant={isLocalParticipant}
       hideParticipant={hideParticipant}
+      isDominantSpeaker={isDominantSpeaker}
     >
       <ParticipantTracks
         participant={participant}

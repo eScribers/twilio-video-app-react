@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       height: 0,
       overflow: 'hidden',
-      marginBottom: '2em',
       '& video': {
         filter: 'none',
         objectFit: 'contain !important',
@@ -137,6 +136,9 @@ const useStyles = makeStyles((theme: Theme) =>
     cursorPointer: {
       cursor: 'pointer',
     },
+    dominantSpeaker: {
+      outline: 'lime solid 2px',
+    },
   })
 );
 
@@ -147,6 +149,7 @@ interface ParticipantInfoProps {
   isSelected?: boolean;
   isLocalParticipant?: boolean;
   hideParticipant?: boolean;
+  isDominantSpeaker?: boolean;
 }
 
 export default function ParticipantInfo({
@@ -156,6 +159,7 @@ export default function ParticipantInfo({
   children,
   isLocalParticipant,
   hideParticipant,
+  isDominantSpeaker,
 }: ParticipantInfoProps) {
   const publications = usePublications(participant);
   const {
@@ -185,6 +189,7 @@ export default function ParticipantInfo({
       className={clsx(classes.container, {
         [classes.hideParticipant]: hideParticipant,
         [classes.cursorPointer]: Boolean(onClick),
+        [classes.dominantSpeaker]: isDominantSpeaker,
       })}
       onClick={onClick}
       data-cy-participant={participant.identity}
