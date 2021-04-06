@@ -62,6 +62,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
   const { endPoint, environmentName, domainName, buildId, loaded: isConfigLoaded } = useConfig({ setError });
+  const [isDeafened, setIsDeafened] = useState(false);
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
@@ -89,6 +90,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     dispatchSetting,
     buildId,
     isConfigLoaded,
+    isDeafened,
+    setIsDeafened,
     authoriseParticipant: async () => {
       const url = `${endPoint}/authorise-participant`;
       console.log('attempting authorise ' + new Date().toLocaleTimeString());

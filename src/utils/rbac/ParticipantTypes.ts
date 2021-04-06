@@ -6,4 +6,5 @@ export const PARTICIPANT_TYPES = {
   DISTRICT_REPRESENTATIVE: 'District Representative',
   INTERPRETER: 'Interpreter',
   OTHER: 'Other',
+  REPORTER_RECORDING: 'Recording',
 };

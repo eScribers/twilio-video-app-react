@@ -8,6 +8,7 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
+import useIsDeafened from '../../../hooks/useIsDeafend/useIsDeafened';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -41,6 +42,7 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
   const [mdState, setMdState] = useState<any>(4);
   const participants = useParticipants();
   const dominantSpeaker = useDominantSpeaker();
+  const [isDeafened] = useIsDeafened();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const classes = useStyles();
 
@@ -85,6 +87,7 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
                 participant={participant}
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
+                isDeafened={isDeafened}
                 onClick={() => setSelectedParticipant(participant)}
               />
             </Paper>
