@@ -88,7 +88,7 @@ resources:
           PriceClass: 'PriceClass_100'
           Restrictions:
             GeoRestriction:
-              RestrictionType: none
+              RestrictionType: 'none'
               Quantity: 0
           ViewerCertificate:
             MinimumProtocolVersion: TLSv1
