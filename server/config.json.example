@@ -1,0 +1,8 @@
+{
+  "TWILLIO_ACCOUNT_SID":"AC...",
+  "TWILLIO_API_KEY_SID":"SK...",
+  "TWILLIO_API_KEY_SECRET":"....",
+  "TWILIO_SIP_CL":"CL...",
+  "ROOM_STATUS_CALLBACK":"https://some-url.loca.lt/dev/roomCallback",
+  "JWT_SECRET": "..."
+}
