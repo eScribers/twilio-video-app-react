@@ -89,6 +89,7 @@ resources:
           Restrictions:
             GeoRestriction:
               RestrictionType: none
+              Quantity: 0
           ViewerCertificate:
             MinimumProtocolVersion: TLSv1
             CloudFrontDefaultCertificate: 'true'
