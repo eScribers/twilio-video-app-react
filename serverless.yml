@@ -86,9 +86,6 @@ resources:
                     - - 'origin-access-identity/cloudfront/'
                       - !Ref CloudFrontOriginAccessIdentity
           PriceClass: 'PriceClass_100'
-          Restrictions:
-            GeoRestriction:
-              RestrictionType: 'none'
           ViewerCertificate:
             MinimumProtocolVersion: TLSv1
             CloudFrontDefaultCertificate: 'true'
