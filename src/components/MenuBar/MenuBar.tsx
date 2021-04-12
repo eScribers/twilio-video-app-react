@@ -79,6 +79,7 @@ export default function MenuBar() {
     setNotification,
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
+    isConfigLoaded,
     // logger,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
@@ -133,6 +134,7 @@ export default function MenuBar() {
 
   useEffect(() => {
     // Authorise participant
+    if (!isConfigLoaded) return;
     (async () => {
       if (participantInfo === null) {
         const participantInformation: ParticipantInformation = await authoriseParticipant();
@@ -147,7 +149,7 @@ export default function MenuBar() {
         }
       }
     })();
-  }, [participantInfo, authoriseParticipant]);
+  }, [participantInfo, authoriseParticipant, isConfigLoaded]);
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();

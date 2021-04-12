@@ -16,6 +16,7 @@ import { inputLabels, Settings } from '../../../state/settings/settingsReducer';
 import { RenderDimensions } from '../../../state/settings/renderDimensions';
 import { useAppState } from '../../../state';
 import useRoomState from '../../../hooks/useRoomState/useRoomState';
+import useWindowSize from '../../../hooks/useWindowSize/useWindowSize';
 
 const useStyles = makeStyles({
   formControl: {
@@ -43,6 +44,9 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
   const { settings, dispatchSetting } = useAppState();
   const roomState = useRoomState();
   const isDisabled = roomState !== 'disconnected';
+  const { width } = useWindowSize();
+
+  const onlyCollaboration = width && width < 768;
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
@@ -60,24 +64,26 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
   return (
     <DialogContent className={className} hidden={hidden}>
       <Grid container spacing={2}>
-        <Grid item sm={6} xs={12}>
-          <FormControl className={classes.formControl}>
-            <InputLabel id={inputLabels.viewMode}>Mode:</InputLabel>
-            <Select
-              fullWidth
-              name={inputLabels.viewMode}
-              label={inputLabels.viewMode}
-              value={withDefault(settings.viewMode)}
-              onChange={handleChange}
-            >
-              <MenuItem value="grid 2 column">2 Column</MenuItem>
-              <MenuItem value="grid 3 column">3 Column</MenuItem>
-              <MenuItem value="grid 4 column">4 Column</MenuItem>
-              <MenuItem value="collaboration">Collaboration</MenuItem>
-              <MenuItem value="default_grid">Default</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
+        {onlyCollaboration ? null : (
+          <Grid item sm={6} xs={12}>
+            <FormControl className={classes.formControl}>
+              <InputLabel id={inputLabels.viewMode}>Mode:</InputLabel>
+              <Select
+                fullWidth
+                name={inputLabels.viewMode}
+                label={inputLabels.viewMode}
+                value={withDefault(settings.viewMode)}
+                onChange={handleChange}
+              >
+                <MenuItem value="collaboration">Collaboration</MenuItem>
+                <MenuItem value="grid 2 column">2 Column</MenuItem>
+                <MenuItem value="grid 3 column">3 Column</MenuItem>
+                <MenuItem value="grid 4 column">4 Column</MenuItem>
+                <MenuItem value="default_grid">Default</MenuItem>
+              </Select>
+            </FormControl>
+          </Grid>
+        )}
         <Grid item sm={6} xs={12}>
           <FormControl className={classes.formControl}>
             <FormControlLabel

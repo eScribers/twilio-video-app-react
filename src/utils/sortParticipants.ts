@@ -16,6 +16,7 @@ const sortParticipants = (unsorted: Participant[], priorities: string[] = defaul
   let bank = [...unsorted];
 
   let sorted: Participant[] = [];
+  // eslint-disable-next-line
   priorities.map(type => {
     bank = bank.filter(participant => {
       if (!participant.identity) return true;

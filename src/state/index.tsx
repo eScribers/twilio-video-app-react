@@ -6,6 +6,7 @@ import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
 import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
+import useConfig from '../hooks/useConfig/useConfig';
 
 export interface ParticipantInformation {
   caseReference: string;
@@ -52,7 +53,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [, setUser] = useState(null);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
   const [activeSinkId, setActiveSinkId] = useState('default');
@@ -61,67 +61,11 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
+  const { endPoint, environmentName, domainName, buildId, loaded: isConfigLoaded } = useConfig({ setError });
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
   const returnUrl = query.get('returnUrl');
-  var endpoint = '';
-  var environmentName = '';
-  var domainName = '';
-
-  async function fetchConfigFile() {
-    if (endpoint !== '' || environmentName !== '' || domainName !== '') return;
-
-    console.log(
-      `fetching endpoint. process.env: ${
-        process.env ? 'process.env: ' + JSON.stringify(process.env) : 'not yet initialised'
-      }`
-    );
-    const PUBLIC_URL = process.env.PUBLIC_URL || process.env.REACT_APP_PUBLIC_URL;
-    console.log(
-      `fetching endpoint. process.env.PUBLIC_URL: ${
-        PUBLIC_URL ? 'process.env.PUBLIC_URL: ' + JSON.stringify(PUBLIC_URL) : 'not yet initialised'
-      }`
-    );
-
-    await fetch(`${PUBLIC_URL}/config.json`)
-      .then(
-        response => {
-          console.log('response from fetch received');
-          return response.json();
-        },
-        err => {
-          console.log('failed to fetch url. err: ' + err);
-        }
-      )
-      .then(responseBodyAsJson => {
-        console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
-        endpoint = responseBodyAsJson.endPoint;
-        environmentName = responseBodyAsJson.environmentName;
-        domainName = responseBodyAsJson.domainName;
-      });
-  }
-
-  async function ensureEnvironmentFromConfigInitialised() {
-    if (endpoint === '' || environmentName === '' || domainName === '') {
-      console.log('ensureEndpointInitialised. endpoint not yet defined attempting to fetch now');
-      await fetchConfigFile();
-      if (endpoint === '' || environmentName === '' || domainName === '') {
-        console.log('warning: endpoint not defined');
-        return false;
-      } else {
-        console.log(
-          'managed to fetch data: endpoint -' +
-            endpoint +
-            'environmentName - ' +
-            environmentName +
-            ' domainName - ' +
-            domainName
-        );
-        return true;
-      }
-    } else return true;
-  }
 
   let contextValue = ({
     error,
@@ -143,30 +87,33 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
+    buildId,
+    isConfigLoaded,
     authoriseParticipant: async () => {
-      if (!(await ensureEnvironmentFromConfigInitialised())) return null;
-
-      const url = `${endpoint}/authorise-participant`;
-
+      const url = `${endPoint}/authorise-participant`;
       console.log('attempting authorise ' + new Date().toLocaleTimeString());
 
-      const { data } = await axios({
-        url: url,
-        method: 'POST',
-        headers: {
-          Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
-        },
-        data: {},
-      });
+      try {
+        const { data } = await axios({
+          url: url,
+          method: 'POST',
+          headers: {
+            Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
+          },
+        });
 
-      return data;
+        return data;
+      } catch (err) {
+        setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
+      }
+
+      return false;
     },
     participantInfo,
     getToken: async (participantInformation: ParticipantInformation) => {
-      const endpointIsInitialised = await ensureEnvironmentFromConfigInitialised();
-      if (!endpointIsInitialised) return null;
+      if (!isConfigLoaded) return null;
 
-      const url = `${endpoint}/token`;
+      const url = `${endPoint}/token`;
       const { data } = await axios({
         url: url,
         method: 'POST',
@@ -185,7 +132,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       return data;
     },
     disconnectParticipant: async (isRegistered?: boolean) => {
-      if (!(await ensureEnvironmentFromConfigInitialised())) return null;
+      if (!isConfigLoaded) return null;
 
       var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
       var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
@@ -194,8 +141,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       else window.location.replace(loginPageUrl);
     },
     removeParticipant: async participantSid => {
-      if (!(await ensureEnvironmentFromConfigInitialised())) return null;
-      const url = `${endpoint}/remove-participant`;
+      if (!isConfigLoaded) return null;
+      const url = `${endPoint}/remove-participant`;
 
       const { data } = await axios({
         url: url,
@@ -212,22 +159,15 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 
   const authoriseParticipant: StateContextType['authoriseParticipant'] = async () => {
     if (hasTriedAuthorisation) return participantInfo;
-
-    //setIsFetching(true);
+    setHasTriedAuthorisation(true);
 
     try {
       const response: any = await contextValue.authoriseParticipant();
-      //setIsFetching(false);
       if (!response) return response;
       setParticipantInfo(response.participantInfo);
-      setHasTriedAuthorisation(true);
       return response.participantInfo;
     } catch (err) {
-      //setHasTriedAuthorisation(true);
-      //setError({ message: 'Unauthorised Access', code: 401, name: 'Authorization Error' });
-      //setIsFetching(false);
-      console.log('error authorising participant: ' + err);
-
+      setError({ message: 'error authorising participant: ' + err } as TwilioError);
       return Promise.reject(err);
     }
   };

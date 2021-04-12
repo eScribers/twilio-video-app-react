@@ -38,6 +38,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
         className="makeStyles-paper-2"
       >
         <Participant
+          isDominantSpeaker={true}
           isSelected={false}
           key="0"
           onClick={[Function]}
@@ -61,6 +62,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
         className="makeStyles-paper-2"
       >
         <Participant
+          isDominantSpeaker={true}
           isSelected={false}
           key="1"
           onClick={[Function]}

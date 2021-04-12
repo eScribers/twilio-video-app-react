@@ -7,6 +7,8 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
 import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
+import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexGrow: 1,
@@ -38,8 +40,11 @@ export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
   const participants = useSortedParticipants();
+  const dominantSpeaker = useDominantSpeaker();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const classes = useStyles();
+
+  const dominantIdentity = dominantSpeaker?.identity;
 
   useEffect(() => {
     if (currViewMode !== viewMode) {
@@ -79,6 +84,7 @@ export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
                 key={participant.sid}
                 participant={participant}
                 isSelected={selectedParticipant === participant}
+                isDominantSpeaker={dominantIdentity === participant.identity}
                 onClick={() => setSelectedParticipant(participant)}
               />
             </Paper>

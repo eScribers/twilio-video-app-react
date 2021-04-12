@@ -4,10 +4,11 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
 import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
+import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
-  overflowY: 'auto',
+  overflowY: 'scroll',
   [theme.breakpoints.down('xs')]: {
     overflowY: 'initial',
     overflowX: 'auto',
@@ -26,7 +27,10 @@ export default function ParticipantStripCollaboration() {
     room: { localParticipant },
   } = useVideoContext();
   const participants = useSortedParticipants();
+  const dominantSpeaker = useDominantSpeaker();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+
+  const dominantIdentity = dominantSpeaker?.identity;
 
   return (
     <Container>
@@ -39,6 +43,7 @@ export default function ParticipantStripCollaboration() {
         {participants.map(participant => (
           <Participant
             key={participant.sid}
+            isDominantSpeaker={participant.identity === dominantIdentity}
             participant={participant}
             isSelected={selectedParticipant === participant}
             onClick={() => setSelectedParticipant(participant)}
