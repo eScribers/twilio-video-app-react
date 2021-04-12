@@ -3,6 +3,7 @@ import { useAppState } from '../../state';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import useParticipants from '../useParticipants/useParticipants';
+import useParticipant from '../useParticipant/useParticipant';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
 const useIsSilenced = () => {
@@ -11,6 +12,7 @@ const useIsSilenced = () => {
   } = useVideoContext();
   const { isSilenced, setIsSilenced, setNotification } = useAppState();
   const participants = useParticipants();
+  const participantCommands = useParticipant();
 
   useEffect(() => {
     const isReporter = ParticipantIdentity.Parse(localParticipant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER;
@@ -27,13 +29,14 @@ const useIsSilenced = () => {
       });
       console.log('You are silenced because of a zoiper call');
       setIsSilenced(true);
+      participantCommands.muteParticipant(localParticipant);
     }
     if (isSilenced && isReporter && !isZoiperConnected) {
-      setNotification({ message: 'Zoiper call disconnected' });
+      setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
       console.log('Zoiper call disconnected, you are un-silenced');
       setIsSilenced(false);
     }
-  }, [participants, isSilenced, setIsSilenced, localParticipant.identity, setNotification]);
+  }, [participants, isSilenced, setIsSilenced, localParticipant, setNotification, participantCommands]);
 
   return [isSilenced, setIsSilenced];
 };
