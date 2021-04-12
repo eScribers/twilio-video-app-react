@@ -13,9 +13,13 @@ const token = async (req:any, res:any) => {
 
   // TODO remove mock
   headers.Authorization = 'a a';
+  const type = Math.floor(Math.random()*3);
+  let participantType = 'Hearing Officer';
+  if(type === 1) participantType = 'Reporter';
+  if(type === 2) participantType = 'Parent';
   body = JSON.stringify({
-    partyType: 'Hearing Officer',
-    partyName: 'Gala',
+    partyType: participantType,
+    partyName: 'Gal' + Math.floor(Math.random()*100), // In order to not have conflicting names
     caseReference: "14",
     videoConferenceRoomName: "14",
     personId: "591",

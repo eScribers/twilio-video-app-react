@@ -106,7 +106,7 @@
     ]
   },
   "scripts": {
-    "start": "concurrently npm:server npm:dev",
+    "start": "react-scripts start",
     "dev": "react-scripts start",
     "server": "nodemon --config server/nodemon.json server/src/*.ts",
     "build": "node ./scripts/build.js",
