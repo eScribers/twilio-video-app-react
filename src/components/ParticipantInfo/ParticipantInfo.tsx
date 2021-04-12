@@ -158,7 +158,6 @@ export default function ParticipantInfo({
   onClick,
   isSelected,
   children,
-  // isLocalParticipant,
   hideParticipant,
   isDominantSpeaker,
 }: ParticipantInfoProps) {
