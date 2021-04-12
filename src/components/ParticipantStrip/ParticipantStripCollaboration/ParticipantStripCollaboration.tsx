@@ -4,7 +4,7 @@ import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
-import useIsDeafened from '../../../hooks/useIsDeafend/useIsDeafened';
+import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -28,7 +28,7 @@ export default function ParticipantStripCollaboration() {
   } = useVideoContext();
   const participants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
-  const [isDeafened] = useIsDeafened();
+  const [isSilenced] = useIsSilenced();
 
   return (
     <Container>
@@ -43,7 +43,7 @@ export default function ParticipantStripCollaboration() {
             key={participant.sid}
             participant={participant}
             isSelected={selectedParticipant === participant}
-            isDeafened={isDeafened}
+            isSilenced={isSilenced}
             onClick={() => setSelectedParticipant(participant)}
           />
         ))}

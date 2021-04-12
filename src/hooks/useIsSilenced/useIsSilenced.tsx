@@ -5,11 +5,11 @@ import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import useParticipants from '../useParticipants/useParticipants';
 import useVideoContext from '../useVideoContext/useVideoContext';
 
-const useIsDeafened = () => {
+const useIsSilenced = () => {
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const { isDeafened, setIsDeafened, setNotification } = useAppState();
+  const { isSilenced, setIsSilenced, setNotification } = useAppState();
   const participants = useParticipants();
 
   useEffect(() => {
@@ -20,22 +20,22 @@ const useIsDeafened = () => {
           ParticipantIdentity.Parse(participant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER_RECORDING
       ).length >= 1;
 
-    if (!isDeafened && isReporter && isZoiperConnected) {
+    if (!isSilenced && isReporter && isZoiperConnected) {
       setNotification({
         message:
-          'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is deafened in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
+          'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
       });
-      console.log('You are deafened because of a zoiper call');
-      setIsDeafened(true);
+      console.log('You are silenced because of a zoiper call');
+      setIsSilenced(true);
     }
-    if (isDeafened && isReporter && !isZoiperConnected) {
+    if (isSilenced && isReporter && !isZoiperConnected) {
       setNotification({ message: 'Zoiper call disconnected' });
-      console.log('Zoiper call disconnected, you are un-deafened');
-      setIsDeafened(false);
+      console.log('Zoiper call disconnected, you are un-silenced');
+      setIsSilenced(false);
     }
-  }, [participants, isDeafened, setIsDeafened, localParticipant.identity, setNotification]);
+  }, [participants, isSilenced, setIsSilenced, localParticipant.identity, setNotification]);
 
-  return [isDeafened, setIsDeafened];
+  return [isSilenced, setIsSilenced];
 };
 
-export default useIsDeafened;
+export default useIsSilenced;

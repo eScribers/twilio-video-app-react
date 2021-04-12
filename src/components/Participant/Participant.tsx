@@ -12,7 +12,7 @@ interface ParticipantProps {
   isDominantSpeaker?: boolean;
   isLocalParticipant?: boolean;
   hideParticipant?: boolean;
-  isDeafened?: boolean;
+  isSilenced?: boolean;
 }
 
 export default function Participant({
@@ -24,7 +24,7 @@ export default function Participant({
   isLocalParticipant,
   hideParticipant,
   isDominantSpeaker,
-  isDeafened,
+  isSilenced,
 }: ParticipantProps) {
   return (
     <ParticipantInfo
@@ -37,7 +37,7 @@ export default function Participant({
     >
       <ParticipantTracks
         participant={participant}
-        videoOnly={videoOnly || isDeafened}
+        videoOnly={videoOnly || isSilenced}
         enableScreenShare={enableScreenShare}
         isLocalParticipant={isLocalParticipant}
       />

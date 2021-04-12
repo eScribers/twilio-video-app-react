@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import EventEmitter from 'events';
-import useIsDeafened from './useIsDeafened';
+import useIsSilenced from './useIsSilenced';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import { useAppState } from '../../state';
@@ -10,7 +10,7 @@ jest.mock('../../state');
 
 const mockedVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseAppState = useAppState as jest.Mock<any>;
-mockUseAppState.mockImplementation(() => ({ isDeafened: false, setIsDeafened: jest.fn() }));
+mockUseAppState.mockImplementation(() => ({ isSilenced: false, setIsSilenced: jest.fn() }));
 
 const mockLocalParticipant = new EventEmitter() as any;
 
@@ -34,24 +34,24 @@ mockedVideoContext.mockImplementation(() => ({
   onError: () => {},
 }));
 
-describe('the useIsDeafened hook', () => {
+describe('the useIsSilenced hook', () => {
   it('when there are no participants yet should return false', () => {
-    const { result } = renderHook(useIsDeafened);
+    const { result } = renderHook(useIsSilenced);
     console.log(result.current);
 
-    const [_isDeafened, setIsDeafened] = result.current;
-    expect(setIsDeafened).not.toHaveBeenCalled();
+    const [_isSilenced, setIsSilenced] = result.current;
+    expect(setIsSilenced).not.toHaveBeenCalled();
   });
 
   it('should return false when "participantConnected" is not the recorder', async () => {
     const mockRoom = MockRoom();
-    const { result } = renderHook(useIsDeafened);
-    const [_isDeafened, setIsDeafened] = result.current;
+    const { result } = renderHook(useIsSilenced);
+    const [_isSilenced, setIsSilenced] = result.current;
     act(() => {
       mockRoom.emit('participantConnected', { identity: `Reporter@${PARTICIPANT_TYPES.REPORTER_RECORDING}` });
     });
     setTimeout(() => {
-      expect(setIsDeafened).toHaveBeenCalledWith(true);
+      expect(setIsSilenced).toHaveBeenCalledWith(true);
     }, 2000);
   });
 });
