@@ -9,6 +9,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
       participant="localParticipant"
     />
     <Participant
+      isDominantSpeaker={true}
       isSelected={false}
       key="0"
       onClick={[Function]}
@@ -19,6 +20,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
       }
     />
     <Participant
+      isDominantSpeaker={true}
       isSelected={false}
       key="1"
       onClick={[Function]}
