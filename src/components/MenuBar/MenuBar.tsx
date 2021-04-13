@@ -61,6 +61,12 @@ const useStyles = makeStyles(theme =>
     joinButton: {
       margin: '1em',
     },
+    dialInWrapper: {
+      margin: '0 20px 0 20px',
+    },
+    dialIn: {
+      margin: 0,
+    },
   })
 );
 
@@ -239,6 +245,10 @@ export default function MenuBar() {
           </h3>
         )}
         <div className={classes.rightButtonContainer}>
+          <div className={classes.dialInWrapper}>
+            <h3 className={classes.dialIn}>Dial in number</h3>
+            <span>+1 929 419 4126</span>
+          </div>
           <ToggleGridViewButton />
           {/* {!mobileAndTabletCheck() && (
             <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
