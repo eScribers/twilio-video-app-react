@@ -1,5 +1,5 @@
 /// <reference types="Cypress" />
-import { generateNumber, generatePassword } from '../../submodules/authentication/cypress/support/helperFunctions';
+import { generateNumber, generatePassword, getRandomInt } from '../../submodules/authentication/cypress/support/helperFunctions';
 import moment from 'moment';
 import 'moment-timezone';
 
@@ -24,6 +24,23 @@ context('Startup', () => {
         hearingOfficer = "Tester Tester HO";
     cy.createNewConference( caseRef, hearingDate, startTime, hearingOfficer );
   });
+
+  // See https://escribers.atlassian.net/browse/CA-860
+
+  // it('should log in as a manager and create a conference', () => {
+  //   const conferenceUrlPath = baseUrl + "/conference/newconference";
+  //   const statusValues = ['In_progress', 'Completed', 'Scheduled'];
+  //   const providers = ['Twilio Video', 'Twilio Telephone'];
+  //   cy.loginAsManager();
+  //   const nowTime = moment.tz('Asia/Jerusalem');
+  //   cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
+  //   let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
+  //     startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2, 'hours').format('HH:mm:ss'),
+  //     provider = providers[0], status = statusValues[0],
+  //     hearingOfficer = `reporter-${caseRef}`,
+  //     reporterPerson = getRandomInt(48, 90).toString();
+  //   cy.createNewConference(conferenceUrlPath, caseRef, caseName, hearingDate, startTime, endTime, provider, status, hearingOfficer, reporterPerson);
+  // });
 
   it('should fill login form and get error of "The username/password is incorrect."', () => {
     let userName = generatePassword(4);
