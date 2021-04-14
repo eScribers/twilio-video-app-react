@@ -10,6 +10,7 @@ import { ROOM_STATE } from './utils/displayStrings';
 
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
+import MessageText from './components/MessageText/MessageText';
 
 const Container = styled('div')({
   display: 'grid',
@@ -32,6 +33,7 @@ export default function App() {
 
   return (
     <Container style={{ height }}>
+      <MessageText />
       <MenuBar />
       <Main>
         {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
