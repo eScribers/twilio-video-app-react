@@ -134,8 +134,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     disconnectParticipant: async (isRegistered?: boolean) => {
       if (!isConfigLoaded) return null;
 
-      var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-      var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
+      const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      const loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
 
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
       else window.location.replace(loginPageUrl);
