@@ -5,6 +5,7 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
 import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
+import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -26,9 +27,12 @@ export default function ParticipantStripCollaboration() {
   const {
     room: { localParticipant },
   } = useVideoContext();
+  const dominantSpeaker = useDominantSpeaker();
   const participants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const [isSilenced] = useIsSilenced();
+
+  const dominantIdentity = dominantSpeaker?.identity;
 
   return (
     <Container>
@@ -41,6 +45,7 @@ export default function ParticipantStripCollaboration() {
         {participants.map(participant => (
           <Participant
             key={participant.sid}
+            isDominantSpeaker={participant.identity === dominantIdentity}
             participant={participant}
             isSelected={selectedParticipant === participant}
             isSilenced={isSilenced}

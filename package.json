@@ -1,6 +1,6 @@
 {
   "name": "twilio-video-app-react",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "private": true,
   "files": [
     "src",
@@ -105,6 +105,7 @@
     "server": "node server.js",
     "build": "node ./scripts/build.js",
     "test": "jest",
+    "pull": "git submodule update --remote --recursive",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{ts,tsx}",
     "start:ci": "serve --no-clipboard --listen ${PORT:-8080}",

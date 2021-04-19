@@ -1,22 +1,41 @@
 import detectSound from './detectSound';
 
-Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hearingDate,startTime,endTime,
-  provider,status,hearingOfficer,reporterPerson) => {
-  cy.get('input[id="case_reference"]').type(caseRef).should('have.value', caseRef);
-  cy.get('input[id="case_name"]').type(caseName).should('have.value', caseName);
-  cy.get('input[id="hearing_date"]').type(hearingDate).should('have.value', hearingDate);
-  cy.get('input[id="start_time"]').type(startTime).should('have.value', startTime);
-  cy.get('input[id="end_time"]').type(endTime).should('have.value', endTime);
-  cy.get('[id="provider_id"]').select(provider);
-  cy.get('[id="status_id"]').select(status);
-  cy.get('input[id="hearing_officer"]').type(hearingOfficer).should('have.value', hearingOfficer);
-  cy.get('[id="reporter_person_id"]').select(reporterPerson);
+Cypress.Commands.add('createNewConference', (caseRef,hearingDate,startTime,hearingOfficer) => {
+  cy.get('#showAddHearingForm').click();
+  cy.get('input[id="hearing"]').type(hearingDate).should('have.value', hearingDate);
+  cy.get('input[id="starttime"]').type(startTime).should('have.value', startTime);
+  cy.get('input[id="studentname"]').type("Test Student").should('have.value', "Test Student");
+  cy.get('[id="district"]').select("1");
+  cy.get('input[id="office"]').type("1").should('have.value', "1");
+  cy.get('[id="hearingofficer"]').select(hearingOfficer);
+  cy.get('input[id="casenumber"]').type(caseRef).should('have.value', caseRef);
+
+  cy.get('input[id="hearingid"]').type("1").should('have.value', "1");
+  cy.get('[name="hearingtype"]').select("9");
  
-  cy.get('div[id="newconference"]').find('form').submit();
-  cy.get('p').contains('Conference created OK.').should('be.visible');
-  cy.url().should('include', conferenceUrl);
-        
+  cy.get('div[id="addHearing"]').find('form').submit();
+  cy.get('p').contains('Hearing created OK!').should('be.visible');
 });
+
+// See https://escribers.atlassian.net/browse/CA-860
+
+// Cypress.Commands.add('createNewConference', (conferenceUrl,caseRef,caseName,hearingDate,startTime,endTime,
+//   provider,status,hearingOfficer,reporterPerson) => {
+//   cy.get('input[id="case_reference"]').type(caseRef).should('have.value', caseRef);
+//   cy.get('input[id="case_name"]').type(caseName).should('have.value', caseName);
+//   cy.get('input[id="hearing_date"]').type(hearingDate).should('have.value', hearingDate);
+//   cy.get('input[id="start_time"]').type(startTime).should('have.value', startTime);
+//   cy.get('input[id="end_time"]').type(endTime).should('have.value', endTime);
+//   cy.get('[id="provider_id"]').select(provider);
+//   cy.get('[id="status_id"]').select(status);
+//   cy.get('input[id="hearing_officer"]').type(hearingOfficer).should('have.value', hearingOfficer);
+//   cy.get('[id="reporter_person_id"]').select(reporterPerson);
+ 
+//   cy.get('div[id="newconference"]').find('form').submit();
+//   cy.get('p').contains('Conference created OK.').should('be.visible');
+//   cy.url().should('include', conferenceUrl);
+        
+// });
 
 Cypress.Commands.add('deleteExistingConference', (caseReference) => {
 
