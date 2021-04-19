@@ -1,9 +1,9 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
-import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
+import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 
 const Container = styled('aside')(({ theme }) => ({
@@ -26,8 +26,8 @@ export default function ParticipantStripCollaboration() {
   const {
     room: { localParticipant },
   } = useVideoContext();
+  const participants = useSortedParticipants();
   const dominantSpeaker = useDominantSpeaker();
-  const participants = useParticipants();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
 
   const dominantIdentity = dominantSpeaker?.identity;
