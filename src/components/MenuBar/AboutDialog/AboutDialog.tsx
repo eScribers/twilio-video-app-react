@@ -5,12 +5,16 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import preval from 'preval.macro';
 
 import { version as appVersion } from '../../../../package.json';
 import Video from 'twilio-video';
 
-const dateTimeStamp = preval`module.exports = new Date();`;
+let dateTimeStamp = '00:00';
+
+if (process.env.JEST_WORKER_ID === undefined) {
+  const preval = require('preval.macro');
+  dateTimeStamp = preval`module.exports = new Date();`;
+}
 
 interface AboutDialogProps {
   open: boolean;
