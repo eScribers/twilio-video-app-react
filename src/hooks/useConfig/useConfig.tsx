@@ -6,7 +6,6 @@ interface IConfig {
   endPoint: string | undefined;
   environmentName: string | undefined;
   domainName: string | undefined;
-  buildId: string | undefined;
 }
 
 const initialState = {
@@ -15,7 +14,6 @@ const initialState = {
   endPoint: undefined,
   environmentName: undefined,
   domainName: undefined,
-  buildId: undefined,
 };
 
 const public_url = process.env.PUBLIC_URL;
