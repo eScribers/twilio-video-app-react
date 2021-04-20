@@ -61,7 +61,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
-  const { endPoint, environmentName, domainName, buildId, loaded: isConfigLoaded } = useConfig({ setError });
+  const { endPoint, environmentName, domainName, loaded: isConfigLoaded } = useConfig({ setError });
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
@@ -87,7 +87,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
-    buildId,
     isConfigLoaded,
     authoriseParticipant: async () => {
       const url = `${endPoint}/authorise-participant`;
