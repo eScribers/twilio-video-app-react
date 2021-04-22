@@ -4,11 +4,11 @@ import ParticipantStripGrid from './ParticipantStripGrid';
 import { shallow } from 'enzyme';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import { useAppState } from '../../../state';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 
 jest.mock('../../../hooks/useVideoContext/useVideoContext');
 jest.mock('../../VideoProvider/useSelectedParticipant/useSelectedParticipant');
-jest.mock('../../../state');
+jest.mock('../../../hooks/useAppState/useAppState');
 const mockedVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseSelectedParticipant = useSelectedParticipant as jest.Mock<any>;
 

@@ -5,7 +5,7 @@ import MenuContainer from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
-import { useAppState } from '../../../state';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 
 export default function Menu() {
   const { user } = useAppState();

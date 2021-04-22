@@ -9,7 +9,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ERROR_MESSAGE } from './utils/displayStrings';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
-import AppStateProvider, { useAppState } from './state';
+import AppStateProvider from './state';
 import { VideoProvider } from './components/VideoProvider/';
 import ErrorDialog from './components/ErrorDialog/ErrorDialog';
 import NotificationDialog from './components/NotificationDialog/NotificationDialog';
@@ -19,6 +19,7 @@ import { detectBrowser } from './utils/index';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
 import useConnectionOptions from './utils/useConnectionOptions/useConnectionOptions';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
+import { useAppState } from './hooks/useAppState/useAppState';
 
 const alertProviderOptions = {
   // you can also just use 'bottom center'

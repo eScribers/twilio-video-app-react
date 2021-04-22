@@ -5,10 +5,9 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import { useAppState } from '../../../state';
-
 import { version as appVersion } from '../../../../package.json';
 import Video from 'twilio-video';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 
 interface AboutDialogProps {
   open: boolean;

@@ -1,9 +1,9 @@
+import { useAppState } from '../../hooks/useAppState/useAppState';
 import { Settings } from '../../state/settings/settingsReducer';
-import { useAppState } from '../../state';
 import useConnectionOptions from './useConnectionOptions';
 
 const mockUseAppState = useAppState as jest.Mock<any>;
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 
 describe('the useConnectionOptions function', () => {
   it('should remove any undefined values from settings', () => {

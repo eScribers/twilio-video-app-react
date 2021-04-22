@@ -1,12 +1,12 @@
 import React from 'react';
 import ToggleGridViewButton from './ToggleGridViewButton';
-import { useAppState } from '../../../state';
 import { shallow, mount } from 'enzyme';
 import { initialSettings } from '../../../state/settings/settingsReducer';
 import IconButton from '@material-ui/core/IconButton';
 import { act } from 'react-dom/test-utils';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 
-jest.mock('../../../state');
+jest.mock('../../../hooks/useAppState/useAppState');
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockDispatchSetting = jest.fn();
 mockUseAppState.mockImplementation(() => ({ settings: initialSettings, dispatchSetting: mockDispatchSetting }));
