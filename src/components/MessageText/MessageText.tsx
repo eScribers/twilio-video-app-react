@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { Base64 } from 'js-base64';
 import { useAppState } from '../../state';
 
 const MessageText = ({ defaultMessage = '' }) => {
@@ -9,7 +10,7 @@ const MessageText = ({ defaultMessage = '' }) => {
   const messageText = query.get('messageText') || defaultMessage;
 
   useEffect(() => {
-    if (messageText.length >= 1) setNotification({ message: messageText });
+    if (messageText.length >= 1) setNotification({ message: Base64.decode(messageText) });
   }, [messageText, setNotification]);
 
   return null;
