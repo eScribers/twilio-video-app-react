@@ -86,9 +86,12 @@ resources:
                     - - 'origin-access-identity/cloudfront/'
                       - !Ref CloudFrontOriginAccessIdentity
           PriceClass: 'PriceClass_100'
+          Aliases:
+            - ${env:INF_CA_PUBLIC_HOSTNAME}
           ViewerCertificate:
             MinimumProtocolVersion: 'TLSv1'
-            CloudFrontDefaultCertificate: 'true'
+            AcmCertificateArn: ${env:INF_ACM_CERTIFICATE_ARN}
+            SslSupportMethod: sni-only
   Outputs:
     CloudFrontDomainName:
       Value:   !GetAtt
