@@ -23,7 +23,7 @@ import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { useAppState } from '../../hooks/useAppState/useAppState';
-import { ParticipantInformation } from '../../types';
+import { ParticipantInformation } from '../../types/participantInformation';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';

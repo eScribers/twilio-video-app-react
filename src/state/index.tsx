@@ -7,7 +7,8 @@ import { settingsReducer, initialSettings } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
 import useConfig from '../hooks/useConfig/useConfig';
-import { ParticipantInformation, StateContextType } from '../types';
+import { StateContextType } from '../types';
+import { ParticipantInformation } from '../types/participantInformation';
 
 export const StateContext = createContext<StateContextType>(null!);
 

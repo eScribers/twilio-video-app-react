@@ -1,5 +1,6 @@
 import { LocalVideoTrack, RemoteVideoTrack, TwilioError } from 'twilio-video';
 import { Settings, SettingsAction } from './state/settings/settingsReducer';
+import { ParticipantInformation } from './types/participantInformation';
 import { EventEmitter } from 'events';
 
 declare module 'twilio-video' {
@@ -80,14 +81,6 @@ export declare interface PreflightTest extends EventEmitter {
   on(event: 'completed', listener: (report: PreflightTestReport) => void): this;
   on(event: 'failed', listener: (error: Error) => void): this;
   stop: () => void;
-}
-
-export interface ParticipantInformation {
-  caseReference: string;
-  displayName: string;
-  partyType: string;
-  userId: number | null;
-  videoConferenceRoomName: string;
 }
 
 export interface StateContextType {

@@ -3,7 +3,7 @@ import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { useState } from 'react';
 import roleChecker from '../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../utils/rbac/rolePermissions';
-import { ParticipantInformation } from '../../types';
+import { ParticipantInformation } from '../../types/participantInformation';
 
 export default function usePublishDataTrack(participantInfo: ParticipantInformation | null) {
   const {
