@@ -27,8 +27,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
-  const { endPoint, environmentName, domainName, buildId, loaded: isConfigLoaded } = useConfig({ setError });
   const [isSilenced, setIsSilenced] = useState(false);
+  const { endPoint, environmentName, domainName, loaded: isConfigLoaded } = useConfig({ setError });
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
@@ -54,7 +54,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
-    buildId,
     isConfigLoaded,
     isSilenced,
     setIsSilenced,
@@ -103,8 +102,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     disconnectParticipant: async (isRegistered?: boolean) => {
       if (!isConfigLoaded) return null;
 
-      var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-      var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
+      const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      const loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
 
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
       else window.location.replace(loginPageUrl);

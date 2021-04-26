@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import React from 'react';
-import ParticipantStripGrid from './ParticipantStripGrid';
+import ParticipantGrid from './ParticipantGrid';
 import { shallow } from 'enzyme';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
@@ -26,7 +26,7 @@ describe('the ParticipantStrip component', () => {
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStripGrid viewMode={'grid 3x3'} />);
+    const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);
     expect(wrapper).toMatchSnapshot();
   });
 
@@ -39,7 +39,7 @@ describe('the ParticipantStrip component', () => {
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStripGrid viewMode={'grid 3x3'} />);
+    const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);
     expect(
       wrapper
         .find('Participant')
@@ -58,7 +58,7 @@ describe('the ParticipantStrip component', () => {
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStripGrid viewMode={'grid 3x3'} />);
+    const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);
     expect(
       wrapper
         .find('Participant')
@@ -77,7 +77,7 @@ describe('the ParticipantStrip component', () => {
     ]);
     mockRoom.localParticipant = 'localParticipant';
     mockedVideoContext.mockImplementation(() => ({ room: mockRoom }));
-    const wrapper = shallow(<ParticipantStripGrid viewMode={'grid 3x3'} />);
+    const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);
     expect(
       wrapper
         .find('Participant')
