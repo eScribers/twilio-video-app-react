@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { AudioTrack as IAudioTrack } from 'twilio-video';
-import { useAppState } from '../../state';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 interface AudioTrackProps {
   track: IAudioTrack;
@@ -18,6 +18,7 @@ export default function AudioTrack({ track }: AudioTrackProps) {
   }, [track]);
 
   useEffect(() => {
+    if (!activeSinkId) return;
     audioEl.current?.setSinkId?.(activeSinkId);
   }, [activeSinkId]);
 

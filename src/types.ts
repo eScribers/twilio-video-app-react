@@ -80,3 +80,7 @@ export declare interface PreflightTest extends EventEmitter {
   on(event: 'failed', listener: (error: Error) => void): this;
   stop: () => void;
 }
+
+export interface INotification {
+  message: string;
+}

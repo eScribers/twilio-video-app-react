@@ -3,6 +3,7 @@ import { styled } from '@material-ui/core/styles';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
+import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
 import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 
@@ -29,6 +30,7 @@ export default function ParticipantStripCollaboration() {
   const participants = useSortedParticipants();
   const dominantSpeaker = useDominantSpeaker();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const [isSilenced] = useIsSilenced();
 
   const dominantIdentity = dominantSpeaker?.identity;
 
@@ -46,6 +48,7 @@ export default function ParticipantStripCollaboration() {
             isDominantSpeaker={participant.identity === dominantIdentity}
             participant={participant}
             isSelected={selectedParticipant === participant}
+            userIsSilenced={!!isSilenced}
             onClick={() => setSelectedParticipant(participant)}
           />
         ))}

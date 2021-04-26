@@ -1,13 +1,13 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { Base64 } from 'js-base64';
-import { useAppState } from '../../state';
 import MessageText from './MessageText';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockSetNotification = jest.fn(() => {});
 
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 
 describe('the MenuBar component', () => {
   mockUseAppState.mockImplementation(() => ({ setNotification: mockSetNotification }));
