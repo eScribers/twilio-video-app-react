@@ -9,7 +9,7 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ERROR_MESSAGE } from './utils/displayStrings';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
-import AppStateProvider from './state';
+import AppStateProvider from './state/AppStateProvider';
 import { VideoProvider } from './components/VideoProvider/';
 import ErrorDialog from './components/ErrorDialog/ErrorDialog';
 import NotificationDialog from './components/NotificationDialog/NotificationDialog';
