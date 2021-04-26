@@ -3,10 +3,10 @@ import EventEmitter from 'events';
 import useIsSilenced from './useIsSilenced';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
-import { useAppState } from '../../state';
+import { useAppState } from '../useAppState/useAppState';
 
 jest.mock('../useVideoContext/useVideoContext');
-jest.mock('../../state');
+jest.mock('../useAppState/useAppState');
 
 const mockedVideoContext = useVideoContext as jest.Mock<any>;
 const mockUseAppState = useAppState as jest.Mock<any>;

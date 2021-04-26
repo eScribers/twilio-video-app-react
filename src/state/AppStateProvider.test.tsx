@@ -1,20 +1,13 @@
 import React from 'react';
-import { act, renderHook } from '@testing-library/react-hooks';
-import { TwilioError } from 'twilio-video';
-
-import AppStateProvider, { useAppState } from './index';
-import useFirebaseAuth from './useFirebaseAuth/useFirebaseAuth';
-import usePasscodeAuth from './usePasscodeAuth/usePasscodeAuth';
+import { renderHook } from '@testing-library/react-hooks';
+import AppStateProvider from './AppStateProvider';
+import { useAppState } from '../hooks/useAppState/useAppState';
 
 jest.mock('./useFirebaseAuth/useFirebaseAuth', () => jest.fn(() => ({ user: 'firebaseUser' })));
 jest.mock('./usePasscodeAuth/usePasscodeAuth', () => jest.fn(() => ({ user: 'passcodeUser' })));
 
-const mockUsePasscodeAuth = usePasscodeAuth as jest.Mock<any>;
-
 // @ts-ignore
 window.fetch = jest.fn(() => Promise.resolve({ text: () => 'mockVideoToken' }));
-
-const wrapper: React.FC = ({ children }) => <AppStateProvider>{children}</AppStateProvider>;
 
 describe('the useAppState hook', () => {
   beforeEach(jest.clearAllMocks);

@@ -18,6 +18,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
           "sid": 0,
         }
       }
+      userIsSilenced={false}
     />
     <Participant
       isDominantSpeaker={true}
@@ -29,6 +30,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
           "sid": 1,
         }
       }
+      userIsSilenced={false}
     />
   </Styled(div)>
 </Styled(aside)>
