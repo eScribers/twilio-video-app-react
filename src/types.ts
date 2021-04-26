@@ -1,6 +1,4 @@
 import { LocalVideoTrack, RemoteVideoTrack, TwilioError } from 'twilio-video';
-import { Settings, SettingsAction } from './state/settings/settingsReducer';
-import { ParticipantInformation } from './types/participantInformation';
 import { EventEmitter } from 'events';
 
 declare module 'twilio-video' {
@@ -83,30 +81,6 @@ export declare interface PreflightTest extends EventEmitter {
   stop: () => void;
 }
 
-export interface StateContextType {
-  error: TwilioError | null;
-  setError(error: TwilioError | null): void;
-  notification: string | null;
-  setNotification(notification: string | null): void;
-  isAutoRetryingToJoinRoom: boolean;
-  disconnectParticipant(isRegistered?: boolean): void;
-  setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
-  waitingNotification: string;
-  setWaitingNotification(waitingNotification: string | null): void;
-  isFetching: boolean;
-  setSelectedAudioInput: string;
-  selectedVideoInput: string;
-  setSelectedVideoInput: string;
-  selectedSpeakerOutput: string;
-  setSelectedSpeakerOutput: string;
-  gridView: boolean;
-  setGridView: any;
-  authoriseParticipant(): Promise<any>;
-  participantInfo: ParticipantInformation;
-  getToken(participantInformation: ParticipantInformation): Promise<string>;
-  removeParticipant: any;
-  activeSinkId: string;
-  setActiveSinkId(sinkId: string): void;
-  settings: Settings;
-  dispatchSetting: React.Dispatch<SettingsAction>;
+export interface INotification {
+  message: string;
 }

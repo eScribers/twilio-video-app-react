@@ -7,14 +7,15 @@ import { settingsReducer, initialSettings } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
 import useConfig from '../hooks/useConfig/useConfig';
-import { StateContextType } from '../types';
+import { INotification } from '../types';
 import { ParticipantInformation } from '../types/participantInformation';
+import StateContextType from '../types/stateContextType';
 
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState<INotification | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
@@ -27,7 +28,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
-  const [isSilenced, setIsSilenced] = useState(false);
+  const [isSilenced, setIsSilenced] = useState<boolean>(false);
   const { endPoint, environmentName, domainName, loaded: isConfigLoaded } = useConfig({ setError });
 
   const participantAuthToken = window.location.hash.substr(1);

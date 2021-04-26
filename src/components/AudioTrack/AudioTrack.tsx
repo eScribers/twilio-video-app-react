@@ -18,6 +18,7 @@ export default function AudioTrack({ track }: AudioTrackProps) {
   }, [track]);
 
   useEffect(() => {
+    if (!activeSinkId) return;
     audioEl.current?.setSinkId?.(activeSinkId);
   }, [activeSinkId]);
 

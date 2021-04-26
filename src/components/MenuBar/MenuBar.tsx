@@ -24,6 +24,7 @@ import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackP
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
+import { TwilioError } from 'twilio-video';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
@@ -112,8 +113,8 @@ export default function MenuBar() {
     try {
       response = await getToken(participantInformation);
     } catch (err) {
-      if (err.response) setError({ message: err.response.data });
-      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
+      if (err.response) setError({ message: err.response.data } as TwilioError);
+      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
       return;

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Base64 } from 'js-base64';
-import { useAppState } from '../../state';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 const MessageText = ({ defaultMessage = '' }) => {
   const { setNotification } = useAppState();

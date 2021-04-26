@@ -1,6 +1,6 @@
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import { Participant } from 'twilio-video';
+import { Participant, TwilioError } from 'twilio-video';
 import { IMuteRemoteParticipantMessage } from '../../utils/muteRemoteParticipantMessage';
 import { useAppState } from '../useAppState/useAppState';
 
@@ -29,7 +29,7 @@ export default function useParticipant(): IParticipantCommands {
   //Note: function is called removeOtherParticipant to avoid ambiguity on the name of the removeParticipant in useAppState
   function removeOtherParticipant(participantToRemove: Participant) {
     removeParticipant(participantToRemove.sid).catch(err => {
-      setError({ message: err.response.data });
+      setError({ message: err.response.data } as TwilioError);
     });
   }
 

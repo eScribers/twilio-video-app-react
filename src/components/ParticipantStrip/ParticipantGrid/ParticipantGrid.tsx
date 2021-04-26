@@ -87,7 +87,7 @@ export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
                 participant={participant}
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
-                isSilenced={isSilenced}
+                userIsSilenced={!!isSilenced}
                 onClick={() => setSelectedParticipant(participant)}
               />
             </Paper>

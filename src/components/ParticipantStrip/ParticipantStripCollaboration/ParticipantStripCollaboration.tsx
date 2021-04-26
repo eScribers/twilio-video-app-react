@@ -48,7 +48,7 @@ export default function ParticipantStripCollaboration() {
             isDominantSpeaker={participant.identity === dominantIdentity}
             participant={participant}
             isSelected={selectedParticipant === participant}
-            isSilenced={isSilenced}
+            userIsSilenced={!!isSilenced}
             onClick={() => setSelectedParticipant(participant)}
           />
         ))}
