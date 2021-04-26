@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
-import { useAppState } from '../../state';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import useParticipants from '../useParticipants/useParticipants';
 import useParticipant from '../useParticipant/useParticipant';
 import useVideoContext from '../useVideoContext/useVideoContext';
+import { useAppState } from '../useAppState/useAppState';
 
 const useIsSilenced = () => {
   const {

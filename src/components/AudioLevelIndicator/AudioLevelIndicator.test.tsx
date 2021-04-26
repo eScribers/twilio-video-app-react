@@ -4,11 +4,11 @@ import AudioLevelIndicator from './AudioLevelIndicator';
 import MicOff from '@material-ui/icons/MicOff';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { useAppState } from '../../state';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 jest.mock('../../hooks/useIsTrackEnabled/useIsTrackEnabled');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 
 // @ts-ignore
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;

@@ -3,12 +3,12 @@ import ConnectionOptions from './ConnectionOptions';
 import { initialSettings } from '../../../state/settings/settingsReducer';
 import { Select, TextField, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
 import { shallow } from 'enzyme';
-import { useAppState } from '../../../state';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 import useRoomState from '../../../hooks/useRoomState/useRoomState';
 import { getByTestId } from '@testing-library/dom';
 
 jest.mock('../../../hooks/useRoomState/useRoomState');
-jest.mock('../../../state');
+jest.mock('../../../hooks/useAppState/useAppState');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseRoomState = useRoomState as jest.Mock<any>;

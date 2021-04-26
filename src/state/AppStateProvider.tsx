@@ -1,54 +1,21 @@
-import React, { createContext, useContext, useReducer, useState } from 'react';
+import React, { createContext, useReducer, useState } from 'react';
 import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
-import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
+import { settingsReducer, initialSettings } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
 import useConfig from '../hooks/useConfig/useConfig';
-
-export interface ParticipantInformation {
-  caseReference: string;
-  displayName: string;
-  partyType: string;
-  userId: number | null;
-  videoConferenceRoomName: string;
-}
-
-export interface StateContextType {
-  error: TwilioError | null;
-  setError(error: TwilioError | null): void;
-  notification: string | null;
-  setNotification(notification: string | null): void;
-  isAutoRetryingToJoinRoom: boolean;
-  disconnectParticipant(isRegistered?: boolean): void;
-  setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
-  waitingNotification: string;
-  setWaitingNotification(waitingNotification: string | null): void;
-  isFetching: boolean;
-  setSelectedAudioInput: string;
-  selectedVideoInput: string;
-  setSelectedVideoInput: string;
-  selectedSpeakerOutput: string;
-  setSelectedSpeakerOutput: string;
-  gridView: boolean;
-  setGridView: any;
-  authoriseParticipant(): Promise<any>;
-  participantInfo: ParticipantInformation;
-  getToken(participantInformation: ParticipantInformation): Promise<string>;
-  removeParticipant: any;
-  activeSinkId: string;
-  setActiveSinkId(sinkId: string): void;
-  settings: Settings;
-  dispatchSetting: React.Dispatch<SettingsAction>;
-}
+import { INotification } from '../types';
+import { ParticipantInformation } from '../types/participantInformation';
+import StateContextType from '../types/stateContextType';
 
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState<INotification | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
@@ -61,8 +28,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
-  const { endPoint, environmentName, domainName, buildId, loaded: isConfigLoaded } = useConfig({ setError });
-  const [isSilenced, setIsSilenced] = useState(false);
+  const [isSilenced, setIsSilenced] = useState<boolean>(false);
+  const { endPoint, environmentName, domainName, loaded: isConfigLoaded } = useConfig({ setError });
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
@@ -88,7 +55,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
-    buildId,
     isConfigLoaded,
     isSilenced,
     setIsSilenced,
@@ -137,8 +103,8 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     disconnectParticipant: async (isRegistered?: boolean) => {
       if (!isConfigLoaded) return null;
 
-      var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-      var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
+      const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      const loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
 
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
       else window.location.replace(loginPageUrl);
@@ -210,12 +176,4 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       {props.children}
     </StateContext.Provider>
   );
-}
-
-export function useAppState(): any {
-  const context = useContext(StateContext);
-  if (!context) {
-    throw new Error('useAppState must be used within the AppStateProvider');
-  }
-  return context;
 }
