@@ -3,11 +3,12 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
-import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
+import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
+import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,19 +29,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export interface ParticipantStripGridProps {
+export interface ParticipantGridProps {
   viewMode: string;
 }
 
-export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridProps) {
+export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
   const {
     room: { localParticipant },
   } = useVideoContext();
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const participants = useParticipants();
+  const participants = useSortedParticipants();
   const dominantSpeaker = useDominantSpeaker();
+  const [isSilenced] = useIsSilenced();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const classes = useStyles();
 
@@ -85,6 +87,7 @@ export default function ParticipantStripGrid({ viewMode }: ParticipantStripGridP
                 participant={participant}
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
+                userIsSilenced={!!isSilenced}
                 onClick={() => setSelectedParticipant(participant)}
               />
             </Paper>

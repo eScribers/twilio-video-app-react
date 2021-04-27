@@ -1,9 +1,9 @@
 import React from 'react';
 import ParticipantStripCollaboration from '../ParticipantStrip/ParticipantStripCollaboration/ParticipantStripCollaboration';
-import ParticipantStripGrid from '../ParticipantStrip/ParticipantStripGrid/ParticipantStripGrid';
+import ParticipantGrid from '../ParticipantStrip/ParticipantGrid/ParticipantGrid';
 import { styled } from '@material-ui/core/styles';
 import MainParticipant from '../MainParticipant/MainParticipant';
-import { useAppState } from '../../state';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -24,7 +24,7 @@ export default function Room() {
   const { settings } = useAppState();
 
   if (settings.viewMode.includes('grid')) {
-    return <ParticipantStripGrid viewMode={settings.viewMode} />;
+    return <ParticipantGrid viewMode={settings.viewMode} />;
   }
 
   return (

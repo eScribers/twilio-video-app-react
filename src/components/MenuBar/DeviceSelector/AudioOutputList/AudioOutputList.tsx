@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
-import { useAppState } from '../../../../state';
+import { useAppState } from '../../../../hooks/useAppState/useAppState';
 import useDevices from '../../../../hooks/useDevices/useDevices';
 
 export default function AudioOutputList() {

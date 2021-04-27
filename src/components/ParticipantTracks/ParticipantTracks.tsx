@@ -3,8 +3,8 @@ import { Participant, Track } from 'twilio-video';
 import Publication from '../Publication/Publication';
 import usePublications from '../../hooks/usePublications/usePublications';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import { useAppState } from '../../state';
 import { VIEW_MODE, Settings } from '../../state/settings/settingsReducer';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 interface ParticipantTracksProps {
   participant: Participant;

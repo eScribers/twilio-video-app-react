@@ -47,6 +47,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
               "sid": 0,
             }
           }
+          userIsSilenced={false}
         />
       </WithStyles(ForwardRef(Paper))>
     </WithStyles(ForwardRef(Grid))>
@@ -71,6 +72,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
               "sid": 1,
             }
           }
+          userIsSilenced={false}
         />
       </WithStyles(ForwardRef(Paper))>
     </WithStyles(ForwardRef(Grid))>
