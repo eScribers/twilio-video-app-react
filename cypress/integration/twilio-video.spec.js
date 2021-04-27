@@ -17,12 +17,12 @@ context('Startup', () => {
 
   it('should log in as a manager and create a conference', () => {
     cy.loginAsManager();
-  const nowTime = moment.tz('Asia/Jerusalem');
+    const nowTime = moment.tz('America/New_York');
     cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
     let hearingDate = nowTime.format('yyyy-MM-DD'),
-        startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'),
-        hearingOfficer = "Tester Tester HO";
-    cy.createNewConference( caseRef, hearingDate, startTime, hearingOfficer );
+      startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'),
+      hearingOfficer = "Tester Tester HO";
+    cy.createNewConference(caseRef, hearingDate, startTime, hearingOfficer);
   });
 
   // See https://escribers.atlassian.net/browse/CA-860
@@ -64,10 +64,10 @@ context('Startup', () => {
     cy.loginAsHearingOfficer(caseRef);
     const nowTime = moment.tz('Asia/Jerusalem');
     cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
-    cy.url().should('include', '.cloudfront.net/');
+    cy.url().should('include', '?returnUrl');
     cy.log("url" + cy.url());
   })
-  after(() => {});
+  after(() => { });
 
 });
 
