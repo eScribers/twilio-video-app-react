@@ -248,7 +248,7 @@ export default function MenuBar() {
         <div className={classes.rightButtonContainer}>
           <div className={classes.dialInWrapper}>
             <h3 className={classes.dialIn}>Dial in number</h3>
-            <span>+1 929 419 4126</span>
+            <span>+1 929 297 8424</span>
           </div>
           <ToggleGridViewButton />
           {/* {!mobileAndTabletCheck() && (
