@@ -26,6 +26,7 @@ export default class roleChecker {
     if (permission === ROLE_PERMISSIONS.REMOVE_PARTICIPANT) {
       if (role === PARTICIPANT_TYPES.REPORTER && remoteRole !== PARTICIPANT_TYPES.HEARING_OFFICER) return true;
       if (role === PARTICIPANT_TYPES.HEARING_OFFICER && remoteRole !== PARTICIPANT_TYPES.REPORTER) return true;
+      return false;
     }
     if (permission === ROLE_PERMISSIONS.MUTE_PARTICIPANT) {
       return (
