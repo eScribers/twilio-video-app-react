@@ -22,7 +22,7 @@ describe('the doesRoleHavePermission function', () => {
     expect(result).toBeTruthy();
 
     result = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.REMOVE_PARTICIPANT, PARTICIPANT_TYPES.REPORTER);
-    expect(result).toBeFalsy();
+    expect(result).toBeTruthy();
   });
 
   it('should decided if role have a permision to remove participant with more role', () => {
