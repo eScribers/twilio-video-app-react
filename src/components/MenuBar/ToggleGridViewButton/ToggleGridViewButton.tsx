@@ -3,8 +3,8 @@ import useWindowSize from '../../../hooks/useWindowSize/useWindowSize';
 import GridOnIcon from '@material-ui/icons/GridOn';
 import IconButton from '@material-ui/core/IconButton';
 import { ViewModeArray, Settings } from '../../../state/settings/settingsReducer';
-import { useAppState } from '../../../state';
 import Tooltip from '@material-ui/core/Tooltip';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 
 export default function ToggleGridViewButton() {
   const { settings, dispatchSetting } = useAppState();

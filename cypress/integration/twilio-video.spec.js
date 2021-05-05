@@ -6,10 +6,7 @@ import 'moment-timezone';
 // If you are on MacOS and have many popups about Chromium when these tests run, please see: https://stackoverflow.com/questions/54545193/puppeteer-chromium-on-mac-chronically-prompting-accept-incoming-network-connect
 const baseUrl = Cypress.env('BASE_URL');
 const loginUrlPath = baseUrl + "/welcome";
-const conferenceUrlPath = baseUrl + "/conference/newconference";
-const uuid = () => Cypress._.random(0, 1e6)
-const statusValues = ['In_progress', 'Completed', 'Scheduled'];
-const providers = ['Twilio Video', 'Twilio Telephone'];
+const uuid = () => Cypress._.random(0, 1e6);
 const roles = ['Parent', 'Parent Representative', 'District Representative', 'Other', 'Interpreter'];
 const caseRef = uuid();
 
@@ -20,15 +17,30 @@ context('Startup', () => {
 
   it('should log in as a manager and create a conference', () => {
     cy.loginAsManager();
-    const nowTime = moment.tz('Asia/Jerusalem');
+    const nowTime = moment.tz('America/New_York');
     cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
-    let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
-      startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2, 'hours').format('HH:mm:ss'),
-      provider = providers[0], status = statusValues[0],
-      hearingOfficer = `reporter-${caseRef}`,
-      reporterPerson = getRandomInt(48, 90).toString();
-    cy.createNewConference(conferenceUrlPath, caseRef, caseName, hearingDate, startTime, endTime, provider, status, hearingOfficer, reporterPerson);
+    let hearingDate = nowTime.format('yyyy-MM-DD'),
+      startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'),
+      hearingOfficer = "Tester Tester HO";
+    cy.createNewConference(caseRef, hearingDate, startTime, hearingOfficer);
   });
+
+  // See https://escribers.atlassian.net/browse/CA-860
+
+  // it('should log in as a manager and create a conference', () => {
+  //   const conferenceUrlPath = baseUrl + "/conference/newconference";
+  //   const statusValues = ['In_progress', 'Completed', 'Scheduled'];
+  //   const providers = ['Twilio Video', 'Twilio Telephone'];
+  //   cy.loginAsManager();
+  //   const nowTime = moment.tz('Asia/Jerusalem');
+  //   cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
+  //   let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
+  //     startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2, 'hours').format('HH:mm:ss'),
+  //     provider = providers[0], status = statusValues[0],
+  //     hearingOfficer = `reporter-${caseRef}`,
+  //     reporterPerson = getRandomInt(48, 90).toString();
+  //   cy.createNewConference(conferenceUrlPath, caseRef, caseName, hearingDate, startTime, endTime, provider, status, hearingOfficer, reporterPerson);
+  // });
 
   it('should fill login form and get error of "The username/password is incorrect."', () => {
     let userName = generatePassword(4);
@@ -52,10 +64,10 @@ context('Startup', () => {
     cy.loginAsHearingOfficer(caseRef);
     const nowTime = moment.tz('Asia/Jerusalem');
     cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
-    cy.url().should('include', '.cloudfront.net/');
+    cy.url().should('include', '?returnUrl');
     cy.log("url" + cy.url());
   })
-  after(() => {});
+  after(() => { });
 
 });
 

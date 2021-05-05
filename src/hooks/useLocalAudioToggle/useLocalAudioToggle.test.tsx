@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react-hooks';
 import useLocalAudioToggle from './useLocalAudioToggle';
 import useVideoContext from '../useVideoContext/useVideoContext';
-import { useAppState } from '../../state';
+import { useAppState } from '../useAppState/useAppState';
 
-jest.mock('../../state');
+jest.mock('../useAppState/useAppState');
 jest.mock('../useVideoContext/useVideoContext');
 jest.mock('../useIsTrackEnabled/useIsTrackEnabled', () => () => true);
 

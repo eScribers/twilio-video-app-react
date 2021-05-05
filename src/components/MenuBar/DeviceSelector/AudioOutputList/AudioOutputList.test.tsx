@@ -2,10 +2,10 @@ import React from 'react';
 import AudioOutputList from './AudioOutputList';
 import { Select, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
-import { useAppState } from '../../../../state';
+import { useAppState } from '../../../../hooks/useAppState/useAppState';
 import useDevices from '../../../../hooks/useDevices/useDevices';
 
-jest.mock('../../../../state');
+jest.mock('../../../../hooks/useAppState/useAppState');
 jest.mock('../../../../hooks/useDevices/useDevices');
 
 const mockUseAppState = useAppState as jest.Mock<any>;

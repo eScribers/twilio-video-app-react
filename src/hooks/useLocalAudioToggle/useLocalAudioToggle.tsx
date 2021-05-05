@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 import useIsTrackEnabled from '../useIsTrackEnabled/useIsTrackEnabled';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../../utils/displayStrings';
-import { useAppState } from '../../state';
+import { useAppState } from '../useAppState/useAppState';
 
 export default function useLocalAudioToggle() {
   const { localTracks } = useVideoContext();

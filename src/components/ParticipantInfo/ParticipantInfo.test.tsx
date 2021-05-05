@@ -6,11 +6,11 @@ import { shallow } from 'enzyme';
 import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import usePublications from '../../hooks/usePublications/usePublications';
-import { useAppState } from '../../state';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { IVideoContext } from '../../components/VideoProvider';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel', () => () => 4);
 jest.mock('../../hooks/usePublications/usePublications');
 jest.mock('../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff');

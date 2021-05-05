@@ -2,11 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Menu from './Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import { useAppState } from '../../../state';
+import { useAppState } from '../../../hooks/useAppState/useAppState';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import { MenuItem } from '@material-ui/core';
 
-jest.mock('../../../state');
+jest.mock('../../../hooks/useAppState/useAppState');
 jest.mock('../../../hooks/useVideoContext/useVideoContext');
 
 const mockUseAppState = useAppState as jest.Mock<any>;
