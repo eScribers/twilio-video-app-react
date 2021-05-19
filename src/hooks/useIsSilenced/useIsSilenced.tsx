@@ -17,13 +17,15 @@ const useIsSilenced = () => {
 
   useEffect(() => {
     const isReporter = ParticipantIdentity.Parse(localParticipant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER;
+    if (!isReporter) return;
+
     const isSipClientConnected =
       participants.filter(
         participant =>
           ParticipantIdentity.Parse(participant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER_RECORDING
       ).length >= 1;
 
-    if (!isSilenced && isReporter && isSipClientConnected) {
+    if (!isSilenced && isSipClientConnected) {
       setNotification({
         message:
           'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
@@ -32,12 +34,12 @@ const useIsSilenced = () => {
       setIsSilenced(true);
       if (isAudioEnabled) toggleAudioEnabled();
     }
-    if (isSilenced && isReporter && !isSipClientConnected) {
+    if (isSilenced && !isSipClientConnected) {
       setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
       console.log('Zoiper call disconnected, you are un-silenced');
       setIsSilenced(false);
     }
-  }, [participants, isSilenced, setIsSilenced, localParticipant, setNotification]);
+  }, [participants, isSilenced, setIsSilenced, localParticipant, setNotification, isAudioEnabled, toggleAudioEnabled]);
 
   return [isSilenced, setIsSilenced];
 };
