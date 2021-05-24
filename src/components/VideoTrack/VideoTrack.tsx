@@ -6,7 +6,7 @@ import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamT
 
 const Video = styled('video')({
   width: '100%',
-  maxHeight: 'calc(100vh - 70px)',
+  maxHeight: 'calc(100vh - 64px)',
   objectFit: 'contain',
 });
 

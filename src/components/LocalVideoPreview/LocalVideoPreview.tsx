@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     position: 'relative',
     overflow: 'hidden',
-    height: `calc(100vh - 70px)`,
+    height: `calc(100vh - 64px)`,
     background: 'black',
   },
   innerContainer: {

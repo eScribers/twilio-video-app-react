@@ -26,6 +26,7 @@ import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
+import moment from 'moment';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -68,12 +69,26 @@ const useStyles = makeStyles(theme =>
     dialIn: {
       margin: 0,
     },
+    floatingDebugInfo: {
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.2)',
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '10px',
+    },
   })
 );
 
 const getPartyTypes = () => {
   return Object.values(PARTICIPANT_TYPES);
 };
+
+const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
+  <div className={wrapperClass}>
+    {time} - #{subConferenceId}
+  </div>
+);
 
 export default function MenuBar() {
   const classes = useStyles();
@@ -259,6 +274,11 @@ export default function MenuBar() {
           <Menu />
         </div>
       </Toolbar>
+      <FloatingDebugInfo
+        wrapperClass={classes.floatingDebugInfo}
+        time={moment().format()}
+        subConferenceId={participantInfo?.videoConferenceRoomName}
+      />
     </AppBar>
   );
 }
