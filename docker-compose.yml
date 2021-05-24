@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  conf-app:
+    platform: linux/x86_64
+    image: node:16.2.0-alpine3.13
+    volumes:
+      - .:/conf-app
+    working_dir: /conf-app
+    entrypoint: /conf-app/entrypoint.sh
+    ports:
+      - "3000"
