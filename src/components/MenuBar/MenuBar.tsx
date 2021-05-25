@@ -86,7 +86,7 @@ const getPartyTypes = () => {
 
 const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
   <div className={wrapperClass}>
-    {time} - #{subConferenceId}
+    {time} - SC:{subConferenceId}
   </div>
 );
 
