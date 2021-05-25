@@ -1,10 +1,9 @@
-import { TRACK_TYPE } from '../../utils/displayStrings';
 import { LocalDataTrack, LocalDataTrackOptions, LocalParticipant } from 'twilio-video';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { useState } from 'react';
 import roleChecker from '../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../utils/rbac/rolePermissions';
-import { ParticipantInformation } from 'state';
+import { ParticipantInformation } from '../../types/participantInformation';
 
 export default function usePublishDataTrack(participantInfo: ParticipantInformation | null) {
   const {

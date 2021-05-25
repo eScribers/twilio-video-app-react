@@ -1,13 +1,15 @@
 import React from 'react';
 import { styled } from '@material-ui/core/styles';
-import useParticipants from '../../../hooks/useParticipants/useParticipants';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
+import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
+import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
+import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
-  overflowY: 'auto',
+  overflowY: 'scroll',
   [theme.breakpoints.down('xs')]: {
     overflowY: 'initial',
     overflowX: 'auto',
@@ -25,8 +27,12 @@ export default function ParticipantStripCollaboration() {
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const participants = useParticipants();
+  const participants = useSortedParticipants();
+  const dominantSpeaker = useDominantSpeaker();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const [isSilenced] = useIsSilenced();
+
+  const dominantIdentity = dominantSpeaker?.identity;
 
   return (
     <Container>
@@ -39,8 +45,10 @@ export default function ParticipantStripCollaboration() {
         {participants.map(participant => (
           <Participant
             key={participant.sid}
+            isDominantSpeaker={participant.identity === dominantIdentity}
             participant={participant}
             isSelected={selectedParticipant === participant}
+            userIsSilenced={!!isSilenced}
             onClick={() => setSelectedParticipant(participant)}
           />
         ))}

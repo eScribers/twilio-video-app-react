@@ -6,6 +6,7 @@ export interface Settings {
   trackSwitchOffMode: VideoBandwidthProfileOptions['trackSwitchOffMode'];
   dominantSpeakerPriority?: Track.Priority;
   viewMode: string;
+  bandwidthProfileMode: VideoBandwidthProfileOptions['mode'];
   maxTracks: string;
   maxAudioBitrate: string;
   renderDimensionLow?: RenderDimensionValue;
@@ -15,12 +16,19 @@ export interface Settings {
 
 type SettingsKeys = keyof Settings;
 export const VIEW_MODE = {
-  grid_2_2: 'grid 2X2',
-  grid_3_3: 'grid 3X3',
-  grid_4_4: 'grid 4X4',
+  grid_2Column: 'grid 2 column',
+  grid_3Column: 'grid 3 column',
+  grid_4Column: 'grid 4 column',
   collaboration: 'collaboration',
   default: 'default_grid',
 };
+export const ViewModeArray = [
+  VIEW_MODE.grid_2Column,
+  VIEW_MODE.grid_3Column,
+  VIEW_MODE.grid_4Column,
+  VIEW_MODE.collaboration,
+  VIEW_MODE.default,
+];
 export interface SettingsAction {
   name: SettingsKeys;
   value: string;
@@ -30,7 +38,9 @@ export const initialSettings: Settings = {
   trackSwitchOffMode: undefined,
   dominantSpeakerPriority: 'standard',
   viewMode: VIEW_MODE.default,
-  maxTracks: isMobile ? '5' : '10',
+  bandwidthProfileMode: 'collaboration',
+// https://www.twilio.com/docs/video/tutorials/using-bandwidth-profile-api#understanding-maxtracks
+  maxTracks: isMobile ? '8' : '20',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
   renderDimensionStandard: '960p',

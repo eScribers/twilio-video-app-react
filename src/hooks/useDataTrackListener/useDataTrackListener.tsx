@@ -1,6 +1,6 @@
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { useEffect } from 'react';
-import { RemoteParticipant, Track } from 'twilio-video';
+import { RemoteParticipant } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import roleChecker from '../../utils/rbac/roleChecker';

@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme: Theme) =>
       '&.showControls, &:hover': {
         transition: 'opacity 0.6s, transform 0.6s, visibility 0s',
         opacity: 1,
+        zIndex: 2,
         visibility: 'visible',
         transform: 'translate(50%, 0px)',
       },
@@ -52,7 +53,7 @@ export default function Controls(props: { disabled?: boolean }) {
       <ToggleVideoButton disabled={isReconnecting} />
       {roomState !== ROOM_STATE.DISCONNECTED && (
         <>
-          {/* <ToggleScreenShareButton disabled={isReconnecting} /> */}
+          <ToggleScreenShareButton disabled={isReconnecting} />
           <EndCallButton />
         </>
       )}

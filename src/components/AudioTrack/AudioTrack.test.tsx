@@ -1,14 +1,14 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 import AudioTrack from './AudioTrack';
-import { useAppState } from '../../state';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
 const audioEl = document.createElement('audio');
 audioEl.setSinkId = jest.fn();
 
 const mockTrack = { attach: jest.fn(() => audioEl), detach: jest.fn(() => [audioEl]) } as any;
 
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 const mockUseAppState = useAppState as jest.Mock<any>;
 
 mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));

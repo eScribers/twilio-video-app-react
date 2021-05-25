@@ -5,9 +5,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
 import { version as appVersion } from '../../../../package.json';
 import Video from 'twilio-video';
+
+let dateTimeStamp = '00:00';
+
+if (process.env.JEST_WORKER_ID === undefined) {
+  const preval = require('preval.macro');
+  dateTimeStamp = preval`module.exports = new Date();`;
+}
 
 interface AboutDialogProps {
   open: boolean;
@@ -22,8 +28,7 @@ function AboutDialog({ open, onClose }: PropsWithChildren<AboutDialogProps>) {
         <DialogContentText>Browser supported: {String(Video.isSupported)}</DialogContentText>
         <DialogContentText>SDK Version: {Video.version}</DialogContentText>
         <DialogContentText>App Version: {appVersion}</DialogContentText>
-        <DialogContentText>Deployed Tag: {process.env.REACT_APP_GIT_TAG || 'N/A'}</DialogContentText>
-        <DialogContentText>Deployed Commit Hash: {process.env.REACT_APP_GIT_COMMIT || 'N/A'}</DialogContentText>
+        <DialogContentText>Build Time(UTC): {dateTimeStamp || 'N/A'}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary" autoFocus>

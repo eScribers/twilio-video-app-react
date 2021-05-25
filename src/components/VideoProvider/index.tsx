@@ -1,20 +1,20 @@
 import React, { createContext, ReactNode } from 'react';
 import { Callback, ErrorCallback } from '../../types';
 import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
-import useHandleRoomDisconnectionEvents from './useHandleRoomDisconnectionEvents/useHandleRoomDisconnectionEvents';
-import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
+import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
 import useRoom from './useRoom/useRoom';
-import Video, {
+import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
+import {
+  CreateLocalTrackOptions,
   ConnectOptions,
+  LocalAudioTrack,
+  LocalVideoTrack,
   Room,
   TwilioError,
-  LocalVideoTrack,
-  LocalAudioTrack,
-  CreateLocalTrackOptions,
 } from 'twilio-video';
 /*
  *  The hooks used by the VideoProvider component are different than the hooks found in the 'hooks/' directory. The hooks
@@ -31,10 +31,14 @@ export interface IVideoContext {
   onError: ErrorCallback;
   onDisconnect: (isRegistered?: boolean) => void;
   getLocalVideoTrack: (newOptions?: CreateLocalTrackOptions) => Promise<LocalVideoTrack>;
-  getLocalAudioTrack: (deviceId?: string, groupId?: string) => Promise<void | LocalAudioTrack>;
   isAcquiringLocalTracks: boolean;
+  removeLocalAudioTrack: () => void;
   removeLocalVideoTrack: () => void;
+  isSharingScreen: boolean;
+  toggleScreenShare: () => void;
+  getAudioAndVideoTracks: () => Promise<void>;
 }
+
 export const VideoContext = createContext<IVideoContext>(null!);
 
 interface VideoProviderProps {
@@ -42,6 +46,7 @@ interface VideoProviderProps {
   onError: ErrorCallback;
   onDisconnect?: Callback;
   children: ReactNode;
+  onNotification: Callback;
 }
 
 export function VideoProvider({
@@ -50,7 +55,7 @@ export function VideoProvider({
   onError = () => {},
   onNotification = () => {},
   onDisconnect = () => {},
-}: any) {
+}: VideoProviderProps) {
   const onErrorCallback = (error: TwilioError) => {
     console.log(`ERROR: ${error.message}`, error);
     onError(error);
@@ -59,16 +64,18 @@ export function VideoProvider({
   const {
     localTracks,
     getLocalVideoTrack,
-    getLocalAudioTrack,
     isAcquiringLocalTracks,
+    removeLocalAudioTrack,
     removeLocalVideoTrack,
+    getAudioAndVideoTracks,
   } = useLocalTracks();
   const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
   // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionEvents(room, onError, onNotification);
+  useHandleRoomDisconnectionErrors(room, onError);
   useHandleTrackPublicationFailed(room, onError);
   useHandleOnDisconnect(room, onDisconnect);
+  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
 
   return (
     <VideoContext.Provider
@@ -79,10 +86,13 @@ export function VideoProvider({
         onError: onErrorCallback,
         onDisconnect,
         getLocalVideoTrack,
-        getLocalAudioTrack,
         connect,
         isAcquiringLocalTracks,
+        removeLocalAudioTrack,
         removeLocalVideoTrack,
+        isSharingScreen,
+        toggleScreenShare,
+        getAudioAndVideoTracks,
       }}
     >
       <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>

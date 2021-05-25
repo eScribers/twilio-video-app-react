@@ -3,12 +3,13 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import Video, { TwilioError } from 'twilio-video';
+import UAParser from 'ua-parser-js';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
-import { ERROR_MESSAGE } from 'utils/displayStrings';
+import { ERROR_MESSAGE } from './utils/displayStrings';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
-import AppStateProvider, { useAppState } from './state';
+import AppStateProvider from './state/AppStateProvider';
 import { VideoProvider } from './components/VideoProvider/';
 import ErrorDialog from './components/ErrorDialog/ErrorDialog';
 import NotificationDialog from './components/NotificationDialog/NotificationDialog';
@@ -16,9 +17,11 @@ import theme from './theme';
 import App from './App';
 import { detectBrowser } from './utils/index';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
+import useConnectionOptions from './utils/useConnectionOptions/useConnectionOptions';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
+import { useAppState } from './hooks/useAppState/useAppState';
 
-const options = {
+const alertProviderOptions = {
   // you can also just use 'bottom center'
   position: positions.BOTTOM_CENTER,
   timeout: 10000,
@@ -27,24 +30,6 @@ const options = {
   transition: transitions.SCALE,
 };
 
-const connectionOptions = {
-  bandwidthProfile: {
-    video: {
-      mode: 'grid',
-      maxTracks: 10,
-      dominantSpeakerPriority: 'standard',
-      renderDimensions: {
-        high: { height: 1080, width: 1920 },
-        standard: { height: 720, width: 1280 },
-        low: { height: 90, width: 160 },
-      },
-    },
-  },
-  dominantSpeaker: false,
-  maxAudioBitrate: 12000,
-  networkQuality: { local: 1, remote: 1 },
-  preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
-};
 const logger: LogglyTracker = new LogglyTracker();
 const VideoApp = () => {
   const {
@@ -57,7 +42,7 @@ const VideoApp = () => {
     setWaitingNotification,
     waitingNotification,
   } = useAppState();
-
+  const connectionOptions = useConnectionOptions();
   useEffect(() => {
     logger.push({
       logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
@@ -72,9 +57,25 @@ const VideoApp = () => {
   }, []);
 
   if (!Video.isSupported) {
-    return (
-      <ErrorDialog dismissError={() => null} error={(ERROR_MESSAGE.UNSUPPORTED_MESSAGE as unknown) as TwilioError} />
-    );
+    // Please follow the following git issue and remove the following code if chrome on iOS is supported
+    // https://github.com/twilio/twilio-video.js/issues/1388
+    // <<<<<< START
+    const parser = new UAParser();
+    const result = parser.getResult();
+    let allowAnyway = false;
+    const osVer = result.os.version.split('.');
+
+    // forcing "allow" to iOS version 14.4 (for chrome/firefox)
+    if (result.os.name === 'iOS' && Number(osVer[0] || 0) >= 14 && Number(osVer[1] || 0) >= 4) allowAnyway = true;
+
+    if (!allowAnyway)
+      // END >>>>>>>
+      return (
+        <ErrorDialog
+          dismissError={() => null}
+          error={{ message: ERROR_MESSAGE.UNSUPPORTED_MESSAGE as string } as TwilioError}
+        />
+      );
   }
   return (
     <VideoProvider
@@ -105,7 +106,7 @@ ReactDOM.render(
       <AppStateProvider>
         <Switch>
           <Route exact path="/">
-            <AlertProvider template={AlertTemplate} {...options}>
+            <AlertProvider template={AlertTemplate} {...alertProviderOptions}>
               <VideoApp />
             </AlertProvider>
           </Route>

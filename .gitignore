@@ -27,7 +27,15 @@ yarn-error.log*
 
 #.env
 .vscode
+cypress.env.json
 
 test-reports
 junit.xml
 public/config.json
+.env
+cypress.env.json
+submodules/authentication
+config.json
+localtunnel/*
+server/*
+.history/*

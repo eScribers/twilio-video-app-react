@@ -4,7 +4,7 @@ import { ROOM_STATE } from '../../utils/displayStrings';
 
 export default function useRoomState() {
   const { room } = useVideoContext();
-  const [state, setState] = useState(ROOM_STATE.DISCONNECTED);
+  const [state, setState] = useState<string>(ROOM_STATE.DISCONNECTED);
 
   useEffect(() => {
     const setRoomState = () => setState(room.state || ROOM_STATE.DISCONNECTED);

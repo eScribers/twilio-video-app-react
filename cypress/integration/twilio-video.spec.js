@@ -1,103 +1,79 @@
 /// <reference types="Cypress" />
+import { generateNumber, generatePassword, getRandomInt } from '../../submodules/authentication/cypress/support/helperFunctions';
 import moment from 'moment';
 import 'moment-timezone';
 
 // If you are on MacOS and have many popups about Chromium when these tests run, please see: https://stackoverflow.com/questions/54545193/puppeteer-chromium-on-mac-chronically-prompting-accept-incoming-network-connect
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min) + min); 
-}
-const baseUrl = Cypress.env('baseUrl');
+const baseUrl = Cypress.env('BASE_URL');
 const loginUrlPath = baseUrl + "/welcome";
-const conferenceUrlPath = baseUrl + "/conference/newconference";
-const getRoomName = () =>
-    Math.random()
-        .toString(36)
-        .slice(2);
-const uuid = () => Cypress._.random(0, 1e6)
-const statusValues = ['In_progress','Completed','Scheduled'];
-const providers = ['Twilio Video','Twilio Telephone'];
-const roles = ['Parent','Parent Representative','District Representative','Other','Interpreter'];
+const uuid = () => Cypress._.random(0, 1e6);
+const roles = ['Parent', 'Parent Representative', 'District Representative', 'Other', 'Interpreter'];
 const caseRef = uuid();
 
- context('Startup', () => {
-   before(() => { 
-                  let userName = Cypress.env('loginAdminUserName');
-                  let password = Cypress.env('loginAdminPassword');
-                  cy.login(conferenceUrlPath, userName, password);
-                  const nowTime = moment.tz('Asia/Jerusalem');
-                  cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
-                  let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
-                  startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2,'hours').format('HH:mm:ss'),
-                  provider = providers[0], status = statusValues[0],
-                  hearingOfficer = `reporter-${caseRef}`,
-                  reporterPerson = getRandomInt(48,90).toString();
+context('Startup', () => {
+  afterEach(() => {
+    cy.visit(`${baseUrl}/auth/logout`);
+  });
 
-                  cy.createNewConference(conferenceUrlPath,caseRef, caseName, hearingDate, 
-                    startTime,endTime, provider, status,hearingOfficer, reporterPerson);
-                });
+  it('should log in as a manager and create a conference', () => {
+    cy.loginAsManager();
+    const nowTime = moment.tz('America/New_York');
+    cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
+    let hearingDate = nowTime.format('yyyy-MM-DD'),
+      startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'),
+      hearingOfficer = "Tester Tester HO";
+    cy.createNewConference(caseRef, hearingDate, startTime, hearingOfficer);
+  });
 
-      beforeEach(() => {  
-                  cy.visit(`${baseUrl}/auth/logout`);
-                   cy.visit(`${loginUrlPath}/login?UserIdentifier=&Language=en-us&CaseReference=&Password=`);
-                });
+  // See https://escribers.atlassian.net/browse/CA-860
 
-          it('should fill login form and get error of "The username/password is incorrect."', () => {
-            let userName = generatePassword(4);
-            let userPass = generatePassword(8);
-            let caseRef = generateNumber(3);
-            cy.fillConferenceLoginPage(userName,userPass,caseRef);
+  // it('should log in as a manager and create a conference', () => {
+  //   const conferenceUrlPath = baseUrl + "/conference/newconference";
+  //   const statusValues = ['In_progress', 'Completed', 'Scheduled'];
+  //   const providers = ['Twilio Video', 'Twilio Telephone'];
+  //   cy.loginAsManager();
+  //   const nowTime = moment.tz('Asia/Jerusalem');
+  //   cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
+  //   let caseName = `caseName-${caseRef}`, hearingDate = nowTime.format('yyyy-MM-DD'),
+  //     startTime = nowTime.add(5, 'minutes').format('HH:mm:ss'), endTime = nowTime.add(2, 'hours').format('HH:mm:ss'),
+  //     provider = providers[0], status = statusValues[0],
+  //     hearingOfficer = `reporter-${caseRef}`,
+  //     reporterPerson = getRandomInt(48, 90).toString();
+  //   cy.createNewConference(conferenceUrlPath, caseRef, caseName, hearingDate, startTime, endTime, provider, status, hearingOfficer, reporterPerson);
+  // });
 
-            cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
-            cy.get('p').contains('The username/password is incorrect.').should('be.visible');
-          })
+  it('should fill login form and get error of "The username/password is incorrect."', () => {
+    let userName = generatePassword(4);
+    let userPass = generatePassword(8);
+    let caseRef = generateNumber(3);
+    cy.loginAsHearingOfficer(caseRef, userName, userPass);
+    cy.url().should('include', `${loginUrlPath}/login/-8?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
+    cy.get('p').contains('The username/password is incorrect.').should('be.visible');
+  })
 
-          it('should fill login form and get error of "The case number you entered is invalid. Please re-enter your case number."', () => {
-            let userName = Cypress.env('loginHOUserName');
-            let userPass = Cypress.env('loginHOPassword');
-            let caseRef = generateNumber(3);
-            cy.fillConferenceLoginPage(userName,userPass,caseRef);
+  it('should fill login form and get error of "The case number you entered is invalid or the conference has been cancelled. Please re-enter your case number."', () => {
+    let userName = Cypress.env('LOGIN_HO_USERNAME');
+    let userPass = Cypress.env('LOGIN_HO_PASSWORD');
+    let caseRef = generateNumber(3);
+    cy.loginAsHearingOfficer(caseRef, userName, userPass);
+    cy.url().should('include', `${loginUrlPath}/login/-1?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
+    cy.get('p').contains('The case number you entered is invalid or the conference has been cancelled. Please re-enter your case number.').should('be.visible');
+  })
 
-            cy.url().should('include', `${loginUrlPath}/login/-1?UserIdentifier=${userName}&Password=${userPass}&CaseReference=${caseRef}&Language=en-us`);
-            cy.get('p').contains('The case number you entered is invalid. Please re-enter your case number.').should('be.visible');
-          })
-      
-      it('should fill login form and redirect to twilio video app', () => {
-            let userName = Cypress.env('loginHOUserName');
-            let userPass = Cypress.env('loginHOPassword');
-            cy.fillConferenceLoginPage(userName,userPass,caseRef);
-            const nowTime = moment.tz('Asia/Jerusalem');
-            cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
-            cy.url().should('include', '.cloudfront.net/');
-            cy.log("url" + cy.url());
-      })
-      after(() => { 
-        
-      });   
-    }); 
-function generateNumber(length)
-{
-  let numberSet = "123456789";
-  return generateStringFromRandomString(numberSet,length);
-}
+  it('should fill login form and redirect to twilio video app', () => {
+    cy.loginAsHearingOfficer(caseRef);
+    const nowTime = moment.tz('Asia/Jerusalem');
+    cy.log('Current Timezone', nowTime.format('HH:mm:ss'));
+    cy.url().should('include', '?returnUrl');
+    cy.log("url" + cy.url());
+  })
+  after(() => { });
 
-function generatePassword(length)
-{
-  let charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  return generateStringFromRandomString(charset,length);
-}
-function generateStringFromRandomString(randomString, length) {
-  let retVal = "";
-  for (var i = 0, n = randomString.length; i < length; ++i) {
-     retVal += randomString.charAt(Math.floor(Math.random() * n));
-    }
-    return retVal;
-  }
+});
 
 
     // context('A video app user', () => {
- 
+
 //   describe('before entering a room', () => {
 
 //     it('should see their audio level indicator moving in the media device panel', () => {

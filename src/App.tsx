@@ -6,10 +6,11 @@ import LocalVideoPreview from './components/LocalVideoPreview/LocalVideoPreview'
 import MenuBar from './components/MenuBar/MenuBar';
 import ReconnectingNotification from './components/ReconnectingNotification/ReconnectingNotification';
 import Room from './components/Room/Room';
-import { ROOM_STATE } from 'utils/displayStrings';
+import { ROOM_STATE } from './utils/displayStrings';
 
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
+import MessageText from './components/MessageText/MessageText';
 
 const Container = styled('div')({
   display: 'grid',
@@ -32,9 +33,10 @@ export default function App() {
 
   return (
     <Container style={{ height }}>
+      <MessageText />
       <MenuBar />
       <Main>
-        {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview /> : <Room />}
+        {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
         <Controls />
       </Main>
       <ReconnectingNotification />

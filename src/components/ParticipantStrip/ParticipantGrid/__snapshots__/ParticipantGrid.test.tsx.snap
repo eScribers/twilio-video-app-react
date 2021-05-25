@@ -1,0 +1,81 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`the ParticipantStrip component should correctly render ParticipantInfo components 1`] = `
+<div
+  className="makeStyles-root-1"
+>
+  <WithStyles(ForwardRef(Grid))
+    className="makeStyles-scrollable-3"
+    container={true}
+    spacing={3}
+  >
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      lg={3}
+      md={4}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(Paper))
+        className="makeStyles-paper-2"
+      >
+        <Participant
+          isSelected={false}
+          onClick={[Function]}
+          participant={Object {}}
+        />
+      </WithStyles(ForwardRef(Paper))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      key="0"
+      lg={3}
+      md={4}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(Paper))
+        className="makeStyles-paper-2"
+      >
+        <Participant
+          isDominantSpeaker={true}
+          isSelected={false}
+          key="0"
+          onClick={[Function]}
+          participant={
+            Object {
+              "sid": 0,
+            }
+          }
+          userIsSilenced={false}
+        />
+      </WithStyles(ForwardRef(Paper))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      key="1"
+      lg={3}
+      md={4}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(Paper))
+        className="makeStyles-paper-2"
+      >
+        <Participant
+          isDominantSpeaker={true}
+          isSelected={false}
+          key="1"
+          onClick={[Function]}
+          participant={
+            Object {
+              "sid": 1,
+            }
+          }
+          userIsSilenced={false}
+        />
+      </WithStyles(ForwardRef(Paper))>
+    </WithStyles(ForwardRef(Grid))>
+  </WithStyles(ForwardRef(Grid))>
+</div>
+`;

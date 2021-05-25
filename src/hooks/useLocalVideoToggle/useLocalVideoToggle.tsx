@@ -1,5 +1,5 @@
 import { LocalVideoTrack } from 'twilio-video';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 
@@ -11,27 +11,23 @@ export default function useLocalVideoToggle() {
     removeLocalVideoTrack,
     onError,
   } = useVideoContext();
-  const videoTrack = localTracks.find(track => track.kind === TRACK_TYPE.VIDEO) as LocalVideoTrack;
+  const videoTrack = localTracks.find(track => track.name.includes(TRACK_TYPE.CAMERA)) as LocalVideoTrack;
   const [isPublishing, setIspublishing] = useState(false);
-  const previousDeviceIdRef = useRef<string>();
 
   const toggleVideoEnabled = useCallback(() => {
-    if (!isPublishing && videoTrack) {
-      if (localParticipant) {
-        previousDeviceIdRef.current = videoTrack.mediaStreamTrack.getSettings().deviceId;
+    if (!isPublishing) {
+      if (videoTrack) {
+        const localTrackPublication = localParticipant?.unpublishTrack(videoTrack);
         // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-
-        const localTrackPublication = localParticipant.unpublishTrack(videoTrack);
         localParticipant?.emit('trackUnpublished', localTrackPublication);
         removeLocalVideoTrack();
+      } else {
+        setIspublishing(true);
+        getLocalVideoTrack()
+          .then((track: LocalVideoTrack) => localParticipant?.publishTrack(track, { priority: 'low' }))
+          .catch(onError)
+          .finally(() => setIspublishing(false));
       }
-      videoTrack!.stop();
-    } else {
-      setIspublishing(true);
-      getLocalVideoTrack({ deviceId: { exact: previousDeviceIdRef.current } })
-        .then((track: LocalVideoTrack) => localParticipant?.publishTrack(track, { priority: 'low' }))
-        .catch(onError)
-        .finally(() => setIspublishing(false));
     }
   }, [videoTrack, localParticipant, getLocalVideoTrack, isPublishing, onError, removeLocalVideoTrack]);
 
