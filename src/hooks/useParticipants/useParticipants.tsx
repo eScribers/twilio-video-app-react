@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { RemoteParticipant } from 'twilio-video';
+import UAParser from 'ua-parser-js';
 import { Howl } from 'howler';
 import useDominantSpeaker from '../useDominantSpeaker/useDominantSpeaker';
 import useVideoContext from '../useVideoContext/useVideoContext';
@@ -32,12 +33,15 @@ export default function useParticipants() {
   }, [dominantSpeaker]);
 
   useEffect(() => {
+    const parser = new UAParser();
+    const result = parser.getResult();
+
     const participantConnected = (participant: RemoteParticipant) => {
-      logInSound.play();
+      if (result.os.name !== 'iOS') logInSound.play();
       setParticipants(prevParticipants => [...prevParticipants, participant]);
     };
     const participantDisconnected = (participant: RemoteParticipant) => {
-      logOutSound.play();
+      if (result.os.name !== 'iOS') logOutSound.play();
       setParticipants(prevParticipants => prevParticipants.filter(p => p !== participant));
     };
     room.on('participantConnected', participantConnected);

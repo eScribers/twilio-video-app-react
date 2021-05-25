@@ -17,15 +17,16 @@ import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenBut
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 //import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
-import { useAppState } from '../../state';
 import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { ParticipantInformation } from 'state';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
+import { useAppState } from '../../hooks/useAppState/useAppState';
+import { ParticipantInformation } from '../../types/participantInformation';
+import { TwilioError } from 'twilio-video';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
-
+import moment from 'moment';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -62,12 +63,32 @@ const useStyles = makeStyles(theme =>
     joinButton: {
       margin: '1em',
     },
+    dialInWrapper: {
+      margin: '0 20px 0 20px',
+    },
+    dialIn: {
+      margin: 0,
+    },
+    floatingDebugInfo: {
+      position: 'absolute',
+      right: 0,
+      bottom: 0,
+      background: 'rgba(0,0,0,0.2)',
+      color: 'rgba(255,255,255,0.4)',
+      fontSize: '10px',
+    },
   })
 );
 
 const getPartyTypes = () => {
   return Object.values(PARTICIPANT_TYPES);
 };
+
+const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
+  <div className={wrapperClass}>
+    {time} - SC:{subConferenceId}
+  </div>
+);
 
 export default function MenuBar() {
   const classes = useStyles();
@@ -80,6 +101,7 @@ export default function MenuBar() {
     setNotification,
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
+    isConfigLoaded,
     // logger,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
@@ -93,6 +115,7 @@ export default function MenuBar() {
   const [isHostInState, setIsHostInState] = useState(isHostIn);
   const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
   useDataTrackListener();
+  usePublishDataTrack(participantInfo);
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
@@ -105,8 +128,8 @@ export default function MenuBar() {
     try {
       response = await getToken(participantInformation);
     } catch (err) {
-      if (err.response) setError({ message: err.response.data });
-      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR });
+      if (err.response) setError({ message: err.response.data } as TwilioError);
+      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
       return;
@@ -133,6 +156,7 @@ export default function MenuBar() {
 
   useEffect(() => {
     // Authorise participant
+    if (!isConfigLoaded) return;
     (async () => {
       if (participantInfo === null) {
         const participantInformation: ParticipantInformation = await authoriseParticipant();
@@ -147,7 +171,7 @@ export default function MenuBar() {
         }
       }
     })();
-  }, [participantInfo, authoriseParticipant]);
+  }, [participantInfo, authoriseParticipant, isConfigLoaded]);
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -158,23 +182,17 @@ export default function MenuBar() {
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
-      setIsHostInState(isHostIn);
     } else {
       audioTrack?.disable();
       setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
-      setIsHostInState(isHostIn);
     }
+    setIsHostInState(isHostIn);
   }
   if (isReporterIn !== isReporterInState) {
-    if (!isReporterIn) {
-      if (participantInfo?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
-        setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
-      setIsReporterInState(isReporterIn);
-    } else {
-      setIsReporterInState(isReporterIn);
-    }
+    if (!isReporterIn && participantInfo?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
+      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    setIsReporterInState(isReporterIn);
   }
-  usePublishDataTrack(participantInfo);
 
   return (
     <AppBar className={classes.container} position="static">
@@ -243,6 +261,10 @@ export default function MenuBar() {
           </h3>
         )}
         <div className={classes.rightButtonContainer}>
+          <div className={classes.dialInWrapper}>
+            <h3 className={classes.dialIn}>Dial in number</h3>
+            <span>+1 929 297 8424</span>
+          </div>
           <ToggleGridViewButton />
           {/* {!mobileAndTabletCheck() && (
             <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
@@ -252,38 +274,11 @@ export default function MenuBar() {
           <Menu />
         </div>
       </Toolbar>
+      <FloatingDebugInfo
+        wrapperClass={classes.floatingDebugInfo}
+        time={moment().format()}
+        subConferenceId={participantInfo?.videoConferenceRoomName}
+      />
     </AppBar>
   );
 }
-// function detectBrowser() {
-//   // Get the user-agent string
-//   let userAgentString = navigator.userAgent;
-
-//   // Detect Chrome
-//   let chromeAgent = userAgentString.indexOf('Chrome') > -1;
-
-//   // Detect Internet Explorer
-//   let IExplorerAgent = userAgentString.indexOf('MSIE') > -1 || userAgentString.indexOf('rv:') > -1;
-
-//   // Detect Firefox
-//   let firefoxAgent = userAgentString.indexOf('Firefox') > -1;
-
-//   // Detect Safari
-//   let safariAgent = userAgentString.indexOf('Safari') > -1;
-
-//   // Discard Safari since it also matches Chrome
-//   if (chromeAgent && safariAgent) safariAgent = false;
-
-//   // Detect Opera
-//   let operaAgent = userAgentString.indexOf('OP') > -1;
-
-//   // Discard Chrome since it also matches Opera
-//   if (chromeAgent && operaAgent) chromeAgent = false;
-
-//   if (safariAgent) return 'safariAgent';
-//   if (chromeAgent) return 'chromeAgent';
-//   if (IExplorerAgent) return 'IExplorerAgent';
-//   if (operaAgent) return 'operaAgent';
-//   if (firefoxAgent) return 'firefoxAgent';
-//   return 'no detected browser';
-// }

@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme: Theme) => ({
   container: {
     position: 'relative',
     overflow: 'hidden',
-    height: `calc(100vh - 70px)`,
+    height: `calc(100vh - 64px)`,
     background: 'black',
   },
   innerContainer: {
@@ -20,6 +20,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     width: '100%',
     height: '100%',
     maxHeight: '100vh',
+    display: 'flex',
   },
   identityContainer: {
     position: 'absolute',

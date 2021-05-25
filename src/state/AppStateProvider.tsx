@@ -1,58 +1,25 @@
-import React, { createContext, useContext, useReducer, useState } from 'react';
+import React, { createContext, useReducer, useState } from 'react';
 import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
-import { settingsReducer, initialSettings, Settings, SettingsAction } from './settings/settingsReducer';
+import { settingsReducer, initialSettings } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
-
-export interface ParticipantInformation {
-  caseReference: string;
-  displayName: string;
-  partyType: string;
-  userId: number | null;
-  videoConferenceRoomName: string;
-}
-
-export interface StateContextType {
-  error: TwilioError | null;
-  setError(error: TwilioError | null): void;
-  notification: string | null;
-  setNotification(notification: string | null): void;
-  isAutoRetryingToJoinRoom: boolean;
-  disconnectParticipant(isRegistered?: boolean): void;
-  setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
-  waitingNotification: string;
-  setWaitingNotification(waitingNotification: string | null): void;
-  isFetching: boolean;
-  setSelectedAudioInput: string;
-  selectedVideoInput: string;
-  setSelectedVideoInput: string;
-  selectedSpeakerOutput: string;
-  setSelectedSpeakerOutput: string;
-  gridView: boolean;
-  setGridView: any;
-  authoriseParticipant(): Promise<any>;
-  participantInfo: ParticipantInformation;
-  getToken(participantInformation: ParticipantInformation): Promise<string>;
-  removeParticipant: any;
-  activeSinkId: string;
-  setActiveSinkId(sinkId: string): void;
-  settings: Settings;
-  dispatchSetting: React.Dispatch<SettingsAction>;
-}
+import useConfig from '../hooks/useConfig/useConfig';
+import { INotification } from '../types';
+import { ParticipantInformation } from '../types/participantInformation';
+import StateContextType from '../types/stateContextType';
 
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [error, setError] = useState<TwilioError | null>(null);
-  const [notification, setNotification] = useState(null);
+  const [notification, setNotification] = useState<INotification | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [hasTriedAuthorisation, setHasTriedAuthorisation] = useState(false);
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
-  // eslint-disable-next-line no-unused-vars
   const [, setUser] = useState(null);
   const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
   const [activeSinkId, setActiveSinkId] = useState('default');
@@ -61,68 +28,12 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
+  const [isSilenced, setIsSilenced] = useState<boolean>(false);
+  const { endPoint, environmentName, domainName, loaded: isConfigLoaded } = useConfig({ setError });
 
   const participantAuthToken = window.location.hash.substr(1);
   const query = new URLSearchParams(window.location.search);
   const returnUrl = query.get('returnUrl');
-  var endpoint = '';
-  var environmentName = '';
-  var domainName = '';
-
-  async function fetchConfigFile() {
-    if (endpoint !== '' || environmentName !== '' || domainName !== '') return;
-
-    console.log(
-      `fetching endpoint. process.env: ${
-        process.env ? 'process.env: ' + JSON.stringify(process.env) : 'not yet initialised'
-      }`
-    );
-    console.log(
-      `fetching endpoint. process.env.PUBLIC_URL: ${
-        process.env.PUBLIC_URL
-          ? 'process.env.PUBLIC_URL: ' + JSON.stringify(process.env.PUBLIC_URL)
-          : 'not yet initialised'
-      }`
-    );
-
-    await fetch(`${process.env.PUBLIC_URL}/config.json`)
-      .then(
-        response => {
-          console.log('response from fetch received');
-          return response.json();
-        },
-        err => {
-          console.log('failed to fetch url. err: ' + err);
-        }
-      )
-      .then(responseBodyAsJson => {
-        console.log('response body from fetch: ' + JSON.stringify(responseBodyAsJson));
-        endpoint = responseBodyAsJson.endPoint;
-        environmentName = responseBodyAsJson.environmentName;
-        domainName = responseBodyAsJson.domainName;
-      });
-  }
-
-  async function ensureEnvironmentFromConfigInitialised() {
-    if (endpoint === '' || environmentName === '' || domainName === '') {
-      console.log('ensureEndpointInitialised. endpoint not yet defined attempting to fetch now');
-      await fetchConfigFile();
-      if (endpoint === '' || environmentName === '' || domainName === '') {
-        console.log('warning: endpoint not defined');
-        return false;
-      } else {
-        console.log(
-          'managed to fetch data: endpoint -' +
-            endpoint +
-            'environmentName - ' +
-            environmentName +
-            ' domainName - ' +
-            domainName
-        );
-        return true;
-      }
-    } else return true;
-  }
 
   let contextValue = ({
     error,
@@ -144,30 +55,34 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setActiveSinkId,
     settings,
     dispatchSetting,
+    isConfigLoaded,
+    isSilenced,
+    setIsSilenced,
     authoriseParticipant: async () => {
-      if (!(await ensureEnvironmentFromConfigInitialised())) return null;
-
-      const url = `${endpoint}/authorise-participant`;
-
+      const url = `${endPoint}/authorise-participant`;
       console.log('attempting authorise ' + new Date().toLocaleTimeString());
 
-      const { data } = await axios({
-        url: url,
-        method: 'POST',
-        headers: {
-          Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
-        },
-        data: {},
-      });
+      try {
+        const { data } = await axios({
+          url: url,
+          method: 'POST',
+          headers: {
+            Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
+          },
+        });
 
-      return data;
+        return data;
+      } catch (err) {
+        setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
+      }
+
+      return false;
     },
     participantInfo,
     getToken: async (participantInformation: ParticipantInformation) => {
-      const endpointIsInitialised = await ensureEnvironmentFromConfigInitialised();
-      if (!endpointIsInitialised) return null;
+      if (!isConfigLoaded) return null;
 
-      const url = `${endpoint}/token`;
+      const url = `${endPoint}/token`;
       const { data } = await axios({
         url: url,
         method: 'POST',
@@ -186,17 +101,17 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       return data;
     },
     disconnectParticipant: async (isRegistered?: boolean) => {
-      if (!(await ensureEnvironmentFromConfigInitialised())) return null;
+      if (!isConfigLoaded) return null;
 
-      var decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-      var loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
+      const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      const loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
 
       if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
       else window.location.replace(loginPageUrl);
     },
     removeParticipant: async participantSid => {
-      if (!(await ensureEnvironmentFromConfigInitialised())) return null;
-      const url = `${endpoint}/remove-participant`;
+      if (!isConfigLoaded) return null;
+      const url = `${endPoint}/remove-participant`;
 
       const { data } = await axios({
         url: url,
@@ -213,22 +128,15 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
 
   const authoriseParticipant: StateContextType['authoriseParticipant'] = async () => {
     if (hasTriedAuthorisation) return participantInfo;
-
-    //setIsFetching(true);
+    setHasTriedAuthorisation(true);
 
     try {
       const response: any = await contextValue.authoriseParticipant();
-      //setIsFetching(false);
       if (!response) return response;
       setParticipantInfo(response.participantInfo);
-      setHasTriedAuthorisation(true);
       return response.participantInfo;
     } catch (err) {
-      //setHasTriedAuthorisation(true);
-      //setError({ message: 'Unauthorised Access', code: 401, name: 'Authorization Error' });
-      //setIsFetching(false);
-      console.log('error authorising participant: ' + err);
-
+      setError({ message: 'error authorising participant: ' + err } as TwilioError);
       return Promise.reject(err);
     }
   };
@@ -268,12 +176,4 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
       {props.children}
     </StateContext.Provider>
   );
-}
-
-export function useAppState(): any {
-  const context = useContext(StateContext);
-  if (!context) {
-    throw new Error('useAppState must be used within the AppStateProvider');
-  }
-  return context;
 }

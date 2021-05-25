@@ -28,33 +28,24 @@ export default function useLocalTracks() {
       });
   }, []);
 
-  const getLocalVideoTrack = useCallback(
-    (newOptions?: CreateLocalTrackOptions) => {
-      // In the DeviceSelector and FlipCameraButton components, a new video track is created,
-      // then the old track is unpublished and the new track is published. Unpublishing the old
-      // track and publishing the new track at the same time sometimes causes a conflict when the
-      // track name is 'camera', so here we append a timestamp to the track name to avoid the
-      // conflict.
-      const selectedVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
+  const getLocalVideoTrack = useCallback(() => {
+    const selectedVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
 
-      const hasSelectedVideoDevice = videoInputDevices.some(
-        device => selectedVideoDeviceId && device.deviceId === selectedVideoDeviceId
-      );
+    const hasSelectedVideoDevice = videoInputDevices.some(
+      device => selectedVideoDeviceId && device.deviceId === selectedVideoDeviceId
+    );
 
-      const options: CreateLocalTrackOptions = {
-        ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
-        name: `camera-${Date.now()}`,
-        ...(hasSelectedVideoDevice && { deviceId: { exact: selectedVideoDeviceId! } }),
-        ...newOptions,
-      };
+    const options: CreateLocalTrackOptions = {
+      ...(DEFAULT_VIDEO_CONSTRAINTS as {}),
+      name: `camera-${Date.now()}`,
+      ...(hasSelectedVideoDevice && { deviceId: { exact: selectedVideoDeviceId! } }),
+    };
 
-      return Video.createLocalVideoTrack(options).then(newTrack => {
-        setVideoTrack(newTrack);
-        return newTrack;
-      });
-    },
-    [videoInputDevices]
-  );
+    return Video.createLocalVideoTrack(options).then(newTrack => {
+      setVideoTrack(newTrack);
+      return newTrack;
+    });
+  }, [videoInputDevices]);
 
   const removeLocalAudioTrack = useCallback(() => {
     if (audioTrack) {

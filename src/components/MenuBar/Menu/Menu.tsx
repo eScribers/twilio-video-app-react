@@ -5,36 +5,23 @@ import MenuContainer from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
-import { useAppState } from '../../../state';
+import MuteNonModerators from '../MuteNonModerators/MuteNonModerators';
 
 export default function Menu() {
-  const { user } = useAppState();
-  // Uncomment this when handleSignOut is uncommented
-  // const { user, signOut } = useAppState();
-  // const { room, localTracks } = useVideoContext();
-
   const [aboutOpen, setAboutOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
-
   const anchorRef = useRef<HTMLDivElement>(null);
-
-  // const handleSignOut = useCallback(() => {
-  //   room.disconnect?.();
-  //   localTracks.forEach(track => track.stop());
-  //   signOut?.();
-  // }, [room.disconnect, localTracks, signOut]);
 
   return (
     <div ref={anchorRef}>
       <IconButton color="inherit" onClick={() => setMenuOpen(state => !state)}>
-        {/* <SettingsIcon /> */}
         <MoreIcon />
       </IconButton>
       <MenuContainer open={menuOpen} onClose={() => setMenuOpen(state => !state)} anchorEl={anchorRef.current}>
-        {user?.displayName && <MenuItem disabled>{user.displayName}</MenuItem>}
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
+        <MuteNonModerators onClick={() => setMenuOpen(false)} />
         {/* TODO - check if Twilio repository do the same function (handleSignOut) when the end call called  */}
         {/* {user && <MenuItem onClick={handleSignOut}>Logout</MenuItem>} */}
       </MenuContainer>

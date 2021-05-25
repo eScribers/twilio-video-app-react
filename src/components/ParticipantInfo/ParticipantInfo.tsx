@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import { LocalAudioTrack, LocalVideoTrack, Participant, RemoteAudioTrack, RemoteVideoTrack } from 'twilio-video';
@@ -17,6 +17,7 @@ import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
+import { ParticipantNameTag } from '../ParticipantNameTag/ParticipantNameTag';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -26,7 +27,6 @@ const useStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       height: 0,
       overflow: 'hidden',
-      marginBottom: '2em',
       '& video': {
         filter: 'none',
         objectFit: 'contain !important',
@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme: Theme) =>
       border: `${theme.participantBorderWidth}px solid rgb(245, 248, 255)`,
       paddingTop: `calc(${(9 / 16) * 100}% - ${theme.participantBorderWidth}px)`,
       background: 'black',
+      marginBottom: '5px',
       [theme.breakpoints.down('sm')]: {
         height: theme.sidebarMobileHeight,
         width: `${(theme.sidebarMobileHeight * 16) / 9}px`,
@@ -50,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
       left: 0,
       width: '100%',
       height: '100%',
+      display: 'flex',
     },
     infoContainer: {
       position: 'absolute',
@@ -136,6 +138,9 @@ const useStyles = makeStyles((theme: Theme) =>
     cursorPointer: {
       cursor: 'pointer',
     },
+    dominantSpeaker: {
+      outline: 'lime solid 2px',
+    },
   })
 );
 
@@ -146,6 +151,7 @@ interface ParticipantInfoProps {
   isSelected?: boolean;
   isLocalParticipant?: boolean;
   hideParticipant?: boolean;
+  isDominantSpeaker?: boolean;
 }
 
 export default function ParticipantInfo({
@@ -153,8 +159,8 @@ export default function ParticipantInfo({
   onClick,
   isSelected,
   children,
-  isLocalParticipant,
   hideParticipant,
+  isDominantSpeaker,
 }: ParticipantInfoProps) {
   const publications = usePublications(participant);
   const {
@@ -178,16 +184,30 @@ export default function ParticipantInfo({
   const isAudioEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
 
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
-
-  const parsedIdentity = ParticipantIdentity.Parse(participant.identity);
-
+  const [wasPinned, setWasPinned] = useState(false);
   const classes = useStyles();
+
+  useEffect(() => {
+    // Pin this participant if he started sharing his screen
+    if (isScreenShareEnabled && !wasPinned && !isSelected) {
+      if (onClick) onClick();
+      setWasPinned(true);
+    }
+    // Forget "wasPinned" when screen share is off
+    if (!isScreenShareEnabled && wasPinned) {
+      setWasPinned(false);
+      if (isSelected) {
+        if (onClick) onClick();
+      }
+    }
+  }, [isScreenShareEnabled, isSelected, wasPinned, onClick]);
 
   return (
     <div
       className={clsx(classes.container, {
         [classes.hideParticipant]: hideParticipant,
         [classes.cursorPointer]: Boolean(onClick),
+        [classes.dominantSpeaker]: isDominantSpeaker,
       })}
       onClick={onClick}
       data-cy-participant={participant.identity}
@@ -204,11 +224,7 @@ export default function ParticipantInfo({
           )}
           <span className={classes.identity}>
             <AudioLevelIndicator audioTrack={audioTrack} participant={participant} />
-            <Typography variant="body1" className={classes.typeography} component="span">
-              {parsedIdentity.partyType}
-              {parsedIdentity.isRegisteredUser ? ' *' : null}
-              {isLocalParticipant && ' (You)'}
-            </Typography>
+            <ParticipantNameTag participant={participant} />
           </span>
         </div>
         <div>{isSelected && <PinIcon />}</div>

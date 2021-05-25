@@ -22,7 +22,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
         <Participant
           isSelected={false}
           onClick={[Function]}
-          participant="localParticipant"
+          participant={Object {}}
         />
       </WithStyles(ForwardRef(Paper))>
     </WithStyles(ForwardRef(Grid))>
@@ -38,6 +38,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
         className="makeStyles-paper-2"
       >
         <Participant
+          isDominantSpeaker={true}
           isSelected={false}
           key="0"
           onClick={[Function]}
@@ -46,6 +47,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
               "sid": 0,
             }
           }
+          userIsSilenced={false}
         />
       </WithStyles(ForwardRef(Paper))>
     </WithStyles(ForwardRef(Grid))>
@@ -61,6 +63,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
         className="makeStyles-paper-2"
       >
         <Participant
+          isDominantSpeaker={true}
           isSelected={false}
           key="1"
           onClick={[Function]}
@@ -69,6 +72,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
               "sid": 1,
             }
           }
+          userIsSilenced={false}
         />
       </WithStyles(ForwardRef(Paper))>
     </WithStyles(ForwardRef(Grid))>

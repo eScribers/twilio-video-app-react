@@ -6,11 +6,11 @@ import { shallow } from 'enzyme';
 import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import usePublications from '../../hooks/usePublications/usePublications';
-import { useAppState } from '../../state';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { IVideoContext } from '../../components/VideoProvider';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel', () => () => 4);
 jest.mock('../../hooks/usePublications/usePublications');
 jest.mock('../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff');
@@ -144,32 +144,5 @@ describe('the ParticipantInfo component', () => {
       </ParticipantInfo>
     );
     expect(wrapper.exists(PinIcon)).toBe(false);
-  });
-
-  it('should add "(You)" to the participants identity when they are the localParticipant', () => {
-    mockUseIsTrackSwitchedOff.mockImplementation(() => false);
-    mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
-    const wrapper = shallow(
-      <ParticipantInfo
-        onClick={() => {}}
-        isSelected={false}
-        participant={{ identity: '@mockIdentity' } as any}
-        isLocalParticipant
-      >
-        mock children
-      </ParticipantInfo>
-    );
-    expect(wrapper.text()).toContain('mockIdentity (You)');
-  });
-
-  it('should not add "(You)" to the participants identity when they are the localParticipant', () => {
-    mockUseIsTrackSwitchedOff.mockImplementation(() => false);
-    mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456' }]);
-    const wrapper = shallow(
-      <ParticipantInfo onClick={() => {}} isSelected={false} participant={{ identity: '@mockIdentity' } as any}>
-        mock children
-      </ParticipantInfo>
-    );
-    expect(wrapper.text()).not.toContain('mockIdentity (You)');
   });
 });

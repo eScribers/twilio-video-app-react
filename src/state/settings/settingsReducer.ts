@@ -39,7 +39,8 @@ export const initialSettings: Settings = {
   dominantSpeakerPriority: 'standard',
   viewMode: VIEW_MODE.default,
   bandwidthProfileMode: 'collaboration',
-  maxTracks: isMobile ? '5' : '10',
+  // https://www.twilio.com/docs/video/tutorials/using-bandwidth-profile-api#understanding-maxtracks
+  maxTracks: isMobile ? '8' : '20',
   maxAudioBitrate: '16000',
   renderDimensionLow: 'low',
   renderDimensionStandard: '960p',

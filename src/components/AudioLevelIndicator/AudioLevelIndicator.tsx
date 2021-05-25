@@ -48,12 +48,13 @@ function AudioLevelIndicator({
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(audioTrack);
-  let [, toggleAudioEnabled] = useLocalAudioToggle();
+  const [, toggleAudioEnabled] = useLocalAudioToggle();
   const { isHostIn } = useIsHostIn();
   const {
     room: { localParticipant },
   } = useVideoContext();
   const participantCommands = useParticipant();
+  const isLocalParticipant = participant === localParticipant || !participant;
   const localParticipantType: string = !localParticipant
     ? ''
     : ParticipantIdentity.Parse(localParticipant.identity).partyType;
@@ -134,7 +135,7 @@ function AudioLevelIndicator({
     } else toggleAudioEnabled();
   };
 
-  const canMute = participantOptions.includes('Mute') || localParticipant === participant;
+  const canMute = participantOptions.includes('Mute') || isLocalParticipant;
 
   return (
     <IconButton onClick={muteParticipant} disabled={!isHostIn || !canMute}>

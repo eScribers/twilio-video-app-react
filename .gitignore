@@ -35,3 +35,7 @@ public/config.json
 .env
 cypress.env.json
 submodules/authentication
+config.json
+localtunnel/*
+server/*
+.history/*

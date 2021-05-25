@@ -30,7 +30,12 @@ jest.mock('./useHandleOnDisconnect/useHandleOnDisconnect');
 describe('the VideoProvider component', () => {
   it('should correctly return the Video Context object', () => {
     const wrapper: React.FC = ({ children }) => (
-      <VideoProvider onError={() => {}} onDisconnect={mockOnDisconnect} options={{ dominantSpeaker: true }}>
+      <VideoProvider
+        onError={() => {}}
+        onDisconnect={mockOnDisconnect}
+        options={{ dominantSpeaker: true }}
+        onNotification={() => {}}
+      >
         {children}
       </VideoProvider>
     );
@@ -43,7 +48,6 @@ describe('the VideoProvider component', () => {
       connect: expect.any(Function),
       onDisconnect: mockOnDisconnect,
       getLocalVideoTrack: expect.any(Function),
-      getLocalAudioTrack: expect.any(Function),
       removeLocalVideoTrack: expect.any(Function),
       isAcquiringLocalTracks: true,
       toggleScreenShare: expect.any(Function),
@@ -60,7 +64,12 @@ describe('the VideoProvider component', () => {
   it('should call the onError function when there is an error', () => {
     const mockOnError = jest.fn();
     const wrapper: React.FC = ({ children }) => (
-      <VideoProvider onError={mockOnError} onDisconnect={mockOnDisconnect} options={{ dominantSpeaker: true }}>
+      <VideoProvider
+        onError={mockOnError}
+        onDisconnect={mockOnDisconnect}
+        options={{ dominantSpeaker: true }}
+        onNotification={() => {}}
+      >
         {children}
       </VideoProvider>
     );

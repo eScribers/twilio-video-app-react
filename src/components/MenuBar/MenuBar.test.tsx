@@ -1,30 +1,11 @@
-import React from 'react';
-import MenuBar from './MenuBar';
-import { MemoryRouter, Route } from 'react-router-dom';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { VideoContext } from '../VideoProvider/index';
-// Line below gave an error on IVideoContext and suggested using VideoContext, as above
-//import { IVideoContext } from '../VideoProvider/VideoProvider';
-import { fireEvent, render } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
-import { useAppState } from '../../state';
-import { useAlert } from 'react-alert';
-import SettingsButton from './SettingsDialog/SettingsDialog';
-import useMediaDevices from '../../hooks/useMediaDevices/useMediaDevices';
-import selectEvent from '@material-ui/core/Select';
+import { useAppState } from '../../hooks/useAppState/useAppState';
 
-const mockedUseRoomState = useRoomState as jest.Mock<string>;
-// @ts-ignore
-const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 //const mockedUseVideoContext = useVideoContext as jest.Mock<typeof VideoContext>;
 const mockUseAppState = useAppState as jest.Mock<any>;
-const mockUseAlert = useAlert as jest.Mock<string>;
-const mockConnect = jest.fn();
 const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
-const mockUseMediaDevices = useMediaDevices as jest.Mock<any>;
 
-jest.mock('../../state');
+jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
 jest.mock('../../hooks/useRoomState/useRoomState');
 jest.mock('react-alert');
@@ -39,11 +20,6 @@ window.location = {
   search: '',
   origin: '',
 };
-const renderComponent = () => (
-  <MemoryRouter>
-    <MenuBar />
-  </MemoryRouter>
-);
 
 const mockReplaceState = jest.fn();
 Object.defineProperty(window.history, 'replaceState', { value: mockReplaceState });

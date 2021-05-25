@@ -27,6 +27,11 @@ exports[`the ConnectionOptions component when connected to a room should render 
           value="default_grid"
         >
           <WithStyles(ForwardRef(MenuItem))
+            value="collaboration"
+          >
+            Collaboration
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
             value="grid 2 column"
           >
             2 Column
@@ -40,11 +45,6 @@ exports[`the ConnectionOptions component when connected to a room should render 
             value="grid 4 column"
           >
             4 Column
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="collaboration"
-          >
-            Collaboration
           </WithStyles(ForwardRef(MenuItem))>
           <WithStyles(ForwardRef(MenuItem))
             value="default_grid"
@@ -188,7 +188,7 @@ exports[`the ConnectionOptions component when connected to a room should render 
           name="maxTracks"
           onChange={[Function]}
           placeholder="Leave blank for no limit"
-          value="10"
+          value="20"
         />
       </WithStyles(ForwardRef(FormControl))>
       <WithStyles(ForwardRef(FormControl))
@@ -484,6 +484,11 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           value="default_grid"
         >
           <WithStyles(ForwardRef(MenuItem))
+            value="collaboration"
+          >
+            Collaboration
+          </WithStyles(ForwardRef(MenuItem))>
+          <WithStyles(ForwardRef(MenuItem))
             value="grid 2 column"
           >
             2 Column
@@ -497,11 +502,6 @@ exports[`the ConnectionOptions component when not connected to a room should ren
             value="grid 4 column"
           >
             4 Column
-          </WithStyles(ForwardRef(MenuItem))>
-          <WithStyles(ForwardRef(MenuItem))
-            value="collaboration"
-          >
-            Collaboration
           </WithStyles(ForwardRef(MenuItem))>
           <WithStyles(ForwardRef(MenuItem))
             value="default_grid"
@@ -645,7 +645,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           name="maxTracks"
           onChange={[Function]}
           placeholder="Leave blank for no limit"
-          value="10"
+          value="20"
         />
       </WithStyles(ForwardRef(FormControl))>
       <WithStyles(ForwardRef(FormControl))
