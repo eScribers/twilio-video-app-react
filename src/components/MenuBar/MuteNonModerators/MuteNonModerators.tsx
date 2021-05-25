@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import MenuItem from '@material-ui/core/MenuItem';
-import useParticipants from 'hooks/useParticipants/useParticipants';
-import roleChecker from 'utils/rbac/roleChecker';
-import { ROLE_PERMISSIONS } from 'utils/rbac/rolePermissions';
-import { ParticipantIdentity } from 'utils/participantIdentity';
+import useParticipants from '../../../hooks/useParticipants/useParticipants';
+import roleChecker from '../../../utils/rbac/roleChecker';
+import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
+import { ParticipantIdentity } from '../../../utils/participantIdentity';
+import useParticipant from '../../../hooks/useParticipant/useParticipant';
+import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import { RemoteParticipant } from 'twilio-video';
-import useParticipant from 'hooks/useParticipant/useParticipant';
-import useVideoContext from 'hooks/useVideoContext/useVideoContext';
 
 const MuteNonModerators = ({ onClick }) => {
   const {
