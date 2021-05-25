@@ -6,8 +6,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
 import MuteNonModerators from '../MuteNonModerators/MuteNonModerators';
-import { useAppState } from '../../../state';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 
 export default function Menu() {
   const [aboutOpen, setAboutOpen] = useState(false);

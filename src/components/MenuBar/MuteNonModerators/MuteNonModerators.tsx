@@ -22,7 +22,7 @@ const MuteNonModerators = ({ onClick }) => {
     let muteableParticipants: RemoteParticipant[] = [];
     participants.map(participant => {
       let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
-      if (localParticipantType === remoteParticipantPartyType) return;
+      if (localParticipantType === remoteParticipantPartyType) return true;
       if (
         roleChecker.doesRoleHavePermission(
           ROLE_PERMISSIONS.MUTE_PARTICIPANT,
@@ -31,13 +31,14 @@ const MuteNonModerators = ({ onClick }) => {
         )
       )
         muteableParticipants.push(participant);
+      return true;
     });
     setMuteable(muteableParticipants);
-  }, [participants]);
+  }, [participants, localParticipant.identity]);
 
   const sendMuteCommand = () => {
     muteable.map(participant => {
-      participantCommands.muteParticipant(participant);
+      return participantCommands.muteParticipant(participant);
     });
     onClick();
   };
