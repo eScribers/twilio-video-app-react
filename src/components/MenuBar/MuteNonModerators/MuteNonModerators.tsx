@@ -17,8 +17,11 @@ const MuteNonModerators = ({ onClick }) => {
   const participantCommands = useParticipant();
   const [muteable, setMuteable] = useState<RemoteParticipant[]>([]);
 
+  const localIdentity = localParticipant?.identity;
+
   useEffect(() => {
-    const localParticipantType: string = ParticipantIdentity.Parse(localParticipant.identity).partyType;
+    if (!localIdentity) return;
+    const localParticipantType: string = ParticipantIdentity.Parse(localIdentity).partyType;
     let muteableParticipants: RemoteParticipant[] = [];
     participants.map(participant => {
       let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
@@ -34,7 +37,7 @@ const MuteNonModerators = ({ onClick }) => {
       return true;
     });
     setMuteable(muteableParticipants);
-  }, [participants, localParticipant.identity]);
+  }, [participants, localIdentity]);
 
   const sendMuteCommand = () => {
     muteable.map(participant => {
