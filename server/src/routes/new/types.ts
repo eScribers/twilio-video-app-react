@@ -53,3 +53,36 @@ export interface IRoomSettings {
   };
   screenSharing?: boolean;
 }
+
+
+export interface IRoom {
+  roomId: string;
+  roomName: string;
+  participants: IParticipant[];
+  chat: IChat;
+  plannedStartTime: Date;
+  startTime: Date;
+  parentRoomId?: string;
+  roomSettings: IRoomSettings;
+  dialInNumber?: string;
+  cloudRecording: boolean;
+};
+
+export interface IRoomExtended extends IRoom {
+  recordings: {
+    entireRoomVideo: IRecording;
+    participantsVideo: IParticipantRecording[];
+    entireRoomAudio: IRecording;
+    participantsAudio: IParticipantRecording[];
+  }
+}
+
+export interface IRecording {
+  duration: number;
+  hasVideo: boolean;
+  url: string;
+}
+
+export interface IParticipantRecording extends IRecording {
+  displayName: string;
+}
