@@ -9,14 +9,20 @@ import roleChecker from '../../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
 import { ParticipantIdentity } from '../../../utils/participantIdentity';
 interface ParticipantDropDownProps {
+  localParticipantType: string;
   participant: Participant;
+  isAudioEnabled: boolean;
 }
 
 const [REMOVE, MUTE] = ['Remove', 'Mute'];
 const ITEM_HEIGHT = 48;
 
-export default function ParticipantDropDown({ localParticipantType, participant }: any) {
-  const options = getParticipantOptions(participant, localParticipantType);
+export default function ParticipantDropDown({
+  localParticipantType,
+  participant,
+  isAudioEnabled,
+}: ParticipantDropDownProps) {
+  const options = getParticipantOptions(participant, localParticipantType, !isAudioEnabled);
   const [anchorEl, setAnchorEl] = React.useState(null);
   const participantCommands = useParticipant();
 
@@ -70,7 +76,11 @@ export default function ParticipantDropDown({ localParticipantType, participant 
   );
 }
 
-export const getParticipantOptions = (participant: Participant, localParticipantType: string) => {
+export const getParticipantOptions = (
+  participant: Participant,
+  localParticipantType: string,
+  isTrackMuted: boolean = false
+) => {
   let options: string[] = [];
   let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
   if (localParticipantType === remoteParticipantPartyType) return options;
@@ -86,7 +96,7 @@ export const getParticipantOptions = (participant: Participant, localParticipant
     remoteParticipantPartyType
   );
 
-  if (canMute) options.push(MUTE);
+  if (canMute && !isTrackMuted) options.push(MUTE);
   if (canRemove) options.push(REMOVE);
   return options;
 };

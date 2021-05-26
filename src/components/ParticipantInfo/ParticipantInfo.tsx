@@ -16,6 +16,7 @@ import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import { ParticipantNameTag } from '../ParticipantNameTag/ParticipantNameTag';
 
 const useStyles = makeStyles((theme: Theme) =>
@@ -180,6 +181,8 @@ export default function ParticipantInfo({
   const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
 
   const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
+  const isAudioEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
+
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
   const [wasPinned, setWasPinned] = useState(false);
   const classes = useStyles();
@@ -225,7 +228,11 @@ export default function ParticipantInfo({
           </span>
         </div>
         <div>{isSelected && <PinIcon />}</div>
-        <ParticipantDropDown participant={participant} localParticipantType={localParticipantType} />
+        <ParticipantDropDown
+          participant={participant}
+          localParticipantType={localParticipantType}
+          isAudioEnabled={isAudioEnabled}
+        />
       </div>
       <div className={classes.innerContainer}>
         {(!isVideoEnabled || isVideoSwitchedOff) && (

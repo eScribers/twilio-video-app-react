@@ -6,7 +6,7 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
     <Participant
       isSelected={false}
       onClick={[Function]}
-      participant="localParticipant"
+      participant={Object {}}
     />
     <Participant
       isDominantSpeaker={true}

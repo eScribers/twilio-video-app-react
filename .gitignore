@@ -38,3 +38,4 @@ submodules/authentication
 config.json
 localtunnel/*
 server/*
+.history/*

@@ -28,10 +28,21 @@ function MockRoom() {
   mockRoom.participants = new Map([]) as any;
   return mockRoom;
 }
+const mockLocalTrack = {
+  kind: 'audio',
+  mediaStreamTrack: {
+    label: 'mock local audio track',
+    getSettings: () => ({ deviceId: '234' }),
+  },
+  restart: jest.fn(),
+  on: jest.fn(),
+  off: jest.fn(),
+};
 
 mockedVideoContext.mockImplementation(() => ({
   room: MockRoom(),
   onError: () => {},
+  localTracks: [mockLocalTrack],
 }));
 
 describe('the useIsSilenced hook', () => {
