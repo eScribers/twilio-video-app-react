@@ -11,6 +11,7 @@ import { ROOM_STATE } from './utils/displayStrings';
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
 import MessageText from './components/MessageText/MessageText';
+import EventFeed from './components/EventFeed/EventFeed';
 
 const Container = styled('div')({
   display: 'grid',
@@ -21,6 +22,9 @@ const Main = styled('main')({
   overflowX: 'hidden',
 });
 
+const query = new URLSearchParams(window.location.search);
+const returnUrl = query.get('returnUrl');
+
 export default function App() {
   const roomState = useRoomState();
 
@@ -30,6 +34,10 @@ export default function App() {
   // We will dynamically set the height with 'window.innerHeight', which means that this
   // will look good on mobile browsers even after the location bar opens or closes.
   const height = useHeight();
+
+  if (!returnUrl) {
+    return <EventFeed />;
+  }
 
   return (
     <Container style={{ height }}>
