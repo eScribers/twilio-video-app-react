@@ -11,7 +11,7 @@ interface IGetRoomResponse {
 };
 
 
-// Will allow us to join side-rooms, we can unify that to getRoom basically
+// Will allow us to join breakout-rooms, we can unify that to getRoom basically
 const joinRoom = async (req: express.Request, res: express.Response) => {
 
   // We should use the JWT in the authentication header to get the user's name

@@ -1,4 +1,5 @@
 import express from "express";
+import getLink from './new/getLink';
 import getRoom from './new/getRoom';
 import joinRoom from './new/joinRoom';
 import muteParticipant from "./new/muteParticipant";
@@ -8,8 +9,9 @@ import requestUnmuteParticipant from "./new/requestUnmuteParticipant";
 
 const newRoute = express.Router({mergeParams: true});
 
+newRoute.get('/getLink', getLink); // Concept
 newRoute.get('/getRoom', getRoom);
-newRoute.post('/joinRoom', joinRoom);
+newRoute.post('/joinRoom', joinRoom); // Not mandatory
 newRoute.post('/muteParticipant', muteParticipant);
 newRoute.post('/requetUnmuteParticipant', requestUnmuteParticipant);
 newRoute.post('/removeParticipant', removeParticipant);

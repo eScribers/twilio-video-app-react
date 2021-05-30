@@ -8,6 +8,7 @@ export interface IUserPermissions {
   chatWriteAccess: boolean;
   chatFileSharingAccess: boolean;
   screenSharingAccess: boolean;
+  allowToCreateBreakoutRoom: boolean;
 }
 
 export interface IUser {
@@ -18,6 +19,7 @@ export interface IUser {
 }
 
 export interface IParticipant extends IUser {
+  isTelephonic: boolean;
   muted: boolean;
   cameraOff: boolean;
   sharingScreen: boolean;
