@@ -11,7 +11,7 @@ import { ROOM_STATE } from './utils/displayStrings';
 import useHeight from './hooks/useHeight/useHeight';
 import useRoomState from './hooks/useRoomState/useRoomState';
 import MessageText from './components/MessageText/MessageText';
-import EventFeed from './components/EventFeed/EventFeed';
+import SideMenu from './components/SideMenu/SideMenu';
 
 const Container = styled('div')({
   display: 'grid',
@@ -36,7 +36,7 @@ export default function App() {
   const height = useHeight();
 
   if (!returnUrl) {
-    return <EventFeed />;
+    return <SideMenu />;
   }
 
   return (

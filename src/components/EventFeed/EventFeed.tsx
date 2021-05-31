@@ -36,9 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'grid',
       gridTemplateRows: '1fr 50px',
       gridTemplateColumns: '100%',
-      backgroundColor: 'gray',
       width: '400px',
-      height: '100vh',
     },
     feed: {
       display: 'flex',
@@ -73,7 +71,8 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const EventFeed = ({ events = mockData }: IEventFeed) => {
   const classes = useStyles();
-  const [eventsState, setEventsState] = useState(events);
+  // const [eventsState, setEventsState] = useState(events);
+  const [eventsState] = useState(events);
 
   useEffect(() => {
     document.querySelector('.pin-to-bottom')?.scrollTo({ top: 1000000 });
