@@ -47,7 +47,7 @@ const Tab = ({ name, children, tab: currentTab, setTab, classes }) => (
   </div>
 );
 
-const SideMenu = () => {
+const MessagingSection = () => {
   const classes = useStyles();
   const [tab, setTab] = useState('participantList');
 
@@ -71,4 +71,4 @@ const SideMenu = () => {
   );
 };
 
-export default SideMenu;
+export default MessagingSection;

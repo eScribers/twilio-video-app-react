@@ -29,15 +29,15 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const ChatLine = ({ me, participants }) => {
+const ChatLine = ({ me, participants, onClick }) => {
   const classes = useStyles();
   const iconSrc =
     participants.length > 2 || participants[0] === 'All' ? '/assets/icons/users.svg' : '/assets/icons/user.svg';
 
   return (
-    <div className={classes.chatLine}>
+    <div onClick={onClick} className={classes.chatLine}>
       <div className={classes.iconWrapper}>
-        <img src={iconSrc} className={classes.icon} />
+        <img src={iconSrc} alt="chat-bubble" className={classes.icon} />
       </div>
       <div>{participants.filter((v: string) => v !== me).join(', ')}</div>
     </div>
@@ -46,6 +46,7 @@ const ChatLine = ({ me, participants }) => {
 
 ChatLine.defaultProps = {
   me: '',
+  onClick: () => {},
 };
 
 export default ChatLine;
