@@ -6,7 +6,7 @@ import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
 import { ParticipantIdentity } from '../../../utils/participantIdentity';
 import useParticipant from '../../../hooks/useParticipant/useParticipant';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import { RemoteParticipant } from 'twilio-video';
+import { Participant } from 'twilio-video';
 
 const MuteNonModerators = ({ onClick }) => {
   const {
@@ -15,14 +15,14 @@ const MuteNonModerators = ({ onClick }) => {
 
   const participants = useParticipants();
   const participantCommands = useParticipant();
-  const [muteable, setMuteable] = useState<RemoteParticipant[]>([]);
+  const [muteable, setMuteable] = useState<Participant[]>([]);
 
   const localIdentity = localParticipant?.identity;
 
   useEffect(() => {
     if (!localIdentity) return;
     const localParticipantType: string = ParticipantIdentity.Parse(localIdentity).partyType;
-    let muteableParticipants: RemoteParticipant[] = [];
+    let muteableParticipants: Participant[] = [];
     participants.map(participant => {
       let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
       if (localParticipantType === remoteParticipantPartyType) return true;

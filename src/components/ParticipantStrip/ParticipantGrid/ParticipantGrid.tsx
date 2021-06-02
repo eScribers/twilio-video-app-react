@@ -1,4 +1,5 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useEffect, useState } from 'react';
@@ -6,9 +7,12 @@ import Grid from '@material-ui/core/Grid';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
-import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
+// import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
+import rootStore from '../../../stores';
+
+const { participantStore } = rootStore;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,14 +37,14 @@ export interface ParticipantGridProps {
   viewMode: string;
 }
 
-export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
+const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
   const {
     room: { localParticipant },
   } = useVideoContext();
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const participants = useSortedParticipants();
+  const { sortedParticipants } = participantStore;
   const dominantSpeaker = useDominantSpeaker();
   const [isSilenced] = useIsSilenced();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
@@ -79,7 +83,7 @@ export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
             />
           </Paper>
         </Grid>
-        {participants.map((participant: any) => (
+        {sortedParticipants.map((participant: any) => (
           <Grid key={participant.sid} item xs={12} sm={6} md={mdState} lg={lgState}>
             <Paper className={classes.paper}>
               <Participant
@@ -96,4 +100,6 @@ export default function ParticipantGrid({ viewMode }: ParticipantGridProps) {
       </Grid>
     </div>
   );
-}
+});
+
+export default ParticipantGrid;

@@ -1,11 +1,15 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { styled } from '@material-ui/core/styles';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
 import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
-import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
+// import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
+import rootStore from '../../../stores';
+
+const { participantStore } = rootStore;
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -23,11 +27,12 @@ const ScrollContainer = styled('div')(({ theme }) => ({
     display: 'flex',
   },
 }));
-export default function ParticipantStripCollaboration() {
+
+const ParticipantStripCollaboration = observer(() => {
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const participants = useSortedParticipants();
+  const { sortedParticipants } = participantStore;
   const dominantSpeaker = useDominantSpeaker();
   const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const [isSilenced] = useIsSilenced();
@@ -42,7 +47,7 @@ export default function ParticipantStripCollaboration() {
           isSelected={selectedParticipant === localParticipant}
           onClick={() => setSelectedParticipant(localParticipant)}
         />
-        {participants.map(participant => (
+        {sortedParticipants.map(participant => (
           <Participant
             key={participant.sid}
             isDominantSpeaker={participant.identity === dominantIdentity}
@@ -55,4 +60,6 @@ export default function ParticipantStripCollaboration() {
       </ScrollContainer>
     </Container>
   );
-}
+});
+
+export default ParticipantStripCollaboration;
