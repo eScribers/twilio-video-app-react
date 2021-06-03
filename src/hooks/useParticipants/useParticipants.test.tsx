@@ -3,6 +3,8 @@ import EventEmitter from 'events';
 import useDominantSpeaker from '../useDominantSpeaker/useDominantSpeaker';
 import useParticipants from './useParticipants';
 import useVideoContext from '../useVideoContext/useVideoContext';
+import rootStore from '../../stores';
+import { sleep } from '../../utils';
 
 jest.mock('../useVideoContext/useVideoContext');
 jest.mock('../useDominantSpeaker/useDominantSpeaker');
@@ -30,19 +32,21 @@ describe('the useParticipants hook', () => {
   });
 
   it('should return respond to "participantConnected" events', async () => {
-    const { result } = renderHook(useParticipants);
+    renderHook(useParticipants);
+    const { participantStore } = rootStore;
     act(() => {
       mockRoom.emit('participantConnected', 'newParticipant');
     });
-    expect(result.current).toEqual(['participant1', 'participant2', 'newParticipant']);
+    expect(participantStore.participants).toEqual(['participant1', 'participant2', 'newParticipant']);
   });
 
   it('should return respond to "participantDisconnected" events', async () => {
-    const { result } = renderHook(useParticipants);
+    renderHook(useParticipants);
+    const { participantStore } = rootStore;
     act(() => {
       mockRoom.emit('participantDisconnected', 'participant1');
     });
-    expect(result.current).toEqual(['participant2']);
+    expect(participantStore.participants).toEqual(['participant2']);
   });
 
   it('should reorder participants when the dominant speaker changes', () => {

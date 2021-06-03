@@ -44,10 +44,9 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const { sortedParticipants } = participantStore;
+  const { sortedParticipants, selectedParticipant } = participantStore;
   const dominantSpeaker = useDominantSpeaker();
   const [isSilenced] = useIsSilenced();
-  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
   const classes = useStyles();
 
   const dominantIdentity = dominantSpeaker?.identity;
@@ -79,7 +78,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
             <Participant
               participant={localParticipant}
               isSelected={selectedParticipant === localParticipant}
-              onClick={() => setSelectedParticipant(localParticipant)}
+              onClick={() => participantStore.setSelectedParticipant(localParticipant)}
             />
           </Paper>
         </Grid>
@@ -92,7 +91,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
                 userIsSilenced={!!isSilenced}
-                onClick={() => setSelectedParticipant(participant)}
+                onClick={() => participantStore.setSelectedParticipant(participant)}
               />
             </Paper>
           </Grid>

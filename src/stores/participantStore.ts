@@ -11,16 +11,16 @@ class ParticipantStore {
 
   sortedParticipants: Participant[] = [];
 
+  selectedParticipant: null | Participant = null;
+
   constructor(rootStore: any) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!test');
   }
 
   setParticipants(participants: Participant[]) {
     this.participants = participants;
     this.sortedParticipants = sortParticipants(participants);
-    console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!set', participants);
   }
 
   addParticipant(participant: Participant) {
@@ -29,6 +29,14 @@ class ParticipantStore {
 
   removeParticipantSid(participantSid: string) {
     this.setParticipants([...this.participants.filter(p => p.sid !== participantSid)]);
+  }
+
+  setSelectedParticipant(participant: null | Participant) {
+    if (this.selectedParticipant === participant) {
+      this.selectedParticipant = null;
+      return;
+    }
+    this.selectedParticipant = participant;
   }
 }
 

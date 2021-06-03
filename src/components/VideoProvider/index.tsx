@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode } from 'react';
 import { Callback, ErrorCallback } from '../../types';
-import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
@@ -95,7 +94,7 @@ export function VideoProvider({
         getAudioAndVideoTracks,
       }}
     >
-      <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>
+      {children}
       {/* 
         The AttachVisibilityHandler component is using the useLocalVideoToggle hook
         which must be used within the VideoContext Provider.

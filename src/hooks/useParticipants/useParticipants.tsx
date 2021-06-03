@@ -1,12 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { RemoteParticipant } from 'twilio-video';
 import UAParser from 'ua-parser-js';
 import { Howl } from 'howler';
 import useDominantSpeaker from '../useDominantSpeaker/useDominantSpeaker';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import rootStore from '../../stores';
-
-const { participantStore } = rootStore;
 
 // Free to use sounds:
 //https://freesound.org/people/FoolBoyMedia/sounds/352656/
@@ -29,7 +27,6 @@ export default function useParticipants() {
 
   if (participantStore.participants.length === 0 && existingParticipants.length >= 1) {
     participantStore.setParticipants(existingParticipants);
-    console.log('Inifinte?');
   }
 
   // When the dominant speaker changes, they are moved to the front of the participants array.

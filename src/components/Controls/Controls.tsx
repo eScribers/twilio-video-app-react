@@ -37,7 +37,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function Controls(props: { disabled?: boolean }) {
+export default function Controls() {
   const classes = useStyles();
   const roomState = useRoomState();
   const isReconnecting = roomState === ROOM_STATE.RECONNECTING;

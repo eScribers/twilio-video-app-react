@@ -71,3 +71,7 @@ export function detectBrowser() {
   if (firefoxAgent) return 'firefoxAgent';
   return 'no detected browser';
 }
+
+export const sleep = (ms: number) => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+};

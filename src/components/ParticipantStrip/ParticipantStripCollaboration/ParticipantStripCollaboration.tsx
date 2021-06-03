@@ -32,9 +32,9 @@ const ParticipantStripCollaboration = observer(() => {
   const {
     room: { localParticipant },
   } = useVideoContext();
-  const { sortedParticipants } = participantStore;
   const dominantSpeaker = useDominantSpeaker();
-  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
+  const { sortedParticipants, selectedParticipant } = participantStore;
+
   const [isSilenced] = useIsSilenced();
 
   const dominantIdentity = dominantSpeaker?.identity;
@@ -45,7 +45,7 @@ const ParticipantStripCollaboration = observer(() => {
         <Participant
           participant={localParticipant}
           isSelected={selectedParticipant === localParticipant}
-          onClick={() => setSelectedParticipant(localParticipant)}
+          onClick={() => participantStore.setSelectedParticipant(localParticipant)}
         />
         {sortedParticipants.map(participant => (
           <Participant
@@ -54,7 +54,7 @@ const ParticipantStripCollaboration = observer(() => {
             participant={participant}
             isSelected={selectedParticipant === participant}
             userIsSilenced={!!isSilenced}
-            onClick={() => setSelectedParticipant(participant)}
+            onClick={() => participantStore.setSelectedParticipant(participant)}
           />
         ))}
       </ScrollContainer>

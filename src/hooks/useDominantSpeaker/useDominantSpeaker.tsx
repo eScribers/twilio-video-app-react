@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import useVideoContext from '../useVideoContext/useVideoContext';
 import { RemoteParticipant } from 'twilio-video';
+import rootStore from '../../stores';
 
 export default function useDominantSpeaker() {
   const { room } = useVideoContext();
+  const { participantStore } = rootStore;
   const [dominantSpeaker, setDominantSpeaker] = useState(room.dominantSpeaker);
 
   useEffect(() => {
@@ -20,6 +22,9 @@ export default function useDominantSpeaker() {
     // Since 'null' values are ignored, we will need to listen for the 'participantDisconnected'
     // event, so we can set the dominantSpeaker to 'null' when they disconnect.
     const handleParticipantDisconnected = (participant: RemoteParticipant) => {
+      if (participantStore.selectedParticipant === participant) {
+        participantStore.setSelectedParticipant(null);
+      }
       setDominantSpeaker(prevDominantSpeaker => {
         return prevDominantSpeaker === participant ? null : prevDominantSpeaker;
       });
