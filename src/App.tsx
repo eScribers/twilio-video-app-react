@@ -36,7 +36,8 @@ export default function App() {
   const height = useHeight();
 
   if (!returnUrl) {
-    return <MessagingSection />;
+    // return <MessagingSection />;
+    return <div>No conference data was included. Please check the URL is correct.</div>;
   }
 
   return (
