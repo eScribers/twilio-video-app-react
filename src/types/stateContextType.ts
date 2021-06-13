@@ -1,6 +1,6 @@
 import { TwilioError } from 'twilio-video';
 import { INotification, RoomType } from '../types';
-import { Settings, SettingsAction } from '../state/settings/settingsReducer';
+import { Settings } from '../state/settings/settingsReducer';
 import { ParticipantInformation } from '../types/participantInformation';
 export default interface StateContextType {
   error: TwilioError | null;
@@ -27,7 +27,6 @@ export default interface StateContextType {
   activeSinkId?: string | undefined;
   setActiveSinkId(sinkId: string): void;
   settings: Settings;
-  dispatchSetting: React.Dispatch<SettingsAction>;
   Provider: any;
   Consumer: any;
   isConfigLoaded?: boolean;

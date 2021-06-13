@@ -1,19 +1,21 @@
-import React, { createContext, useReducer, useState } from 'react';
+import React, { createContext, useState } from 'react';
 import { TwilioError } from 'twilio-video';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
 import axios from 'axios';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
-import { settingsReducer, initialSettings } from './settings/settingsReducer';
 import * as jwt_decode from 'jwt-decode';
 import roleChecker from '../utils/rbac/roleChecker';
 import useConfig from '../hooks/useConfig/useConfig';
 import { INotification } from '../types';
 import { ParticipantInformation } from '../types/participantInformation';
 import StateContextType from '../types/stateContextType';
+import rootStore from '../stores';
 
 export const StateContext = createContext<StateContextType>(null!);
 
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
+  const { roomStore } = rootStore;
+  const { settings } = roomStore;
   const [error, setError] = useState<TwilioError | null>(null);
   const [notification, setNotification] = useState<INotification | null>(null);
   const [isFetching, setIsFetching] = useState(false);
@@ -21,7 +23,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
   const [, setUser] = useState(null);
-  const [settings, dispatchSetting] = useReducer(settingsReducer, initialSettings);
   const [activeSinkId, setActiveSinkId] = useState('default');
   const [userToken, setUserToken] = useState('');
   const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
@@ -54,7 +55,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     activeSinkId,
     setActiveSinkId,
     settings,
-    dispatchSetting,
     isConfigLoaded,
     isSilenced,
     setIsSilenced,

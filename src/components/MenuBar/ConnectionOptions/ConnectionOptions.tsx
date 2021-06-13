@@ -15,7 +15,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import { inputLabels, Settings } from '../../../state/settings/settingsReducer';
 import { RenderDimensions } from '../../../state/settings/renderDimensions';
 import useWindowSize from '../../../hooks/useWindowSize/useWindowSize';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
 import rootStore from '../../../stores';
 import { observer } from 'mobx-react-lite';
 import { ROOM_STATE } from '../../../utils/displayStrings';
@@ -43,20 +42,18 @@ const RenderDimensionItems = RenderDimensions.map(({ label, value }) => (
 
 const ConnectionOptions = observer(({ className, hidden }: { className?: string; hidden?: boolean }) => {
   const classes = useStyles();
-  const { settings, dispatchSetting } = useAppState();
   const { roomStore } = rootStore;
+  const { settings } = roomStore;
 
   const isDisabled = roomStore.roomState !== ROOM_STATE.DISCONNECTED;
   const { width } = useWindowSize();
 
   const onlyCollaboration = width && width < 768;
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
-      dispatchSetting({ name: e.target.name as keyof Settings, value: e.target.value as string });
-    },
-    [dispatchSetting]
-  );
+  const handleChange = (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
+    roomStore.setSetting(e.target.name as keyof Settings, e.target.value as string);
+  };
+
   const handleNumberChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
       if (!/[^\d]/.test(e.target.value as string)) handleChange(e);

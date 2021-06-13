@@ -17,7 +17,6 @@ import theme from './theme';
 import App from './App';
 import { detectBrowser } from './utils/index';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
-import useConnectionOptions from './utils/useConnectionOptions/useConnectionOptions';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
 import { useAppState } from './hooks/useAppState/useAppState';
 
@@ -42,7 +41,6 @@ const VideoApp = () => {
     setWaitingNotification,
     waitingNotification,
   } = useAppState();
-  const connectionOptions = useConnectionOptions();
   useEffect(() => {
     logger.push({
       logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
@@ -78,12 +76,13 @@ const VideoApp = () => {
       );
   }
   return (
-    <VideoProvider
-      options={connectionOptions}
-      onError={setError}
-      onNotification={setNotification}
-      onDisconnect={disconnectParticipant}
-    >
+    // <VideoProvider
+    //   options={connectionOptions}
+    //   onError={setError}
+    //   onNotification={setNotification}
+    //   onDisconnect={disconnectParticipant}
+    // >
+    <VideoProvider onError={setError} onNotification={setNotification} onDisconnect={disconnectParticipant}>
       <ErrorDialog dismissError={() => setError(null)} error={error} />
       <NotificationDialog dismissNotification={() => setNotification(null)} notification={notification} />
       <WaitingForRoomDialog

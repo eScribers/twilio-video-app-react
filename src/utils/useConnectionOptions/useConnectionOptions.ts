@@ -10,7 +10,7 @@ export default function useConnectionOptions() {
   // for available connection options.
   const connectionOptions: ConnectOptions = {
     // Bandwidth Profile, Dominant Speaker, and Network Quality
-    // features are only available in Small Group or Group Rooms.
+    // features are only availabl§e in Small Group or Group Rooms.
     // Please set "Room Type" to "Group" or "Small Group" in your
     // Twilio Console: https://www.twilio.com/console/video/configure
     bandwidthProfile: {

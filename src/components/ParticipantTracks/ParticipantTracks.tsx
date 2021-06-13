@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { Participant, Track } from 'twilio-video';
+import { LocalTrackPublication, Participant, Track, TrackPublication } from 'twilio-video';
 import Publication from '../Publication/Publication';
 import usePublications from '../../hooks/usePublications/usePublications';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { VIEW_MODE, Settings } from '../../state/settings/settingsReducer';
-import { useAppState } from '../../hooks/useAppState/useAppState';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
 
 interface ParticipantTracksProps {
   participant: Participant;
@@ -22,45 +23,39 @@ interface ParticipantTracksProps {
  *  and the Publication component renders Tracks.
  */
 
-export default function ParticipantTracks({
-  participant,
-  videoOnly,
-  enableScreenShare,
-  videoPriority,
-  isLocalParticipant,
-}: ParticipantTracksProps) {
-  const publications = usePublications(participant);
-  const { dispatchSetting } = useAppState();
-  let somebodySharesScreen = false;
-  somebodySharesScreen = somebodySharesScreen || publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN));
-  useEffect(() => {
-    if (somebodySharesScreen)
-      dispatchSetting({
-        name: 'viewMode' as keyof Settings,
-        value: VIEW_MODE.collaboration,
-      });
-  }, [somebodySharesScreen, dispatchSetting]);
+const ParticipantTracks = observer(
+  ({ participant, videoOnly, enableScreenShare, videoPriority, isLocalParticipant }: ParticipantTracksProps) => {
+    const publications = usePublications(participant);
+    const { roomStore } = rootStore;
+    let somebodySharesScreen = false;
+    somebodySharesScreen = somebodySharesScreen || publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN));
+    useEffect(() => {
+      if (somebodySharesScreen) roomStore.setSetting('viewMode' as keyof Settings, VIEW_MODE.collaboration);
+    }, [somebodySharesScreen]);
 
-  let filteredPublications;
+    let filteredPublications: TrackPublication[];
 
-  if (enableScreenShare && publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN))) {
-    filteredPublications = publications.filter(p => !p.trackName.includes(TRACK_TYPE.CAMERA));
-  } else {
-    filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.SCREEN);
+    if (enableScreenShare && publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN))) {
+      filteredPublications = publications.filter(p => !p.trackName.includes(TRACK_TYPE.CAMERA));
+    } else {
+      filteredPublications = publications.filter(p => p.trackName !== TRACK_TYPE.SCREEN);
+    }
+
+    return (
+      <>
+        {filteredPublications.map(publication => (
+          <Publication
+            key={publication.kind}
+            publication={publication as LocalTrackPublication}
+            participant={participant}
+            isLocalParticipant={isLocalParticipant}
+            videoOnly={videoOnly}
+            videoPriority={videoPriority}
+          />
+        ))}
+      </>
+    );
   }
+);
 
-  return (
-    <>
-      {filteredPublications.map(publication => (
-        <Publication
-          key={publication.kind}
-          publication={publication}
-          participant={participant}
-          isLocalParticipant={isLocalParticipant}
-          videoOnly={videoOnly}
-          videoPriority={videoPriority}
-        />
-      ))}
-    </>
-  );
-}
+export default ParticipantTracks;
