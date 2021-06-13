@@ -9,9 +9,10 @@ import Room from './components/Room/Room';
 import { ROOM_STATE } from './utils/displayStrings';
 
 import useHeight from './hooks/useHeight/useHeight';
-import useRoomState from './hooks/useRoomState/useRoomState';
 import MessageText from './components/MessageText/MessageText';
 import MessagingSection from './components/MessagingSection/MessagingSection';
+import rootStore from './stores';
+import { observer } from 'mobx-react-lite';
 
 const Container = styled('div')({
   display: 'grid',
@@ -25,8 +26,8 @@ const Main = styled('main')({
 const query = new URLSearchParams(window.location.search);
 const returnUrl = query.get('returnUrl');
 
-export default function App() {
-  const roomState = useRoomState();
+const App = observer(() => {
+  const { roomStore } = rootStore;
 
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
@@ -44,10 +45,12 @@ export default function App() {
       <MessageText />
       <MenuBar />
       <Main>
-        {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
+        {roomStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
         <Controls />
       </Main>
       <ReconnectingNotification />
     </Container>
   );
-}
+});
+
+export default App;

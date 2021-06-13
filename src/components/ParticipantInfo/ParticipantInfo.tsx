@@ -210,7 +210,7 @@ export default function ParticipantInfo({
         [classes.dominantSpeaker]: isDominantSpeaker,
       })}
       onClick={onClick}
-      data-cy-participant={participant.identity}
+      data-cy-participant={participant?.identity}
     >
       <div className={classes.infoContainer}>
         <div className={classes.networkQualityContainer}>

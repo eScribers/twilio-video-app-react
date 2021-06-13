@@ -101,7 +101,7 @@ export default function MainParticipantInfo({ participant, children }: MainParti
   return (
     <div
       data-cy-main-participant
-      data-cy-participant={participant.identity}
+      data-cy-participant={participant?.identity}
       className={clsx(classes.container, { [classes.isVideoSwitchedOff]: isVideoSwitchedOff })}
     >
       <div className={classes.infoContainer}>

@@ -10,14 +10,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Offline, Online } from 'react-detect-offline';
-import { TRACK_TYPE, NOTIFICATION_MESSAGE, ERROR_MESSAGE } from '../../utils/displayStrings';
+import { TRACK_TYPE, NOTIFICATION_MESSAGE, ERROR_MESSAGE, ROOM_STATE } from '../../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 //import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
@@ -27,6 +26,7 @@ import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
 import moment from 'moment';
+import rootStore from '../../stores';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -105,7 +105,7 @@ export default function MenuBar() {
     // logger,
   } = useAppState();
   const { isConnecting, connect, localTracks } = useVideoContext();
-  const roomState = useRoomState();
+  const { roomStore } = rootStore;
 
   const [participantInfo, setParticipantInfo] = useState<ParticipantInformation | null>(null);
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
@@ -198,7 +198,7 @@ export default function MenuBar() {
     <AppBar className={classes.container} position="static">
       <Toolbar>
         <img src="/escribers-logo-transparent.png" height="64px" alt="eScribers" />
-        {roomState === 'disconnected' ? (
+        {roomStore.roomState === ROOM_STATE.DISCONNECTED ? (
           <form className={classes.form} onSubmit={handleSubmit}>
             <FormControl className={classes.textField}>
               <InputLabel>Party Type</InputLabel>

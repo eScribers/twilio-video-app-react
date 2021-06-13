@@ -4,13 +4,15 @@ import { isMobile } from '../../../utils';
 import Video, { ConnectOptions, LocalTrack, Room } from 'twilio-video';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ROOM_STATE } from '../../../utils/displayStrings';
+import rootStore from '../../../stores';
 
 // @ts-ignore
 window.TwilioVideo = Video;
 
-export default function useRoom(localTracks: LocalTrack[], onError: Callback, options?: ConnectOptions) {
+const useRoom = (localTracks: LocalTrack[], onError: Callback, options?: ConnectOptions) => {
   const [room, setRoom] = useState<Room>(new EventEmitter() as Room);
   const [isConnecting, setIsConnecting] = useState(false);
+  const { roomStore } = rootStore;
   const optionsRef = useRef(options);
 
   useEffect(() => {
@@ -25,6 +27,7 @@ export default function useRoom(localTracks: LocalTrack[], onError: Callback, op
       return Video.connect(token, { ...optionsRef.current, tracks: localTracks }).then(
         newRoom => {
           setRoom(newRoom);
+          roomStore.setRoom(newRoom);
           const disconnect = () => newRoom.disconnect();
 
           // This app can add up to 13 'participantDisconnected' listeners to the room object, which can trigger
@@ -71,4 +74,6 @@ export default function useRoom(localTracks: LocalTrack[], onError: Callback, op
   );
 
   return { room, isConnecting, connect };
-}
+};
+
+export default useRoom;

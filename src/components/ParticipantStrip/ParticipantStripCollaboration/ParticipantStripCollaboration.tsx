@@ -2,10 +2,8 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@material-ui/core/styles';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
 import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
-// import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 import rootStore from '../../../stores';
 

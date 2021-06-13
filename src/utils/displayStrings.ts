@@ -27,6 +27,8 @@ export enum ROOM_STATE {
   CONNECTED = 'connected',
 }
 
+export type IRoomState = ROOM_STATE;
+
 export const TRACK_TYPE = {
   CAMERA: 'camera',
   MICROPHONE: 'microphone',

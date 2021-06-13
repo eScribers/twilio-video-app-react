@@ -7,8 +7,9 @@ import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import { ROOM_STATE } from '../../utils/displayStrings';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
+import rootStore from '../../stores';
+import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,21 +38,21 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function Controls() {
+const Controls = observer(() => {
   const classes = useStyles();
-  const roomState = useRoomState();
-  const isReconnecting = roomState === ROOM_STATE.RECONNECTING;
-  const isdisconnected = roomState === ROOM_STATE.DISCONNECTED;
+  const { roomStore } = rootStore;
+  const isReconnecting = roomStore.roomState === ROOM_STATE.RECONNECTING;
+  const isdisconnected = roomStore.roomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
   const { isHostIn } = useIsHostIn();
-  const showControls = isUserActive || roomState === ROOM_STATE.DISCONNECTED;
+  const showControls = isUserActive || roomStore.roomState === ROOM_STATE.DISCONNECTED;
   const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !isHostIn;
 
   return (
     <div className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={isReconnecting} />
-      {roomState !== ROOM_STATE.DISCONNECTED && (
+      {roomStore.roomState !== ROOM_STATE.DISCONNECTED && (
         <>
           <ToggleScreenShareButton disabled={isReconnecting} />
           <EndCallButton />
@@ -59,4 +60,6 @@ export default function Controls() {
       )}
     </div>
   );
-}
+});
+
+export default Controls;
