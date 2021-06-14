@@ -50,9 +50,12 @@ const ConnectionOptions = observer(({ className, hidden }: { className?: string;
 
   const onlyCollaboration = width && width < 768;
 
-  const handleChange = (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
-    roomStore.setSetting(e.target.name as keyof Settings, e.target.value as string);
-  };
+  const handleChange = useCallback(
+    (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
+      roomStore.setSetting(e.target.name as keyof Settings, e.target.value as string);
+    },
+    [roomStore]
+  );
 
   const handleNumberChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {

@@ -40,7 +40,7 @@ export default function useParticipants() {
       ];
       participantStore.setParticipants(updatedParticipants);
     }
-  }, [dominantSpeaker]);
+  }, [dominantSpeaker, participantStore]);
 
   useEffect(() => {
     if (listenersAreSet) return;
@@ -62,7 +62,7 @@ export default function useParticipants() {
       room.off('participantConnected', participantConnected);
       room.off('participantDisconnected', participantDisconnected);
     };
-  }, [room]);
+  }, [room, participantStore]);
 
   return participantStore.participants;
 }

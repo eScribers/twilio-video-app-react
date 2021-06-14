@@ -18,6 +18,8 @@ import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import { ParticipantNameTag } from '../ParticipantNameTag/ParticipantNameTag';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -154,101 +156,99 @@ interface ParticipantInfoProps {
   isDominantSpeaker?: boolean;
 }
 
-export default function ParticipantInfo({
-  participant,
-  onClick,
-  isSelected,
-  children,
-  hideParticipant,
-  isDominantSpeaker,
-}: ParticipantInfoProps) {
-  const publications = usePublications(participant);
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
+const ParticipantInfo = observer(
+  ({ onClick, isSelected, children, hideParticipant, isDominantSpeaker }: ParticipantInfoProps) => {
+    const { participantStore } = rootStore;
+    const { participant } = participantStore;
+    const publications = usePublications(participant);
 
-  const localParticipantType: string = !localParticipant
-    ? ''
-    : ParticipantIdentity.Parse(localParticipant.identity).partyType;
+    const localParticipantType: string = !participant ? '' : ParticipantIdentity.Parse(participant.identity).partyType;
 
-  const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
-  const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA));
+    const audioPublication = participant?.audioTracks[0];
+    console.log(participant); // There are no audio tracks available for some reason
 
-  const isVideoEnabled = Boolean(videoPublication);
-  const isScreenShareEnabled = publications.find(p => p.trackName.includes(TRACK_TYPE.SCREEN));
+    const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA));
 
-  const videoTrack = useTrack(videoPublication);
-  const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
+    const isVideoEnabled = Boolean(videoPublication);
+    const isScreenShareEnabled = publications.find(p => p.trackName.includes(TRACK_TYPE.SCREEN));
 
-  const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
-  const isAudioEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
+    const videoTrack = useTrack(videoPublication);
+    const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
 
-  const isParticipantReconnecting = useParticipantIsReconnecting(participant);
-  const [wasPinned, setWasPinned] = useState(false);
-  const classes = useStyles();
+    const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
+    const isAudioEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
 
-  useEffect(() => {
-    // Pin this participant if he started sharing his screen
-    if (isScreenShareEnabled && !wasPinned && !isSelected) {
-      if (onClick) onClick();
-      setWasPinned(true);
-    }
-    // Forget "wasPinned" when screen share is off
-    if (!isScreenShareEnabled && wasPinned) {
-      setWasPinned(false);
-      if (isSelected) {
+    const isParticipantReconnecting = useParticipantIsReconnecting(participant);
+    const [wasPinned, setWasPinned] = useState(false);
+    const classes = useStyles();
+
+    useEffect(() => {
+      // Pin this participant if he started sharing his screen
+      if (isScreenShareEnabled && !wasPinned && !isSelected) {
         if (onClick) onClick();
+        setWasPinned(true);
       }
-    }
-  }, [isScreenShareEnabled, isSelected, wasPinned, onClick]);
+      // Forget "wasPinned" when screen share is off
+      if (!isScreenShareEnabled && wasPinned) {
+        setWasPinned(false);
+        if (isSelected) {
+          if (onClick) onClick();
+        }
+      }
+    }, [isScreenShareEnabled, isSelected, wasPinned, onClick]);
 
-  return (
-    <div
-      className={clsx(classes.container, {
-        [classes.hideParticipant]: hideParticipant,
-        [classes.cursorPointer]: Boolean(onClick),
-        [classes.dominantSpeaker]: isDominantSpeaker,
-      })}
-      onClick={onClick}
-      data-cy-participant={participant?.identity}
-    >
-      <div className={classes.infoContainer}>
-        <div className={classes.networkQualityContainer}>
-          <NetworkQualityLevel participant={participant} />
-        </div>
-        <div className={classes.infoRowBottom}>
-          {isScreenShareEnabled && (
-            <span className={classes.screenShareIconContainer}>
-              <ScreenShareIcon />
+    if (!participant) return null;
+
+    return (
+      <div
+        className={clsx(classes.container, {
+          [classes.hideParticipant]: hideParticipant,
+          [classes.cursorPointer]: Boolean(onClick),
+          [classes.dominantSpeaker]: isDominantSpeaker,
+        })}
+        onClick={onClick}
+        data-cy-participant={participant?.identity}
+      >
+        <div className={classes.infoContainer}>
+          <div className={classes.networkQualityContainer}>
+            <NetworkQualityLevel participant={participant} />
+          </div>
+          <div className={classes.infoRowBottom}>
+            {isScreenShareEnabled && (
+              <span className={classes.screenShareIconContainer}>
+                <ScreenShareIcon />
+              </span>
+            )}
+            <span className={classes.identity}>
+              <AudioLevelIndicator audioTrack={audioTrack} participant={participant} />
+              <ParticipantNameTag participant={participant} />
             </span>
-          )}
-          <span className={classes.identity}>
-            <AudioLevelIndicator audioTrack={audioTrack} participant={participant} />
-            <ParticipantNameTag participant={participant} />
-          </span>
+          </div>
+          <div>{isSelected && <PinIcon />}</div>
+          <ParticipantDropDown
+            participant={participant}
+            localParticipantType={localParticipantType}
+            isAudioEnabled={isAudioEnabled}
+          />
         </div>
-        <div>{isSelected && <PinIcon />}</div>
-        <ParticipantDropDown
-          participant={participant}
-          localParticipantType={localParticipantType}
-          isAudioEnabled={isAudioEnabled}
-        />
+        <div className={classes.innerContainer}>
+          {(!isVideoEnabled || isVideoSwitchedOff) && (
+            <div className={classes.avatarContainer}>
+              <AvatarIcon />
+            </div>
+          )}
+          {isParticipantReconnecting && (
+            <div className={classes.reconnectingContainer}>
+              <Typography variant="body1" className={classes.typeography}>
+                Reconnecting...
+              </Typography>
+            </div>
+          )}
+          {children}
+        </div>
       </div>
-      <div className={classes.innerContainer}>
-        {(!isVideoEnabled || isVideoSwitchedOff) && (
-          <div className={classes.avatarContainer}>
-            <AvatarIcon />
-          </div>
-        )}
-        {isParticipantReconnecting && (
-          <div className={classes.reconnectingContainer}>
-            <Typography variant="body1" className={classes.typeography}>
-              Reconnecting...
-            </Typography>
-          </div>
-        )}
-        {children}
-      </div>
-    </div>
-  );
-}
+    );
+  }
+);
+
+export default ParticipantInfo;

@@ -10,14 +10,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Offline, Online } from 'react-detect-offline';
-import { TRACK_TYPE, NOTIFICATION_MESSAGE, ERROR_MESSAGE, ROOM_STATE } from '../../utils/displayStrings';
+import { NOTIFICATION_MESSAGE, ERROR_MESSAGE, ROOM_STATE } from '../../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 //import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
@@ -27,6 +26,7 @@ import { TwilioError } from 'twilio-video';
 // import { LogglyTracker } from 'react-native-loggly-jslogger';
 import moment from 'moment';
 import rootStore from '../../stores';
+import { observer } from 'mobx-react-lite';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -90,7 +90,7 @@ const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
   </div>
 );
 
-export default function MenuBar() {
+const MenuBar = observer(() => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
   const {
@@ -104,8 +104,8 @@ export default function MenuBar() {
     isConfigLoaded,
     // logger,
   } = useAppState();
-  const { isConnecting, connect, localTracks } = useVideoContext();
-  const { roomStore } = rootStore;
+  const { roomStore, participantStore } = rootStore;
+  const { isConnecting } = roomStore;
 
   const [participantInfo, setParticipantInfo] = useState<ParticipantInformation | null>(null);
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
@@ -148,7 +148,7 @@ export default function MenuBar() {
       }
     } else {
       setWaitingNotification(null);
-      await connect(response);
+      await roomStore.joinRoom(response);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
@@ -178,12 +178,11 @@ export default function MenuBar() {
     joinRoom(participantInfo);
   };
 
-  const audioTrack = localTracks.find(x => x.kind === TRACK_TYPE.AUDIO);
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
     } else {
-      audioTrack?.disable();
+      participantStore?.participant?.audioTracks[0]?.disable();
       setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
     }
     setIsHostInState(isHostIn);
@@ -281,4 +280,6 @@ export default function MenuBar() {
       />
     </AppBar>
   );
-}
+});
+
+export default MenuBar;

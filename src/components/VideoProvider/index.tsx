@@ -5,7 +5,6 @@ import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityH
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useLocalTracks from './useLocalTracks/useLocalTracks';
-import useRoom from './useRoom/useRoom';
 import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
 import {
   CreateLocalTrackOptions,
@@ -15,6 +14,8 @@ import {
   Room,
   TwilioError,
 } from 'twilio-video';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
 /*
  *  The hooks used by the VideoProvider component are different than the hooks found in the 'hooks/' directory. The hooks
  *  in the 'hooks/' directory can be used anywhere in a video application, and they can be used any number of times.
@@ -26,7 +27,6 @@ export interface IVideoContext {
   room: Room;
   localTracks: (LocalAudioTrack | LocalVideoTrack)[];
   isConnecting: boolean;
-  connect: (token: string) => Promise<void>;
   onError: ErrorCallback;
   onDisconnect: (isRegistered?: boolean) => void;
   getLocalVideoTrack: (newOptions?: CreateLocalTrackOptions) => Promise<LocalVideoTrack>;
@@ -48,58 +48,61 @@ interface VideoProviderProps {
   onNotification: Callback;
 }
 
-export function VideoProvider({
-  options,
-  children,
-  onError = () => {},
-  onNotification = () => {},
-  onDisconnect = () => {},
-}: VideoProviderProps) {
-  const onErrorCallback = (error: TwilioError) => {
-    console.log(`ERROR: ${error.message}`, error);
-    onError(error);
-  };
+export const VideoProvider = observer(
+  ({
+    options,
+    children,
+    onError = () => {},
+    onNotification = () => {},
+    onDisconnect = () => {},
+  }: VideoProviderProps) => {
+    const onErrorCallback = (error: TwilioError) => {
+      console.log(`ERROR: ${error.message}`, error);
+      onError(error);
+    };
 
-  const {
-    localTracks,
-    getLocalVideoTrack,
-    isAcquiringLocalTracks,
-    removeLocalAudioTrack,
-    removeLocalVideoTrack,
-    getAudioAndVideoTracks,
-  } = useLocalTracks();
-  const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
+    const {
+      localTracks,
+      getLocalVideoTrack,
+      isAcquiringLocalTracks,
+      removeLocalAudioTrack,
+      removeLocalVideoTrack,
+      getAudioAndVideoTracks,
+    } = useLocalTracks();
+    const { roomStore } = rootStore;
+    const { room, isConnecting } = roomStore;
+    // const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
 
-  // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionErrors(room, onError);
-  useHandleTrackPublicationFailed(room, onError);
-  useHandleOnDisconnect(room, onDisconnect);
-  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
+    // Register onError and onDisconnect callback functions.
+    useHandleRoomDisconnectionErrors(room, onError);
+    useHandleTrackPublicationFailed(room, onError);
+    useHandleOnDisconnect(room, onDisconnect);
+    const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
 
-  return (
-    <VideoContext.Provider
-      value={{
-        room,
-        localTracks,
-        isConnecting,
-        onError: onErrorCallback,
-        onDisconnect,
-        getLocalVideoTrack,
-        connect,
-        isAcquiringLocalTracks,
-        removeLocalAudioTrack,
-        removeLocalVideoTrack,
-        isSharingScreen,
-        toggleScreenShare,
-        getAudioAndVideoTracks,
-      }}
-    >
-      {children}
-      {/* 
+    return (
+      <VideoContext.Provider
+        value={{
+          room,
+          localTracks,
+          isConnecting,
+          onError: onErrorCallback,
+          onDisconnect,
+          getLocalVideoTrack,
+          isAcquiringLocalTracks,
+          removeLocalAudioTrack,
+          removeLocalVideoTrack,
+          isSharingScreen,
+          toggleScreenShare,
+          getAudioAndVideoTracks,
+        }}
+      >
+        {children}
+        {/* 
         The AttachVisibilityHandler component is using the useLocalVideoToggle hook
         which must be used within the VideoContext Provider.
       */}
-      <AttachVisibilityHandler />
-    </VideoContext.Provider>
-  );
-}
+        <AttachVisibilityHandler />
+      </VideoContext.Provider>
+    );
+  }
+);

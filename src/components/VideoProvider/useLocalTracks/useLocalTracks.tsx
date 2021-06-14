@@ -61,6 +61,7 @@ export default function useLocalTracks() {
     }
   }, [videoTrack]);
 
+  // Todo Move this to the store:::
   const getAudioAndVideoTracks = useCallback(() => {
     if (!hasAudioInputDevices && !hasVideoInputDevices) return Promise.resolve();
     if (isAcquiringLocalTracks || audioTrack || videoTrack) return Promise.resolve();

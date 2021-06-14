@@ -11,6 +11,7 @@ import {
   RemoteTrackPublication,
   Track,
 } from 'twilio-video';
+import { observer } from 'mobx-react-lite';
 
 interface PublicationProps {
   publication: LocalTrackPublication | RemoteTrackPublication;
@@ -20,7 +21,7 @@ interface PublicationProps {
   videoPriority?: Track.Priority | null;
 }
 
-export default function Publication({ publication, isLocalParticipant, videoOnly, videoPriority }: PublicationProps) {
+const Publication = observer(({ publication, isLocalParticipant, videoOnly, videoPriority }: PublicationProps) => {
   const track = useTrack(publication);
 
   if (!track) return null;
@@ -39,4 +40,6 @@ export default function Publication({ publication, isLocalParticipant, videoOnly
     default:
       return null;
   }
-}
+});
+
+export default Publication;

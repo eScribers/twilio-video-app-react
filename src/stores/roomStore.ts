@@ -1,11 +1,13 @@
 import { makeAutoObservable } from 'mobx';
-import { ROOM_STATE, IRoomState } from '../utils/displayStrings';
+import { ROOM_STATE } from '../utils/displayStrings';
 import EventEmitter from 'events';
 import { Room } from 'twilio-video';
 import { ConnectOptions } from 'twilio-video';
 import { isMobile, removeUndefineds } from '../utils';
 import { getResolution } from '../state/settings/renderDimensions';
 import { Settings, initialSettings } from '../state/settings/settingsReducer';
+import Video from 'twilio-video';
+import { Callback } from '../types';
 
 class RoomStore {
   rootStore: any;
@@ -25,9 +27,42 @@ class RoomStore {
     this.room = room;
   }
 
-  joinRoom(token) {
+  setIsConnecting(isConnecting: boolean) {
+    this.isConnecting = isConnecting;
+  }
+  async joinRoom(token: string, option?: ConnectOptions, onError?: Callback) {
     if (this.isConnecting) return console.log('Already connecting!');
-    this.isConnecting = true;
+    this.setIsConnecting(true);
+    try {
+      console.log('Joining room', this.rootStore.participantStore.localTracks);
+      const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
+      this.setRoom(newRoom);
+      this.setIsConnecting(false);
+      const disconnect = () => newRoom.disconnect();
+
+      newRoom.once(ROOM_STATE.DISCONNECTED, () => {
+        setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
+        window.removeEventListener('beforeunload', disconnect);
+        if (isMobile) window.removeEventListener('pagehide', disconnect);
+      });
+
+      window.addEventListener('beforeunload', disconnect); // disconnect from the room when the user closes the browser
+      if (isMobile) window.addEventListener('pagehide', disconnect);
+
+      // @ts-ignore
+      window.twilioRoom = newRoom; // Registering the room globally
+
+      console.log(newRoom.localParticipant.videoTracks);
+
+      // All video publications are low by default, except MainParticipant (which is high)
+      newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
+
+      this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
+    } catch (err) {
+      console.log(err.message);
+      onError && onError(err);
+      this.setIsConnecting(false);
+    }
   }
 
   setSetting(key: keyof Settings, value: string) {

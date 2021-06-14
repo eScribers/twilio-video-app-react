@@ -4,13 +4,10 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Participant from '../../Participant/Participant';
 import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
 import rootStore from '../../../stores';
-
-const { participantStore } = rootStore;
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -36,13 +33,11 @@ export interface ParticipantGridProps {
 }
 
 const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
+  const { participantStore } = rootStore;
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const { sortedParticipants, selectedParticipant } = participantStore;
+  const { sortedParticipants, selectedParticipant, participant } = participantStore;
   const dominantSpeaker = useDominantSpeaker();
   const [isSilenced] = useIsSilenced();
   const classes = useStyles();
@@ -68,15 +63,16 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
     }
   }, [viewMode, currViewMode]);
 
+  if (!participant) return null;
   return (
     <div className={classes.root}>
       <Grid container spacing={3} className={classes.scrollable}>
         <Grid item xs={12} sm={6} md={mdState} lg={lgState}>
           <Paper className={classes.paper}>
             <Participant
-              participant={localParticipant}
-              isSelected={selectedParticipant === localParticipant}
-              onClick={() => participantStore.setSelectedParticipant(localParticipant)}
+              participant={participant}
+              isSelected={selectedParticipant === participant}
+              onClick={() => participantStore.setSelectedParticipant(participant)}
             />
           </Paper>
         </Grid>

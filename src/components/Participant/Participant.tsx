@@ -2,6 +2,7 @@ import React from 'react';
 import ParticipantInfo from '../ParticipantInfo/ParticipantInfo';
 import ParticipantTracks from '../ParticipantTracks/ParticipantTracks';
 import { Participant as IParticipant } from 'twilio-video';
+import { observer } from 'mobx-react-lite';
 
 interface ParticipantProps {
   participant: IParticipant;
@@ -15,32 +16,36 @@ interface ParticipantProps {
   userIsSilenced?: boolean;
 }
 
-export default function Participant({
-  participant,
-  videoOnly,
-  enableScreenShare,
-  onClick,
-  isSelected,
-  isLocalParticipant,
-  hideParticipant,
-  isDominantSpeaker,
-  userIsSilenced,
-}: ParticipantProps) {
-  return (
-    <ParticipantInfo
-      participant={participant}
-      onClick={onClick}
-      isSelected={isSelected}
-      isLocalParticipant={isLocalParticipant}
-      hideParticipant={hideParticipant}
-      isDominantSpeaker={isDominantSpeaker}
-    >
-      <ParticipantTracks
+const Participant = observer(
+  ({
+    participant,
+    videoOnly,
+    enableScreenShare,
+    onClick,
+    isSelected,
+    isLocalParticipant,
+    hideParticipant,
+    isDominantSpeaker,
+    userIsSilenced,
+  }: ParticipantProps) => {
+    return (
+      <ParticipantInfo
         participant={participant}
-        videoOnly={videoOnly || userIsSilenced}
-        enableScreenShare={enableScreenShare}
+        onClick={onClick}
+        isSelected={isSelected}
         isLocalParticipant={isLocalParticipant}
-      />
-    </ParticipantInfo>
-  );
-}
+        hideParticipant={hideParticipant}
+        isDominantSpeaker={isDominantSpeaker}
+      >
+        <ParticipantTracks
+          participant={participant}
+          videoOnly={videoOnly || userIsSilenced}
+          enableScreenShare={enableScreenShare}
+          isLocalParticipant={isLocalParticipant}
+        />
+      </ParticipantInfo>
+    );
+  }
+);
+
+export default Participant;

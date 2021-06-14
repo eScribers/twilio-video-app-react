@@ -36,7 +36,7 @@ export default function useDominantSpeaker() {
       room.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
       room.off('participantDisconnected', handleParticipantDisconnected);
     };
-  }, [room]);
+  }, [room, participantStore]);
 
   return dominantSpeaker;
 }
