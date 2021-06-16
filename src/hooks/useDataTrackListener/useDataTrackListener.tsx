@@ -2,13 +2,14 @@ import useVideoContext from '../useVideoContext/useVideoContext';
 import { useEffect } from 'react';
 import { RemoteParticipant } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
-import { TRACK_TYPE } from '../../utils/displayStrings';
 import roleChecker from '../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../utils/rbac/rolePermissions';
 import { IMuteRemoteParticipantMessage } from '../../utils/muteRemoteParticipantMessage';
+import rootStore from '../../stores';
 
 export default function useDataTrackListener() {
-  const { room, localTracks } = useVideoContext();
+  const { room } = useVideoContext();
+  const { participantStore } = rootStore;
 
   useEffect(() => {
     const handleRemoteParticipant = (participant: RemoteParticipant) => {
@@ -38,8 +39,8 @@ export default function useDataTrackListener() {
         console.log(
           `Received mute participant message for this participant (${room.localParticipant.sid}). Disabling/Muting local audio track`
         );
-        const audioTrack = localTracks.find(x => x.kind === TRACK_TYPE.AUDIO);
-        audioTrack?.disable();
+        // const audioTrack = participantStore.localTracks.find(x => x?.kind === TRACK_TYPE.AUDIO);
+        // audioTrack?.disable();
       }
     }
 
@@ -53,5 +54,5 @@ export default function useDataTrackListener() {
     return () => {
       room.off('participantConnected', handleRemoteParticipant);
     };
-  }, [room, localTracks]);
+  }, [room, participantStore]);
 }

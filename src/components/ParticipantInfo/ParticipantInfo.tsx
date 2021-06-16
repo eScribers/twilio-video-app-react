@@ -15,11 +15,9 @@ import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecti
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import ParticipantDropDown from './ParticipantDropDown/ParticipantDropDown';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import { ParticipantNameTag } from '../ParticipantNameTag/ParticipantNameTag';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -157,15 +155,12 @@ interface ParticipantInfoProps {
 }
 
 const ParticipantInfo = observer(
-  ({ onClick, isSelected, children, hideParticipant, isDominantSpeaker }: ParticipantInfoProps) => {
-    const { participantStore } = rootStore;
-    const { participant } = participantStore;
+  ({ onClick, isSelected, children, hideParticipant, isDominantSpeaker, participant }: ParticipantInfoProps) => {
     const publications = usePublications(participant);
 
     const localParticipantType: string = !participant ? '' : ParticipantIdentity.Parse(participant.identity).partyType;
 
-    const audioPublication = participant?.audioTracks[0];
-    console.log(participant); // There are no audio tracks available for some reason
+    const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
 
     const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA));
 

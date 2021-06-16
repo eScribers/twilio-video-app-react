@@ -34,7 +34,6 @@ class RoomStore {
     if (this.isConnecting) return console.log('Already connecting!');
     this.setIsConnecting(true);
     try {
-      console.log('Joining room', this.rootStore.participantStore.localTracks);
       const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
       this.setRoom(newRoom);
       this.setIsConnecting(false);
@@ -51,8 +50,6 @@ class RoomStore {
 
       // @ts-ignore
       window.twilioRoom = newRoom; // Registering the room globally
-
-      console.log(newRoom.localParticipant.videoTracks);
 
       // All video publications are low by default, except MainParticipant (which is high)
       newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
@@ -75,10 +72,6 @@ class RoomStore {
 
   get options() {
     const connectionOptions: ConnectOptions = {
-      // Bandwidth Profile, Dominant Speaker, and Network Quality
-      // features are only availabl§e in Small Group or Group Rooms.
-      // Please set "Room Type" to "Group" or "Small Group" in your
-      // Twilio Console: https://www.twilio.com/console/video/configure
       bandwidthProfile: {
         video: {
           mode: this.settings.bandwidthProfileMode,
@@ -93,17 +86,10 @@ class RoomStore {
       },
       dominantSpeaker: true,
       networkQuality: { local: 1, remote: 1 },
-
-      // Comment this line if you are playing music.
       maxAudioBitrate: Number(this.settings.maxAudioBitrate),
-
-      // VP8 simulcast enables the media server in a Small Group or Group Room
-      // to adapt your encoded video quality for each RemoteParticipant based on
-      // their individual bandwidth constraints. Simulcast should be disabled if
-      // you are using Peer-to-Peer or 'Go' Rooms.
-      // preferredVideoCodecs: [{ codec: 'VP8', simulcast: roomType !== 'peer-to-peer' && roomType !== 'go' }],
-      preferredVideoCodecs: [{ codec: 'VP8', simulcast: this.rootStore.participantStore.participants.length > 2 }],
+      preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };
+
     if (isMobile && connectionOptions?.bandwidthProfile?.video) {
       connectionOptions!.bandwidthProfile!.video!.maxSubscriptionBitrate = 2500000;
     }

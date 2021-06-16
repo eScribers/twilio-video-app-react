@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { AudioTrack, LocalAudioTrack, Participant, RemoteAudioTrack } from 'twilio-video';
+import { AudioTrack, Participant, LocalAudioTrack, RemoteAudioTrack } from 'twilio-video';
 import { interval } from 'd3-timer';
 import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import { PLAYER_STATE } from '../../utils/displayStrings';
 import { IconButton } from '@material-ui/core';
-import useLocalAudioToggle from '../../hooks/useLocalAudioToggle/useLocalAudioToggle';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { getParticipantOptions } from '../../components/ParticipantInfo/ParticipantDropDown/ParticipantDropDown';
-import useParticipant from '../../hooks/useParticipant/useParticipant';
 import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
 
 let clipId = 0;
 const getUniqueClipId = () => clipId++;
@@ -50,12 +48,9 @@ const AudioLevelIndicator = observer(
     const [analyser, setAnalyser] = useState<AnalyserNode>();
     const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
     const mediaStreamTrack = useMediaStreamTrack(audioTrack);
-    const [, toggleAudioEnabled] = useLocalAudioToggle();
     const { isHostIn } = useIsHostIn();
-    const {
-      room: { localParticipant },
-    } = useVideoContext();
-    const participantCommands = useParticipant();
+    const { participantStore } = rootStore;
+    const localParticipant = rootStore.participantStore.participant;
     const isLocalParticipant = participant === localParticipant || !participant;
     const localParticipantType: string = !localParticipant
       ? ''
@@ -133,8 +128,8 @@ const AudioLevelIndicator = observer(
       e.preventDefault();
       e.stopPropagation();
       if (participantOptions.includes('Mute') && participant) {
-        participantCommands.muteParticipant(participant);
-      } else toggleAudioEnabled();
+        participantStore.muteOtherParticipant(participant);
+      } else participantStore.toggleAudioEnabled();
     };
 
     const canMute = participantOptions.includes('Mute') || isLocalParticipant;

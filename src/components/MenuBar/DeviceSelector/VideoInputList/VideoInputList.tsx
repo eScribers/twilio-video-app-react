@@ -5,8 +5,8 @@ import { LocalVideoTrack } from 'twilio-video';
 import { makeStyles } from '@material-ui/core/styles';
 import VideoTrack from '../../../VideoTrack/VideoTrack';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
-import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import useDevices from '../../../../hooks/useDevices/useDevices';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../../stores';
 
 const useStyles = makeStyles({
   preview: {
@@ -19,12 +19,13 @@ const useStyles = makeStyles({
   },
 });
 
-export default function VideoInputList() {
+const VideoInputList = observer(() => {
   const classes = useStyles();
-  const { videoInputDevices } = useDevices();
-  const { localTracks } = useVideoContext();
+  const { participantStore } = rootStore;
 
-  const localVideoTrack = localTracks.find(track => track.kind === 'video') as LocalVideoTrack | undefined;
+  const localVideoTrack = participantStore.localTracks.find(track => track?.kind === 'video') as
+    | LocalVideoTrack
+    | undefined;
   const mediaStreamTrack = useMediaStreamTrack(localVideoTrack);
   const [storedLocalVideoDeviceId, setStoredLocalVideoDeviceId] = useState(
     window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY)
@@ -49,7 +50,7 @@ export default function VideoInputList() {
           <VideoTrack isLocal track={localVideoTrack} />
         </div>
       )}
-      {videoInputDevices.length > 1 ? (
+      {participantStore.devices.videoInputDevices.length > 1 ? (
         <FormControl fullWidth>
           <Typography variant="subtitle2" gutterBottom>
             Video Input
@@ -59,7 +60,7 @@ export default function VideoInputList() {
             value={localVideoInputDeviceId || ''}
             variant="outlined"
           >
-            {videoInputDevices.map(device => (
+            {participantStore.devices.videoInputDevices.map(device => (
               <MenuItem value={device.deviceId} key={device.deviceId}>
                 {device.label}
               </MenuItem>
@@ -76,4 +77,6 @@ export default function VideoInputList() {
       )}
     </div>
   );
-}
+});
+
+export default VideoInputList;

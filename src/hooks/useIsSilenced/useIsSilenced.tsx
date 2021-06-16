@@ -2,21 +2,22 @@ import { useEffect } from 'react';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import useParticipants from '../useParticipants/useParticipants';
-import useVideoContext from '../useVideoContext/useVideoContext';
 import { useAppState } from '../useAppState/useAppState';
-import useLocalAudioToggle from '../useLocalAudioToggle/useLocalAudioToggle';
+import rootStore from '../../stores';
 
 const useIsSilenced = () => {
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
+  const { participantStore } = rootStore;
   const { isSilenced, setIsSilenced, setNotification } = useAppState();
-  const [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
 
   const participants = useParticipants();
+  const localParticipant = participantStore.participant;
 
   useEffect(() => {
-    const isReporter = ParticipantIdentity.Parse(localParticipant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER;
+    if (!participantStore.participant) return;
+
+    const isReporter =
+      ParticipantIdentity.Parse(participantStore.participant?.identity || '')['partyType'] ===
+      PARTICIPANT_TYPES.REPORTER;
     if (!isReporter) return;
 
     const isSipClientConnected =
@@ -32,14 +33,14 @@ const useIsSilenced = () => {
       });
       console.log('You are silenced because of a zoiper call');
       setIsSilenced(true);
-      if (isAudioEnabled) toggleAudioEnabled();
+      if (participantStore.localAudioTrack) participantStore.toggleAudioEnabled();
     }
     if (isSilenced && !isSipClientConnected) {
       setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
       console.log('Zoiper call disconnected, you are un-silenced');
       setIsSilenced(false);
     }
-  }, [participants, isSilenced, setIsSilenced, localParticipant, setNotification, isAudioEnabled, toggleAudioEnabled]);
+  }, [participants, isSilenced, setIsSilenced, localParticipant, setNotification, participantStore]);
 
   return [isSilenced, setIsSilenced];
 };

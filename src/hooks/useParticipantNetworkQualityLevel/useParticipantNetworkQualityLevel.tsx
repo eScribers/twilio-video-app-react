@@ -5,8 +5,13 @@ export default function useParticipantNetworkQualityLevel(participant: Participa
   const [networkQualityLevel, setNetworkQualityLevel] = useState(participant?.networkQualityLevel);
 
   useEffect(() => {
-    const handleNewtorkQualityLevelChange = (newNetworkQualityLevel: number) =>
+    const handleNewtorkQualityLevelChange = (newNetworkQualityLevel: number) => {
+      console.log('Handling networkQualityLevel change', newNetworkQualityLevel);
+
       setNetworkQualityLevel(newNetworkQualityLevel);
+    };
+    // THIS IS CURRENTLY BROKEN:
+    console.log('THIS IS CURRENTLY BROKEN: Setting quality monitory', participant, participant?.networkQualityLevel);
 
     setNetworkQualityLevel(participant?.networkQualityLevel);
     participant.on('networkQualityLevelChanged', handleNewtorkQualityLevelChange);

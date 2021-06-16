@@ -4,14 +4,17 @@ import { LocalAudioTrack, LocalVideoTrack, Participant, RemoteAudioTrack, Remote
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import useIsTrackSwitchedOff from '../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff';
-import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import { TRACK_TYPE } from '../../utils/displayStrings';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import AudioLevelIndicator from '../../components/AudioLevelIndicator/AudioLevelIndicator';
 import AvatarIcon from '../../icons/AvatarIcon';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
+import { TrackPublication } from 'twilio-video';
+import { LocalTrackPublication } from 'twilio-video';
+import { RemoteTrackPublication } from 'twilio-video';
 
 const useStyles = makeStyles({
   container: {
@@ -77,24 +80,29 @@ interface MainParticipantInfoProps {
   children: React.ReactNode;
 }
 
-export default function MainParticipantInfo({ participant, children }: MainParticipantInfoProps) {
+const MainParticipantInfo = observer(({ participant, children }: MainParticipantInfoProps) => {
   const classes = useStyles();
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
-  const isLocal = localParticipant === participant;
+  const { participantStore } = rootStore;
+  const isLocal = participantStore.participant?.identity === participant?.identity;
 
-  const publications = usePublications(participant);
-  const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA));
-  const screenSharePublication = publications.find(p => p.trackName.includes(TRACK_TYPE.SCREEN));
+  const publications = Array.from(participant.tracks.values()) as TrackPublication[];
+  const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA)) as
+    | LocalTrackPublication
+    | RemoteTrackPublication;
+  const screenSharePublication = publications.find(p => p.trackName.includes(TRACK_TYPE.SCREEN)) as
+    | LocalTrackPublication
+    | RemoteTrackPublication;
 
   const videoTrack = useTrack(screenSharePublication || videoPublication);
   const isVideoEnabled = Boolean(videoTrack);
 
-  const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
-  const audioTrack = useTrack(audioPublication) as LocalAudioTrack | RemoteAudioTrack | undefined;
+  const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO) as
+    | LocalTrackPublication
+    | RemoteTrackPublication
+    | undefined;
+  const audioTrack = audioPublication as LocalAudioTrack | RemoteAudioTrack | undefined;
 
-  const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack);
+  const isVideoSwitchedOff = useIsTrackSwitchedOff(videoTrack as LocalVideoTrack | RemoteVideoTrack | undefined);
   const parsedIdentity = ParticipantIdentity.Parse(participant.identity);
   const isParticipantReconnecting = useParticipantIsReconnecting(participant);
 
@@ -127,4 +135,6 @@ export default function MainParticipantInfo({ participant, children }: MainParti
       {children}
     </div>
   );
-}
+});
+
+export default MainParticipantInfo;

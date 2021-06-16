@@ -15,10 +15,8 @@ import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
-//import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
 import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
-import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
@@ -115,7 +113,6 @@ const MenuBar = observer(() => {
   const [isHostInState, setIsHostInState] = useState(isHostIn);
   const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
   useDataTrackListener();
-  usePublishDataTrack(participantInfo);
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
@@ -182,7 +179,7 @@ const MenuBar = observer(() => {
     if (isHostIn) {
       setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
     } else {
-      participantStore?.participant?.audioTracks[0]?.disable();
+      participantStore.setLocalAudioTrackEnabled(false);
       setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
     }
     setIsHostInState(isHostIn);

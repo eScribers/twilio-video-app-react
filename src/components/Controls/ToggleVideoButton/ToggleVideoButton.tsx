@@ -6,8 +6,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import Videocam from '@material-ui/icons/Videocam';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 
-import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../stores';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,13 +16,11 @@ const useStyles = makeStyles((theme: Theme) =>
     },
   })
 );
-export default function ToggleVideoButton(props: { disabled?: boolean }) {
+const ToggleVideoButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
-  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+  const { participantStore } = rootStore;
+  const localParticipant = participantStore.participant;
   const [, setDisabled] = useState(false);
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
   function handleVideoTrackPublishUnpublishInProgress(inProgress: any) {
     setDisabled(inProgress);
   }
@@ -38,16 +36,22 @@ export default function ToggleVideoButton(props: { disabled?: boolean }) {
   }, [localParticipant]);
 
   return (
-    <Tooltip title={isVideoEnabled ? 'Video off' : 'Video on'} placement="top" PopperProps={{ disablePortal: true }}>
+    <Tooltip
+      title={participantStore.localVideoTrack ? 'Video off' : 'Video on'}
+      placement="top"
+      PopperProps={{ disablePortal: true }}
+    >
       <Fab
         className={classes.fab}
         onClick={() => {
-          toggleVideoEnabled();
+          participantStore.toggleVideoEnabled();
         }}
         disabled={props.disabled}
       >
-        {isVideoEnabled ? <Videocam /> : <VideocamOff />}
+        {participantStore.localVideoTrack ? <Videocam /> : <VideocamOff />}
       </Fab>
     </Tooltip>
   );
-}
+});
+
+export default ToggleVideoButton;
