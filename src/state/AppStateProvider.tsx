@@ -10,6 +10,7 @@ import { INotification } from '../types';
 import { ParticipantInformation } from '../types/participantInformation';
 import StateContextType from '../types/stateContextType';
 import rootStore from '../stores';
+import moment, { Moment } from 'moment';
 
 export const StateContext = createContext<StateContextType>(null!);
 
@@ -29,6 +30,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
   const [participantInfo, setParticipantInfo] = useState(null);
+  const [joinTime, setJoinTime] = useState<Moment | null>(null);
   const [isSilenced, setIsSilenced] = useState<boolean>(false);
   const { endPoint, environmentName, domainName, loaded: isConfigLoaded } = useConfig({ setError });
 
@@ -103,6 +105,10 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     disconnectParticipant: async (isRegistered?: boolean) => {
       if (!isConfigLoaded) return null;
 
+      if (joinTime && moment().isSameOrAfter(joinTime.add(3, 'hours').add(50, 'minutes'))) {
+        return window.location.reload();
+      }
+
       const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
       const loginPageUrl = `http://tabula-${environmentName}.${domainName}/tabula/welcome/thankyou`;
 
@@ -142,6 +148,7 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   };
 
   const getToken: StateContextType['getToken'] = async (participantInformation: ParticipantInformation) => {
+    setJoinTime(moment());
     setIsFetching(true);
 
     const res: any = await contextValue.getToken(participantInformation);
