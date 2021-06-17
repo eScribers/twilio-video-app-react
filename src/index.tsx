@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Video, { TwilioError } from 'twilio-video';
+import Video from 'twilio-video';
 import UAParser from 'ua-parser-js';
 import { CssBaseline } from '@material-ui/core';
 import { MuiThemeProvider } from '@material-ui/core/styles';
@@ -19,6 +19,9 @@ import { detectBrowser } from './utils/index';
 import { LogglyTracker } from 'react-native-loggly-jslogger';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
 import { useAppState } from './hooks/useAppState/useAppState';
+import { observer } from 'mobx-react-lite';
+import rootStore from './stores';
+import { INotification } from './types';
 
 const alertProviderOptions = {
   // you can also just use 'bottom center'
@@ -30,17 +33,11 @@ const alertProviderOptions = {
 };
 
 const logger: LogglyTracker = new LogglyTracker();
-const VideoApp = () => {
-  const {
-    error,
-    setError,
-    notification,
-    setNotification,
-    disconnectParticipant,
-    setIsAutoRetryingToJoinRoom,
-    setWaitingNotification,
-    waitingNotification,
-  } = useAppState();
+const VideoApp = observer(() => {
+  const { setIsAutoRetryingToJoinRoom, setWaitingNotification, waitingNotification } = useAppState();
+  const { roomStore } = rootStore;
+  const { notifications } = roomStore;
+
   useEffect(() => {
     logger.push({
       logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
@@ -71,20 +68,21 @@ const VideoApp = () => {
       return (
         <ErrorDialog
           dismissError={() => null}
-          error={{ message: ERROR_MESSAGE.UNSUPPORTED_MESSAGE as string } as TwilioError}
+          error={{ type: 'error', message: ERROR_MESSAGE.UNSUPPORTED_MESSAGE as string } as INotification}
         />
       );
   }
   return (
-    // <VideoProvider
-    //   options={connectionOptions}
-    //   onError={setError}
-    //   onNotification={setNotification}
-    //   onDisconnect={disconnectParticipant}
-    // >
-    <VideoProvider onError={setError} onNotification={setNotification} onDisconnect={disconnectParticipant}>
-      <ErrorDialog dismissError={() => setError(null)} error={error} />
-      <NotificationDialog dismissNotification={() => setNotification(null)} notification={notification} />
+    <VideoProvider>
+      {notifications?.[0]?.type !== 'error' ? null : (
+        <ErrorDialog dismissError={() => roomStore.dismissNotfication(notifications[0])} error={notifications[0]} />
+      )}
+      {notifications?.[0]?.type !== 'notification' ? null : (
+        <NotificationDialog
+          dismissNotification={() => roomStore.dismissNotfication(notifications[0])}
+          notification={notifications[0]}
+        />
+      )}
       <WaitingForRoomDialog
         cancelWait={() => {
           setIsAutoRetryingToJoinRoom(false);
@@ -95,7 +93,7 @@ const VideoApp = () => {
       <App />
     </VideoProvider>
   );
-};
+});
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>

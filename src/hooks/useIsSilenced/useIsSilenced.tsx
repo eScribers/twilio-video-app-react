@@ -6,8 +6,9 @@ import { useAppState } from '../useAppState/useAppState';
 import rootStore from '../../stores';
 
 const useIsSilenced = () => {
-  const { participantStore } = rootStore;
-  const { isSilenced, setIsSilenced, setNotification } = useAppState();
+  const { roomStore, participantStore } = rootStore;
+  const { setNotification } = roomStore;
+  const { isSilenced, setIsSilenced } = useAppState();
 
   const participants = useParticipants();
   const localParticipant = participantStore.participant;

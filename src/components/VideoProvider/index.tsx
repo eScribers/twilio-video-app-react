@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode } from 'react';
-import { Callback, ErrorCallback } from '../../types';
+import { ErrorCallback } from '../../types';
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
@@ -28,46 +28,42 @@ export const VideoContext = createContext<IVideoContext>(null!);
 
 interface VideoProviderProps {
   options?: ConnectOptions;
-  onError: ErrorCallback;
-  onDisconnect?: Callback;
   children: ReactNode;
-  onNotification: Callback;
 }
 
-export const VideoProvider = observer(
-  ({ children, onError = () => {}, onNotification = () => {}, onDisconnect = () => {} }: VideoProviderProps) => {
-    const onErrorCallback = (error: TwilioError) => {
-      console.log(`ERROR: ${error.message}`, error);
-      onError(error);
-    };
+export const VideoProvider = observer(({ children }: VideoProviderProps) => {
+  const { roomStore, participantStore } = rootStore;
 
-    const { roomStore } = rootStore;
-    const { room, isConnecting } = roomStore;
+  const { room, isConnecting } = roomStore;
 
-    // Register onError and onDisconnect callback functions.
-    useHandleRoomDisconnectionErrors(room, onError);
-    useHandleTrackPublicationFailed(room, onError);
-    useHandleOnDisconnect(room, onDisconnect);
-    const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
+  const onErrorCallback = (error: TwilioError) => {
+    console.log(`ERROR: ${error.message}`, error);
+    roomStore.setError(error);
+  };
 
-    return (
-      <VideoContext.Provider
-        value={{
-          room,
-          isConnecting,
-          onError: onErrorCallback,
-          onDisconnect,
-          isSharingScreen,
-          toggleScreenShare,
-        }}
-      >
-        {children}
-        {/* 
+  // Register onError and onDisconnect callback functions.
+  useHandleRoomDisconnectionErrors(room, roomStore.setError);
+  useHandleTrackPublicationFailed(room, roomStore.setError);
+  useHandleOnDisconnect(room, participantStore.disconnectParticipant);
+  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, roomStore.setError);
+
+  return (
+    <VideoContext.Provider
+      value={{
+        room,
+        isConnecting,
+        onError: onErrorCallback,
+        onDisconnect: () => {},
+        isSharingScreen,
+        toggleScreenShare,
+      }}
+    >
+      {children}
+      {/* 
         The AttachVisibilityHandler component is using the useLocalVideoToggle hook
         which must be used within the VideoContext Provider.
       */}
-        <AttachVisibilityHandler />
-      </VideoContext.Provider>
-    );
-  }
-);
+      <AttachVisibilityHandler />
+    </VideoContext.Provider>
+  );
+});

@@ -4,8 +4,8 @@ import { RemoteParticipant } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import roleChecker from '../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../utils/rbac/rolePermissions';
-import { IMuteRemoteParticipantMessage } from '../../utils/muteRemoteParticipantMessage';
 import rootStore from '../../stores';
+import { IMuteRemoteParticipantMessage } from '../../types';
 
 export default function useDataTrackListener() {
   const { room } = useVideoContext();

@@ -21,7 +21,6 @@ import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackL
 import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
-// import { LogglyTracker } from 'react-native-loggly-jslogger';
 import moment from 'moment';
 import rootStore from '../../stores';
 import { observer } from 'mobx-react-lite';
@@ -92,20 +91,14 @@ const MenuBar = observer(() => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
   const {
-    setError,
-    getToken,
-    isFetching,
-    authoriseParticipant,
-    setNotification,
     isAutoRetryingToJoinRoom,
     setWaitingNotification,
-    isConfigLoaded,
     // logger,
   } = useAppState();
   const { roomStore, participantStore } = rootStore;
-  const { isConnecting } = roomStore;
+  const { isConnecting, config } = roomStore;
+  const { isFetchingUserToken, participantInformation } = participantStore;
 
-  const [participantInfo, setParticipantInfo] = useState<ParticipantInformation | null>(null);
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
@@ -123,10 +116,10 @@ const MenuBar = observer(() => {
 
     var response = null as any;
     try {
-      response = await getToken(participantInformation);
+      response = await participantStore.getToken(participantInformation);
     } catch (err) {
-      if (err.response) setError({ message: err.response.data } as TwilioError);
-      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
+      if (err.response) roomStore.setError({ message: err.response.data } as TwilioError);
+      else roomStore.setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
       return;
@@ -141,7 +134,7 @@ const MenuBar = observer(() => {
         }, RETRY_INTERVAL);
         setRetryJoinRoomAttemptTimerId(timeoutObj);
       } else {
-        setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+        roomStore.setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
       }
     } else {
       setWaitingNotification(null);
@@ -152,41 +145,26 @@ const MenuBar = observer(() => {
   }
 
   useEffect(() => {
-    // Authorise participant
-    if (!isConfigLoaded) return;
-    (async () => {
-      if (participantInfo === null) {
-        const participantInformation: ParticipantInformation = await authoriseParticipant();
-
-        if (participantInformation && participantInformation.displayName !== '') {
-          setParticipantInfo(participantInformation);
-          /*logger.push({
-              browserType: detectBrowser(),
-              userAgent: navigator.userAgent,
-              participantInformation: participantInformation,
-            });*/
-        }
-      }
-    })();
-  }, [participantInfo, authoriseParticipant, isConfigLoaded]);
+    participantStore.authoriseParticipant();
+  }, [participantStore, config.loaded]);
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    joinRoom(participantInfo);
+    joinRoom(participantInformation);
   };
 
   if (isHostIn !== isHostInState) {
     if (isHostIn) {
-      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
     } else {
       participantStore.setLocalAudioTrackEnabled(false);
-      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
     }
     setIsHostInState(isHostIn);
   }
   if (isReporterIn !== isReporterInState) {
-    if (!isReporterIn && participantInfo?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
-      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    if (!isReporterIn && participantInformation?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
+      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
     setIsReporterInState(isReporterIn);
   }
 
@@ -201,7 +179,7 @@ const MenuBar = observer(() => {
               <Select
                 data-cy="select"
                 label="Party Type"
-                value={participantInfo ? participantInfo.partyType : ''}
+                value={participantInformation ? participantInformation.partyType : ''}
                 margin="dense"
                 placeholder="Party Type"
                 disabled={true}
@@ -219,7 +197,7 @@ const MenuBar = observer(() => {
               id="party-name"
               label="Party Name"
               className={classes.textField}
-              value={participantInfo ? participantInfo.displayName : ''}
+              value={participantInformation ? participantInformation.displayName : ''}
               margin="dense"
               disabled={true}
             />
@@ -229,7 +207,7 @@ const MenuBar = observer(() => {
               id="case-number"
               label="Case Number"
               className={classes.textField}
-              value={participantInfo ? participantInfo.caseReference : ''}
+              value={participantInformation ? participantInformation.caseReference : ''}
               margin="dense"
               disabled={true}
             />
@@ -239,7 +217,7 @@ const MenuBar = observer(() => {
                 type="submit"
                 color="primary"
                 variant="contained"
-                disabled={isConnecting || !participantInfo || isFetching}
+                disabled={isConnecting || !participantInformation || isFetchingUserToken}
               >
                 {submitButtonValue}
               </Button>
@@ -249,11 +227,11 @@ const MenuBar = observer(() => {
                 Offline
               </Button>
             </Offline>
-            {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
+            {(isConnecting || isFetchingUserToken) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
         ) : (
           <h3 style={{ paddingLeft: '10px' }}>
-            Case Reference: {participantInfo ? participantInfo.caseReference : ''}
+            Case Reference: {participantInformation ? participantInformation.caseReference : ''}
           </h3>
         )}
         <div className={classes.rightButtonContainer}>
@@ -273,7 +251,7 @@ const MenuBar = observer(() => {
       <FloatingDebugInfo
         wrapperClass={classes.floatingDebugInfo}
         time={moment().format()}
-        subConferenceId={participantInfo?.videoConferenceRoomName}
+        subConferenceId={participantInformation?.videoConferenceRoomName}
       />
     </AppBar>
   );

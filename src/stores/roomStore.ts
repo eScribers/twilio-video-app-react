@@ -1,13 +1,11 @@
 import { makeAutoObservable } from 'mobx';
 import { ROOM_STATE } from '../utils/displayStrings';
 import EventEmitter from 'events';
-import { Room } from 'twilio-video';
-import { ConnectOptions } from 'twilio-video';
+import Video, { Room, ConnectOptions, TwilioError } from 'twilio-video';
 import { isMobile, removeUndefineds } from '../utils';
 import { getResolution } from '../state/settings/renderDimensions';
 import { Settings, initialSettings } from '../state/settings/settingsReducer';
-import Video from 'twilio-video';
-import { Callback } from '../types';
+import { Callback, IConfig, INotification } from '../types';
 
 class RoomStore {
   rootStore: any;
@@ -18,9 +16,20 @@ class RoomStore {
 
   settings: Settings = initialSettings;
 
+  notifications: INotification[] = [];
+
+  config: IConfig = {
+    loading: false,
+    loaded: false,
+    endPoint: undefined,
+    environmentName: undefined,
+    domainName: undefined,
+  };
+
   constructor(rootStore: any) {
     this.rootStore = rootStore;
     makeAutoObservable(this);
+    this.loadConfig();
   }
 
   setRoom(room: Room) {
@@ -30,6 +39,7 @@ class RoomStore {
   setIsConnecting(isConnecting: boolean) {
     this.isConnecting = isConnecting;
   }
+
   async joinRoom(token: string, option?: ConnectOptions, onError?: Callback) {
     if (this.isConnecting) return console.log('Already connecting!');
     this.setIsConnecting(true);
@@ -60,6 +70,18 @@ class RoomStore {
       onError && onError(err);
       this.setIsConnecting(false);
     }
+  }
+
+  setNotification(notification: INotification) {
+    this.notifications = [...this.notifications, { ...notification, type: 'notification' }];
+  }
+
+  setError(error: TwilioError) {
+    this.notifications = [...this.notifications, { ...error, type: 'error' }];
+  }
+
+  dismissNotfication(notification: INotification) {
+    this.notifications = this.notifications.slice(1);
   }
 
   setSetting(key: keyof Settings, value: string) {
@@ -97,6 +119,22 @@ class RoomStore {
     // Here we remove any 'undefined' values. The twilio-video SDK will only use defaults
     // when no value is passed for an option. It will throw an error when 'undefined' is passed.
     return removeUndefineds(connectionOptions);
+  }
+
+  setConfig(config: IConfig) {
+    this.config = config;
+  }
+
+  async loadConfig() {
+    const public_url = process.env.PUBLIC_URL;
+    try {
+      const request = await fetch(`${public_url}/config.json`);
+      const response = await request.json();
+      this.setConfig({ ...response, loaded: true, loading: false });
+    } catch (err) {
+      this.setConfig({ ...this.config, loading: false, loaded: false });
+      this.setError({ message: `Could not fetch data from ${public_url}/config.json` } as TwilioError);
+    }
   }
 }
 

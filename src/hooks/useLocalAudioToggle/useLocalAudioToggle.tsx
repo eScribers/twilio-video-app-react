@@ -2,13 +2,12 @@ import { LocalAudioTrack } from 'twilio-video';
 import { useCallback } from 'react';
 import useIsTrackEnabled from '../useIsTrackEnabled/useIsTrackEnabled';
 import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../../utils/displayStrings';
-import { useAppState } from '../useAppState/useAppState';
 import rootStore from '../../stores';
 
 const useLocalAudioToggle = () => {
-  const { participantStore } = rootStore;
+  const { roomStore, participantStore } = rootStore;
 
-  const { setNotification } = useAppState();
+  const { setNotification } = roomStore;
 
   const audioTrack = participantStore.localTracks.find(track => track?.kind === TRACK_TYPE.AUDIO) as LocalAudioTrack;
 

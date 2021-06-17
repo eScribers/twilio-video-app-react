@@ -2,15 +2,28 @@ import { CreateLocalTrackOptions, LocalAudioTrack, LocalVideoTrack, LocalPartici
 import { makeAutoObservable } from 'mobx';
 import sortParticipants from '../utils/sortParticipants';
 import roleChecker from '../utils/rbac/roleChecker';
-import Video, { LocalDataTrackOptions, LocalDataTrack } from 'twilio-video';
+import Video, { LocalDataTrackOptions, LocalDataTrack, TwilioError } from 'twilio-video';
 import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '../constants';
 import { ParticipantIdentity } from '../utils/participantIdentity';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
+import axios from 'axios';
+import jwtDecode, { JwtPayload } from 'jwt-decode';
+import { ParticipantInformation } from '../types/participantInformation';
+import moment, { Moment } from 'moment';
+import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
+
+const query = new URLSearchParams(window.location.search);
 
 class ParticipantStore {
   rootStore: any;
 
+  userToken?: string;
+
+  isFetchingUserToken: boolean = false;
+
   participant?: LocalParticipant;
+
+  joinTime?: Moment;
 
   publishingVideoTrackInProgress: boolean = false;
 
@@ -29,6 +42,10 @@ class ParticipantStore {
   deviceList: MediaDeviceInfo[] = [];
 
   dominantSpeaker: Participant | null = null;
+
+  participantInformation: ParticipantInformation | null = null;
+
+  hasTriedAuthorisation: boolean = false;
 
   constructor(rootStore: any) {
     this.rootStore = rootStore;
@@ -247,6 +264,112 @@ class ParticipantStore {
       participant.identity,
       participant
     );
+  }
+
+  setHasTriedAuthorisation(state: boolean) {
+    this.hasTriedAuthorisation = state;
+  }
+
+  setParticipantInformation(data: ParticipantInformation) {
+    this.participantInformation = data;
+  }
+
+  async authoriseParticipant() {
+    if (!this.rootStore.roomStore.config.loaded)
+      return console.log("Tried authorizing participant but config hasn't loaded yet");
+    if (this.hasTriedAuthorisation) return console.log('Tried to authorize participant but it was already authorized');
+
+    const participantAuthToken = window.location.hash.substr(1);
+    const url = `${this.rootStore.roomStore.config.endPoint}/authorise-participant`;
+    console.log('attempting authorise ' + new Date().toLocaleTimeString());
+    this.setHasTriedAuthorisation(true);
+
+    try {
+      const { data } = await axios({
+        url: url,
+        method: 'POST',
+        headers: {
+          Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
+        },
+      });
+
+      if (!data.participantInfo) throw new Error('No participantInfo was received from the server');
+      this.setParticipantInformation(data.participantInfo);
+      return data.participantInfo;
+    } catch (err) {
+      this.rootStore.roomStore.setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
+    }
+
+    return false;
+  }
+
+  setJoinTime(time: Moment) {
+    this.joinTime = time;
+  }
+
+  setUserToken(token: string) {
+    this.userToken = token;
+  }
+
+  setIsFetchingToken(state: boolean) {
+    this.isFetchingUserToken = state;
+  }
+
+  async getToken(participantInformation: ParticipantInformation) {
+    if (!this.rootStore.roomStore.config.loaded) return null;
+    try {
+      this.setIsFetchingToken(true);
+      const participantAuthToken = window.location.hash.substr(1);
+      const url = `${this.rootStore.roomStore.config.endPoint}/token`;
+      const { data: res } = await axios({
+        url: url,
+        method: 'POST',
+        headers: {
+          Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
+        },
+        data: {
+          caseReference: participantInformation.caseReference,
+          partyName: participantInformation.displayName,
+          partyType: participantInformation.partyType,
+          userId: participantInformation.userId,
+          videoConferenceRoomName: participantInformation.videoConferenceRoomName,
+        },
+      });
+
+      this.setJoinTime(moment());
+
+      this.setIsFetchingToken(false);
+
+      if (
+        !res.roomExist &&
+        !roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.START_ROOM, participantInformation.partyType)
+      )
+        return NOTIFICATION_MESSAGE.ROOM_NOT_FOUND;
+
+      this.setUserToken(res.result);
+      const user = jwtDecode<JwtPayload>(res.result);
+
+      return user.twilioToken;
+    } catch (err) {
+      console.log('error occured on getToken: ' + JSON.stringify(err));
+      return '';
+    }
+  }
+
+  async disconnectParticipant(isRegistered?: boolean) {
+    const config = this.rootStore.RoomStore.config;
+    if (!config.loaded) return null;
+    const returnUrl = query.get('returnUrl');
+
+    if (this.joinTime && moment().isSameOrAfter(this.joinTime.add(3, 'hours').add(50, 'minutes'))) {
+      return window.location.reload();
+    }
+
+    const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+    const loginPageUrl = `http://tabula-${config.environmentName}.${config.domainName}/tabula/welcome/thankyou`;
+
+    if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
+    else window.location.replace(loginPageUrl);
   }
 }
 
