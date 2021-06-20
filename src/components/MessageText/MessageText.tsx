@@ -9,15 +9,14 @@ interface IMessageText {
 
 const MessageText = observer(({ defaultMessage = '' }: IMessageText) => {
   const { roomStore } = rootStore;
-  const { setNotification } = roomStore;
 
   const query = new URLSearchParams(window.location.search);
   // defaultMessage is used in the jest testing only
   const messageText = query.get('messageText') || defaultMessage;
 
   useEffect(() => {
-    if (messageText.length >= 1) setNotification({ message: Base64.decode(messageText) });
-  }, [messageText, setNotification]);
+    if (messageText.length >= 1) roomStore.setNotification({ message: Base64.decode(messageText) });
+  }, [messageText, roomStore]);
 
   return null;
 });

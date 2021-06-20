@@ -1,13 +1,8 @@
 import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@material-ui/core/styles';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import Participant from '../../Participant/Participant';
-import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
-import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
 import rootStore from '../../../stores';
-
-const { participantStore } = rootStore;
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -27,31 +22,27 @@ const ScrollContainer = styled('div')(({ theme }) => ({
 }));
 
 const ParticipantStripCollaboration = observer(() => {
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
-  const dominantSpeaker = useDominantSpeaker();
+  const { participantStore } = rootStore;
+  const { dominantSpeaker } = participantStore;
   const { sortedParticipants, selectedParticipant } = participantStore;
 
-  const [isSilenced] = useIsSilenced();
-
-  const dominantIdentity = dominantSpeaker?.identity;
+  if (!participantStore.participant) return null;
 
   return (
     <Container>
       <ScrollContainer>
         <Participant
-          participant={localParticipant}
-          isSelected={selectedParticipant === localParticipant}
-          onClick={() => participantStore.setSelectedParticipant(localParticipant)}
+          participant={participantStore.participant}
+          isSelected={selectedParticipant === participantStore.participant}
+          onClick={() => participantStore.setSelectedParticipant(participantStore.participant)}
         />
         {sortedParticipants.map(participant => (
           <Participant
             key={participant.sid}
-            isDominantSpeaker={participant.identity === dominantIdentity}
+            isDominantSpeaker={participant.identity === dominantSpeaker?.identity}
             participant={participant}
             isSelected={selectedParticipant === participant}
-            userIsSilenced={!!isSilenced}
+            userIsSilenced={!!participantStore.isSilenced}
             onClick={() => participantStore.setSelectedParticipant(participant)}
           />
         ))}

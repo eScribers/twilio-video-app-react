@@ -1,11 +1,13 @@
 import { makeAutoObservable } from 'mobx';
 import { ROOM_STATE } from '../utils/displayStrings';
 import EventEmitter from 'events';
-import Video, { Room, ConnectOptions, TwilioError } from 'twilio-video';
+import Video, { Room, ConnectOptions, TwilioError, RemoteParticipant } from 'twilio-video';
 import { isMobile, removeUndefineds } from '../utils';
 import { getResolution } from '../state/settings/renderDimensions';
 import { Settings, initialSettings } from '../state/settings/settingsReducer';
 import { Callback, IConfig, INotification } from '../types';
+import UAParser from 'ua-parser-js';
+import { Howl } from 'howler';
 
 class RoomStore {
   rootStore: any;
@@ -65,6 +67,45 @@ class RoomStore {
       newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
 
       this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
+      newRoom.off(ROOM_STATE.DISCONNECTED, () => {
+        this.rootStore.participantStore.disconnectParticipant();
+      });
+      newRoom.on(ROOM_STATE.DISCONNECTED, () => {
+        this.rootStore.participantStore.disconnectParticipant();
+      });
+
+      // Assigning all existing participants to be on the participants store
+      newRoom.participants.forEach(participant => {
+        this.rootStore.participantStore.addParticipant(participant);
+      });
+
+      // Free to use sounds:
+      //https://freesound.org/people/FoolBoyMedia/sounds/352656/
+      const logInSound = new Howl({
+        src: ['assets/sounds/logIn.mp3'],
+      });
+      //https://freesound.org/people/FoolBoyMedia/sounds/352656/
+      const logOutSound = new Howl({
+        src: ['assets/sounds/logOut.mp3'],
+      });
+
+      const parser = new UAParser();
+      const result = parser.getResult();
+
+      const participantConnected = (participant: RemoteParticipant) => {
+        if (result.os.name !== 'iOS') logInSound.play();
+        this.rootStore.participantStore.addParticipant(participant);
+      };
+      const participantDisconnected = (participant: RemoteParticipant) => {
+        if (result.os.name !== 'iOS') logOutSound.play();
+        this.rootStore.participantStore.removeParticipantSid(participant.sid);
+      };
+      this.room.on('participantConnected', participantConnected);
+      this.room.on('participantDisconnected', participantDisconnected);
+      return () => {
+        this.room.off('participantConnected', participantConnected);
+        this.room.off('participantDisconnected', participantDisconnected);
+      };
     } catch (err) {
       console.log(err.message);
       onError && onError(err);

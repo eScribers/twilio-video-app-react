@@ -1,5 +1,5 @@
 import { CreateLocalTrackOptions, LocalAudioTrack, LocalVideoTrack, LocalParticipant, Participant } from 'twilio-video';
-import { makeAutoObservable } from 'mobx';
+import { autorun, makeAutoObservable } from 'mobx';
 import sortParticipants from '../utils/sortParticipants';
 import roleChecker from '../utils/rbac/roleChecker';
 import Video, { LocalDataTrackOptions, LocalDataTrack, TwilioError } from 'twilio-video';
@@ -11,6 +11,7 @@ import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { ParticipantInformation } from '../types/participantInformation';
 import moment, { Moment } from 'moment';
 import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
+import { PARTICIPANT_TYPES } from '../utils/rbac/ParticipantTypes';
 
 const query = new URLSearchParams(window.location.search);
 
@@ -37,7 +38,7 @@ class ParticipantStore {
 
   sortedParticipants: Participant[] = [];
 
-  selectedParticipant: null | Participant = null;
+  selectedParticipant: null | LocalParticipant | Participant = null;
 
   deviceList: MediaDeviceInfo[] = [];
 
@@ -46,6 +47,8 @@ class ParticipantStore {
   participantInformation: ParticipantInformation | null = null;
 
   hasTriedAuthorisation: boolean = false;
+
+  isSilenced: boolean = false;
 
   constructor(rootStore: any) {
     this.rootStore = rootStore;
@@ -56,6 +59,29 @@ class ParticipantStore {
       this.toggleAudioEnabled();
       this.addDataTrack();
     })();
+
+    autorun(() => {
+      if (
+        !this.participant?.identity.length ||
+        ParticipantIdentity.Parse(this.participant?.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
+      )
+        return;
+
+      if (!this.isSilenced && this.isSipClientConnected) {
+        this.rootStore.roomStore.setNotification({
+          message:
+            'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
+        });
+        console.log('You are silenced because of a zoiper call');
+        this.setIsSilenced(true);
+        if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
+      }
+      if (this.isSilenced && !this.isSipClientConnected) {
+        this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
+        console.log('Zoiper call disconnected, you are un-silenced');
+        this.setIsSilenced(false);
+      }
+    });
 
     navigator.mediaDevices.addEventListener('devicechange', this.getDevices);
   }
@@ -69,6 +95,10 @@ class ParticipantStore {
     const devices = await navigator.mediaDevices.enumerateDevices();
     console.log('Got devices', devices);
     this.setDevices(devices);
+  }
+
+  setIsSilenced(state: boolean) {
+    this.isSilenced = state;
   }
 
   setParticipants(participants: Participant[]) {
@@ -88,12 +118,12 @@ class ParticipantStore {
     this.setParticipants([...this.participants.filter(p => p.sid !== participantSid)]);
   }
 
-  setSelectedParticipant(participant: null | Participant) {
+  setSelectedParticipant(participant: Participant | LocalParticipant | undefined) {
     if (this.selectedParticipant === participant) {
       this.selectedParticipant = null;
       return;
     }
-    this.selectedParticipant = participant;
+    this.selectedParticipant = participant as Participant;
   }
 
   setLocalAudioTrackEnabled(state: boolean) {
@@ -244,6 +274,19 @@ class ParticipantStore {
     return muteableParticipants;
   }
 
+  get isSipClientConnected() {
+    return (
+      this.participants.filter(
+        participant =>
+          ParticipantIdentity.Parse(participant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER_RECORDING
+      ).length >= 1
+    );
+  }
+
+  get isReporter() {
+    return ParticipantIdentity.Parse(this.participant?.identity || '')['partyType'] === PARTICIPANT_TYPES.REPORTER;
+  }
+
   muteAllNoneModerators() {
     return this.muteableParticipants.map(participant => {
       return this.muteOtherParticipant(participant);
@@ -297,6 +340,7 @@ class ParticipantStore {
       this.setParticipantInformation(data.participantInfo);
       return data.participantInfo;
     } catch (err) {
+      console.log('Authorization failed: ', err.message);
       this.rootStore.roomStore.setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
     }
 
@@ -356,10 +400,13 @@ class ParticipantStore {
     }
   }
 
-  async disconnectParticipant(isRegistered?: boolean) {
-    const config = this.rootStore.RoomStore.config;
-    if (!config.loaded) return null;
+  async disconnectParticipant() {
+    const config = this.rootStore.roomStore.config;
+    if (!config.loaded || !this.participant) return null;
     const returnUrl = query.get('returnUrl');
+
+    let isRegistered: boolean =
+      this.participant.identity?.length > 0 && ParticipantIdentity.Parse(this.participant.identity).isRegisteredUser;
 
     if (this.joinTime && moment().isSameOrAfter(this.joinTime.add(3, 'hours').add(50, 'minutes'))) {
       return window.location.reload();

@@ -144,9 +144,12 @@ const MenuBar = observer(() => {
     }
   }
 
+  const configLoaded = config.loaded;
   useEffect(() => {
-    participantStore.authoriseParticipant();
-  }, [participantStore, config.loaded]);
+    if (configLoaded) {
+      participantStore.authoriseParticipant();
+    }
+  }, [participantStore, configLoaded]);
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();

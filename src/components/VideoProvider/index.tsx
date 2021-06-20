@@ -2,7 +2,6 @@ import React, { createContext, ReactNode } from 'react';
 import { ErrorCallback } from '../../types';
 import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
-import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
 import { ConnectOptions, Room, TwilioError } from 'twilio-video';
@@ -32,7 +31,7 @@ interface VideoProviderProps {
 }
 
 export const VideoProvider = observer(({ children }: VideoProviderProps) => {
-  const { roomStore, participantStore } = rootStore;
+  const { roomStore } = rootStore;
 
   const { room, isConnecting } = roomStore;
 
@@ -44,7 +43,6 @@ export const VideoProvider = observer(({ children }: VideoProviderProps) => {
   // Register onError and onDisconnect callback functions.
   useHandleRoomDisconnectionErrors(room, roomStore.setError);
   useHandleTrackPublicationFailed(room, roomStore.setError);
-  useHandleOnDisconnect(room, participantStore.disconnectParticipant);
   const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, roomStore.setError);
 
   return (

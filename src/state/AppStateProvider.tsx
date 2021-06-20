@@ -9,7 +9,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
   const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
   const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
-  const [isSilenced, setIsSilenced] = useState<boolean>(false);
 
   let contextValue = {
     isAutoRetryingToJoinRoom,
@@ -24,8 +23,6 @@ export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
     setSelectedSpeakerOutput,
     activeSinkId,
     setActiveSinkId,
-    isSilenced,
-    setIsSilenced,
   };
 
   return (

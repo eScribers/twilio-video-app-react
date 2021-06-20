@@ -5,8 +5,6 @@ import Paper from '@material-ui/core/Paper';
 import { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Participant from '../../Participant/Participant';
-import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
-import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
 import rootStore from '../../../stores';
 
 const useStyles = makeStyles(theme => ({
@@ -38,11 +36,9 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
   const { sortedParticipants, selectedParticipant, participant: localParticipant } = participantStore;
-  const dominantSpeaker = useDominantSpeaker();
-  const [isSilenced] = useIsSilenced();
   const classes = useStyles();
 
-  const dominantIdentity = dominantSpeaker?.identity;
+  const dominantIdentity = participantStore.dominantSpeaker?.identity;
 
   useEffect(() => {
     if (currViewMode !== viewMode) {
@@ -84,7 +80,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
                 participant={participant}
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
-                userIsSilenced={!!isSilenced}
+                userIsSilenced={!!participantStore.isSilenced}
                 onClick={() => participantStore.setSelectedParticipant(participant)}
               />
             </Paper>
