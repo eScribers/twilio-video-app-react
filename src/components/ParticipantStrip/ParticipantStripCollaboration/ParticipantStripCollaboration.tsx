@@ -39,7 +39,7 @@ const ParticipantStripCollaboration = observer(() => {
         {sortedParticipants.map(participant => (
           <Participant
             key={participant.sid}
-            isDominantSpeaker={participant.identity === dominantSpeaker?.identity}
+            isDominantSpeaker={participant.identity === dominantSpeaker}
             participant={participant}
             isSelected={selectedParticipant === participant}
             userIsSilenced={!!participantStore.isSilenced}

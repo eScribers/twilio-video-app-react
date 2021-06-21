@@ -13,9 +13,11 @@ const MainParticipant = observer(() => {
 
   const videoPriority =
     (mainParticipant === selectedParticipant || mainParticipant === screenShareParticipant) &&
-    mainParticipant.identity !== participantStore.participant?.identity
+    mainParticipant?.identity !== participantStore.participant?.identity
       ? 'high'
       : null;
+
+  if (!mainParticipant || typeof mainParticipant === 'string') return null;
 
   return (
     /* audio is disabled for this participant component because this participant's audio 

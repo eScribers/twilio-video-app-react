@@ -4,6 +4,7 @@ import RoomStore from './roomStore';
 // Enable navigator for jest testing only
 if (typeof jest !== 'undefined') {
   require('../mocks/navigator');
+  require('../mocks/howler');
 }
 
 export class RootStore {

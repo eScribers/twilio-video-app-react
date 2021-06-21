@@ -20,7 +20,7 @@ class baseParticipant {
   identity = 'testing@Reporter@1';
   networkQualityLevel = null;
   networkQualityStats = null;
-  sid = 'todo';
+  sid = 'sid' + Math.floor(Math.random() * 100000);
   state = 'todo';
   tracks = new Map();
   videoTracks = new Map();
@@ -59,6 +59,13 @@ export class mockParticipant extends baseParticipant implements Participant {
   on(event: 'trackStarted', listener: (track: Track) => void): this;
   on(_event: string, _listener: (...args: any[]) => void) {
     return this;
+  }
+
+  constructor(identity?: string) {
+    super();
+    if (identity) {
+      this.identity = identity;
+    }
   }
 }
 

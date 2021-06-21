@@ -99,15 +99,28 @@ class RoomStore {
         if (result.os.name !== 'iOS') logInSound.play();
         this.rootStore.participantStore.addParticipant(participant);
       };
-      const participantDisconnected = (participant: RemoteParticipant) => {
+      const handleDominantSpeakerChanged = (newDominantSpeaker: RemoteParticipant) => {
+        if (newDominantSpeaker !== null) {
+          this.rootStore.participantStore.setDominantSpeaker(newDominantSpeaker);
+        }
+      };
+
+      // Since 'null' values are ignored, we will need to listen for the 'participantDisconnected'
+      // event, so we can set the dominantSpeaker to 'null' when they disconnect.
+      const handleParticipantDisconnected = (participant: RemoteParticipant) => {
+        if (this.rootStore.participantStore.dominantSpeaker === participant) {
+          return this.rootStore.participantStore.setDominantSpeaker(null);
+        }
         if (result.os.name !== 'iOS') logOutSound.play();
         this.rootStore.participantStore.removeParticipantSid(participant.sid);
       };
       this.room.on('participantConnected', participantConnected);
-      this.room.on('participantDisconnected', participantDisconnected);
+      this.room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
+      this.room.on('participantDisconnected', handleParticipantDisconnected);
       return () => {
         this.room.off('participantConnected', participantConnected);
-        this.room.off('participantDisconnected', participantDisconnected);
+        this.room.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
+        this.room.off('participantDisconnected', handleParticipantDisconnected);
       };
     } catch (err) {
       console.log(err.message);

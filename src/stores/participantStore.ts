@@ -2,7 +2,7 @@ import { CreateLocalTrackOptions, LocalAudioTrack, LocalVideoTrack, LocalPartici
 import { autorun, makeAutoObservable } from 'mobx';
 import sortParticipants from '../utils/sortParticipants';
 import roleChecker from '../utils/rbac/roleChecker';
-import Video, { LocalDataTrackOptions, LocalDataTrack, TwilioError } from 'twilio-video';
+import Video, { LocalDataTrack, TwilioError } from 'twilio-video';
 import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '../constants';
 import { ParticipantIdentity } from '../utils/participantIdentity';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
@@ -42,7 +42,7 @@ class ParticipantStore {
 
   deviceList: MediaDeviceInfo[] = [];
 
-  dominantSpeaker: Participant | null = null;
+  dominantSpeaker: string | null = null;
 
   participantInformation: ParticipantInformation | null = null;
 
@@ -235,8 +235,16 @@ class ParticipantStore {
     // this.localDataTrack = new LocalDataTrack(localDataTrackOptions);
   }
 
-  setDominantSpeaker(participant: Participant) {
+  setDominantSpeaker(participant: string | null) {
     this.dominantSpeaker = participant;
+    if (participant === null) return;
+
+    // Reordering the participants to put the dominantSpeaker on top
+    const reorderParticipants = [...this.participants].filter(p => p.identity !== participant);
+    const foundParticipant = this.participants.find(p => p.identity === participant);
+    if (foundParticipant) {
+      this.setParticipants([foundParticipant, ...reorderParticipants]);
+    }
   }
 
   get mainParticipant() {

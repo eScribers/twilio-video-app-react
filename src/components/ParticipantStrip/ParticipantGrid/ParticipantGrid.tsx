@@ -38,7 +38,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
   const { sortedParticipants, selectedParticipant, participant: localParticipant } = participantStore;
   const classes = useStyles();
 
-  const dominantIdentity = participantStore.dominantSpeaker?.identity;
+  const dominantIdentity = participantStore.dominantSpeaker;
 
   useEffect(() => {
     if (currViewMode !== viewMode) {

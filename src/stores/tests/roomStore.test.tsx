@@ -1,10 +1,9 @@
-import React from 'react';
 import EventEmitter from 'events';
-import { RootStore } from '.';
+import { RootStore } from '..';
 import Video from 'twilio-video';
 import { act } from '@testing-library/react';
-import { sleep } from '../utils';
-import * as utils from '../utils';
+import { sleep } from '../../utils';
+import * as utils from '../../utils';
 
 describe('the room store', () => {
   it('should return an empty room when no token is provided', () => {
