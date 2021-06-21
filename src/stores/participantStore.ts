@@ -93,7 +93,6 @@ class ParticipantStore {
   async getDevices() {
     await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
     const devices = await navigator.mediaDevices.enumerateDevices();
-    console.log('Got devices', devices);
     this.setDevices(devices);
   }
 
@@ -230,10 +229,10 @@ class ParticipantStore {
   }
 
   addDataTrack() {
-    let localDataTrackOptions = {} as LocalDataTrackOptions;
-    localDataTrackOptions.maxRetransmits = 3;
-    localDataTrackOptions.ordered = true;
-    this.localDataTrack = new LocalDataTrack(localDataTrackOptions);
+    // let localDataTrackOptions = {} as LocalDataTrackOptions;
+    // localDataTrackOptions.maxRetransmits = 3;
+    // localDataTrackOptions.ordered = true;
+    // this.localDataTrack = new LocalDataTrack(localDataTrackOptions);
   }
 
   setDominantSpeaker(participant: Participant) {

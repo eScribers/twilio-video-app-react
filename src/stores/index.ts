@@ -1,7 +1,12 @@
 import ParticipantStore from './participantStore';
 import RoomStore from './roomStore';
 
-class RootStore {
+// Enable navigator for jest testing only
+if (typeof jest !== 'undefined') {
+  require('../mocks/navigator');
+}
+
+export class RootStore {
   participantStore: ParticipantStore;
 
   roomStore: RoomStore;

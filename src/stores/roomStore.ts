@@ -43,7 +43,10 @@ class RoomStore {
   }
 
   async joinRoom(token: string, option?: ConnectOptions, onError?: Callback) {
-    if (this.isConnecting) return console.log('Already connecting!');
+    if (this.isConnecting) {
+      console.log('Already connecting!');
+      return false;
+    }
     this.setIsConnecting(true);
     try {
       const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
@@ -75,7 +78,7 @@ class RoomStore {
       });
 
       // Assigning all existing participants to be on the participants store
-      newRoom.participants.forEach(participant => {
+      newRoom.participants?.forEach(participant => {
         this.rootStore.participantStore.addParticipant(participant);
       });
 
@@ -111,6 +114,7 @@ class RoomStore {
       onError && onError(err);
       this.setIsConnecting(false);
     }
+    return true;
   }
 
   setNotification(notification: INotification) {
