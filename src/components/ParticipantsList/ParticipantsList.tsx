@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     participantsList: {
       position: 'relative',
+      overflow: 'auto',
     },
   })
 );

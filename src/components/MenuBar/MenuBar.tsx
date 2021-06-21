@@ -58,7 +58,7 @@ const useStyles = makeStyles(theme =>
       fontWeight: 600,
     },
     joinButton: {
-      margin: '1em',
+      margin: '1em 1.5em',
     },
     dialInWrapper: {
       margin: '0 20px 0 20px',
@@ -73,6 +73,14 @@ const useStyles = makeStyles(theme =>
       background: 'rgba(0,0,0,0.2)',
       color: 'rgba(255,255,255,0.4)',
       fontSize: '10px',
+    },
+    identification: {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '0 20px',
+    },
+    nameRoleRow: {
+      display: 'flex',
     },
   })
 );
@@ -151,8 +159,7 @@ const MenuBar = observer(() => {
     }
   }, [participantStore, configLoaded]);
 
-  const handleSubmit = (event: { preventDefault: () => void }) => {
-    event.preventDefault();
+  const handleSubmit = () => {
     joinRoom(participantInformation);
   };
 
@@ -176,44 +183,7 @@ const MenuBar = observer(() => {
       <Toolbar>
         <img src="/escribers-logo-transparent.png" height="64px" alt="eScribers" />
         {roomStore.roomState === ROOM_STATE.DISCONNECTED ? (
-          <form className={classes.form} onSubmit={handleSubmit}>
-            <FormControl className={classes.textField}>
-              <InputLabel>Party Type</InputLabel>
-              <Select
-                data-cy="select"
-                label="Party Type"
-                value={participantInformation ? participantInformation.partyType : ''}
-                margin="dense"
-                placeholder="Party Type"
-                disabled={true}
-              >
-                {getPartyTypes().map(type => (
-                  <MenuItem key={type} value={type} data-cy="menu-item">
-                    {type}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              autoComplete="off"
-              id="party-name"
-              label="Party Name"
-              className={classes.textField}
-              value={participantInformation ? participantInformation.displayName : ''}
-              margin="dense"
-              disabled={true}
-            />
-
-            <TextField
-              autoComplete="off"
-              id="case-number"
-              label="Case Number"
-              className={classes.textField}
-              value={participantInformation ? participantInformation.caseReference : ''}
-              margin="dense"
-              disabled={true}
-            />
+          <>
             <Online>
               <Button
                 className={classes.joinButton}
@@ -230,8 +200,15 @@ const MenuBar = observer(() => {
                 Offline
               </Button>
             </Offline>
+            <div className={classes.identification}>
+              <div className={classes.nameRoleRow}>
+                {participantInformation ? participantInformation.displayName + ' - ' : ''}
+                {participantInformation ? participantInformation.partyType : ''}
+              </div>
+              <div>{participantInformation ? 'Case number: ' + participantInformation.caseReference : ''}</div>
+            </div>
             {(isConnecting || isFetchingUserToken) && <CircularProgress className={classes.loadingSpinner} />}
-          </form>
+          </>
         ) : (
           <h3 style={{ paddingLeft: '10px' }}>
             Case Reference: {participantInformation ? participantInformation.caseReference : ''}

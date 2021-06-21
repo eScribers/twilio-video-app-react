@@ -17,6 +17,7 @@ import { observer } from 'mobx-react-lite';
 const Container = styled('div')({
   display: 'grid',
   gridTemplateRows: 'auto 1fr',
+  gridTemplateColumns: '1fr 400px',
 });
 
 const Main = styled('main')({
@@ -42,13 +43,16 @@ const App = observer(() => {
 
   return (
     <Container style={{ height }}>
-      <MessageText />
-      <MenuBar />
-      <Main>
-        {roomStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
-        <Controls />
-      </Main>
-      <ReconnectingNotification />
+      <div>
+        <MessageText />
+        <MenuBar />
+        <Main>
+          {roomStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
+          <Controls />
+        </Main>
+        <ReconnectingNotification />
+      </div>
+      <MessagingSection />
     </Container>
   );
 });
