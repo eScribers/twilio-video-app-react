@@ -83,7 +83,7 @@ class ParticipantStore {
       }
     });
 
-    navigator.mediaDevices.addEventListener('devicechange', this.getDevices);
+    navigator.mediaDevices?.addEventListener('devicechange', this.getDevices);
   }
 
   setDevices(devices: MediaDeviceInfo[]) {
