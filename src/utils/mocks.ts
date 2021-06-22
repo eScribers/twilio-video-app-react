@@ -77,6 +77,11 @@ export class mockLocalParticipant extends baseParticipant implements LocalPartic
   videoTracks = new Map();
   signalingRegion = 'todo';
 
+  constructor(identity?: string) {
+    super();
+    if (identity) this.identity = identity;
+  }
+
   publishTrack = async (_track: LocalTrack | MediaStreamTrack, _options?: LocalTrackPublishOptions) =>
     ({} as LocalTrackPublication);
   publishTracks = async (_tracks: Array<LocalTrack | MediaStreamTrack>): Promise<LocalTrackPublication[]> => [];

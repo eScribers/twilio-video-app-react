@@ -105,7 +105,7 @@ class ParticipantStore {
     this.sortedParticipants = sortParticipants(participants);
   }
 
-  setParticipant(participant: LocalParticipant) {
+  setParticipant(participant?: LocalParticipant) {
     this.participant = participant;
   }
 

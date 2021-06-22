@@ -11,12 +11,17 @@ const mockEnumerateDevices = jest.fn(
     })
 );
 
-Object.defineProperty(navigator, 'mediaDevices', {
-  value: {
-    enumerateDevices: mockEnumerateDevices,
-    getUserMedia: mockGetUserMedia,
-    addEventListener: jest.fn(),
-  },
-});
+// @ts-expect-error
+if (!global.definedMediaDevicesForJest) {
+  // @ts-expect-error
+  global.definedMediaDevicesForJest = true;
+  Object.defineProperty(navigator, 'mediaDevices', {
+    value: {
+      enumerateDevices: mockEnumerateDevices,
+      getUserMedia: mockGetUserMedia,
+      addEventListener: jest.fn(),
+    },
+  });
+}
 
 export {};
