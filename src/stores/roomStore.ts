@@ -69,7 +69,8 @@ class RoomStore {
       // All video publications are low by default, except MainParticipant (which is high)
       newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
 
-      this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
+      if (!this.rootStore.participantStore.participant)
+        this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
       newRoom.off(ROOM_STATE.DISCONNECTED, () => {
         this.rootStore.participantStore.disconnectParticipant();
       });
@@ -113,7 +114,9 @@ class RoomStore {
         }
         if (result.os.name !== 'iOS') logOutSound.play();
         this.rootStore.participantStore.removeParticipantSid(participant.sid);
+        // updateScreenShareParticipant();
       };
+
       this.room.on('participantConnected', participantConnected);
       this.room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
       this.room.on('participantDisconnected', handleParticipantDisconnected);

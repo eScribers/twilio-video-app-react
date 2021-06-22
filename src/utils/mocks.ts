@@ -43,7 +43,7 @@ class baseParticipant {
   };
   emit = (_event: string, ..._args: any[]) => true;
   eventNames = () => [];
-  listenerCount = (_type: string) => 2;
+  listenerCount = (_type: string) => 1;
 }
 
 export class mockParticipant extends baseParticipant implements Participant {

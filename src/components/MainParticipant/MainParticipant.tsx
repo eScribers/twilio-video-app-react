@@ -1,7 +1,6 @@
 import React from 'react';
 import MainParticipantInfo from '../MainParticipantInfo/MainParticipantInfo';
 import ParticipantTracks from '../ParticipantTracks/ParticipantTracks';
-import useScreenShareParticipant from '../../hooks/useScreenShareParticipant/useScreenShareParticipant';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../stores';
 
@@ -9,10 +8,9 @@ const MainParticipant = observer(() => {
   const { participantStore } = rootStore;
   const { mainParticipant, participant } = participantStore;
   const { selectedParticipant } = rootStore.participantStore;
-  const screenShareParticipant = useScreenShareParticipant();
 
   const videoPriority =
-    (mainParticipant === selectedParticipant || mainParticipant === screenShareParticipant) &&
+    (mainParticipant === selectedParticipant || mainParticipant === participantStore.screenShareParticipant()) &&
     mainParticipant?.identity !== participantStore.participant?.identity
       ? 'high'
       : null;

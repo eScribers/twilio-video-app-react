@@ -10,8 +10,9 @@ import axios from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { ParticipantInformation } from '../types/participantInformation';
 import moment, { Moment } from 'moment';
-import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
+import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../utils/rbac/ParticipantTypes';
+import { TrackPublication } from 'twilio-video';
 
 const query = new URLSearchParams(window.location.search);
 
@@ -45,6 +46,8 @@ class ParticipantStore {
   dominantSpeaker: string | null = null;
 
   participantInformation: ParticipantInformation | null = null;
+
+  screenSharingInProgress: boolean = false;
 
   hasTriedAuthorisation: boolean = false;
 
@@ -424,6 +427,28 @@ class ParticipantStore {
 
     if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
     else window.location.replace(loginPageUrl);
+  }
+
+  setScreenSharingInProgress(state: boolean) {
+    if (this.screenSharingInProgress !== state) this.screenSharingInProgress = state;
+  }
+
+  screenShareParticipant() {
+    const isSomebodyShareingScreen = [...this.participants, this.participant].find(
+      (participant: Participant | LocalParticipant | undefined) =>
+        participant &&
+        Array.from<TrackPublication>(participant.tracks.values()).find(track => {
+          if (track.trackName.includes(TRACK_TYPE.SCREEN)) {
+            return true;
+          }
+        })
+    );
+    if (isSomebodyShareingScreen) {
+      this.setScreenSharingInProgress(true);
+    } else {
+      this.setScreenSharingInProgress(false);
+    }
+    return isSomebodyShareingScreen;
   }
 }
 
