@@ -1,5 +1,5 @@
 import { CreateLocalTrackOptions, LocalAudioTrack, LocalVideoTrack, LocalParticipant, Participant } from 'twilio-video';
-import { autorun, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import sortParticipants from '../utils/sortParticipants';
 import roleChecker from '../utils/rbac/roleChecker';
 import Video, { LocalDataTrack, TwilioError } from 'twilio-video';
@@ -51,7 +51,7 @@ class ParticipantStore {
 
   hasTriedAuthorisation: boolean = false;
 
-  isSilenced: boolean = false;
+  wasSilenced: boolean = false;
 
   constructor(rootStore: any) {
     this.rootStore = rootStore;
@@ -62,29 +62,6 @@ class ParticipantStore {
       this.toggleAudioEnabled();
       this.addDataTrack();
     })();
-
-    autorun(() => {
-      if (
-        !this.participant?.identity.length ||
-        ParticipantIdentity.Parse(this.participant?.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
-      )
-        return;
-
-      if (!this.isSilenced && this.isSipClientConnected) {
-        this.rootStore.roomStore.setNotification({
-          message:
-            'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
-        });
-        console.log('You are silenced because of a zoiper call');
-        this.setIsSilenced(true);
-        if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
-      }
-      if (this.isSilenced && !this.isSipClientConnected) {
-        this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
-        console.log('Zoiper call disconnected, you are un-silenced');
-        this.setIsSilenced(false);
-      }
-    });
 
     navigator.mediaDevices?.addEventListener('devicechange', this.getDevices);
   }
@@ -97,10 +74,6 @@ class ParticipantStore {
     await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
     const devices = await navigator.mediaDevices.enumerateDevices();
     this.setDevices(devices);
-  }
-
-  setIsSilenced(state: boolean) {
-    this.isSilenced = state;
   }
 
   setParticipants(participants: Participant[]) {
@@ -441,6 +414,7 @@ class ParticipantStore {
           if (track.trackName.includes(TRACK_TYPE.SCREEN)) {
             return true;
           }
+          return false;
         })
     );
     if (isSomebodyShareingScreen) {
@@ -449,6 +423,61 @@ class ParticipantStore {
       this.setScreenSharingInProgress(false);
     }
     return isSomebodyShareingScreen;
+  }
+
+  get isHostIn() {
+    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    let result = false;
+    [...this.participants, this.participant].forEach(participant => {
+      if (
+        (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) ||
+        (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
+      ) {
+        result = true;
+      }
+      return;
+    });
+
+    return result;
+  }
+
+  get isReporterIn() {
+    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    let result = false;
+    [...this.participants, this.participant].forEach(participant => {
+      if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  get isSilenced() {
+    let result = false;
+    if (
+      !this.participant?.identity ||
+      ParticipantIdentity.Parse(this.participant.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
+    ) {
+      this.wasSilenced = result;
+      return result;
+    }
+
+    if (!this.wasSilenced && this.isSipClientConnected) {
+      this.rootStore.roomStore.setNotification({
+        message:
+          'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
+      });
+      console.log('You are silenced because of a zoiper call');
+      result = true;
+      if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
+    }
+    if (this.wasSilenced && !this.isSipClientConnected) {
+      this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
+      console.log('Zoiper call disconnected, you are un-silenced');
+      result = false;
+    }
+    this.wasSilenced = result;
+    return result;
   }
 }
 

@@ -5,7 +5,6 @@ import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useMediaStreamTrack from '../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import { PLAYER_STATE } from '../../utils/displayStrings';
 import { IconButton } from '@material-ui/core';
-import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { getParticipantOptions } from '../../components/ParticipantInfo/ParticipantDropDown/ParticipantDropDown';
 import { observer } from 'mobx-react-lite';
@@ -48,7 +47,6 @@ const AudioLevelIndicator = observer(
     const [analyser, setAnalyser] = useState<AnalyserNode>();
     const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
     const mediaStreamTrack = useMediaStreamTrack(audioTrack);
-    const { isHostIn } = useIsHostIn();
     const { participantStore } = rootStore;
     const localParticipant = rootStore.participantStore.participant;
     const isLocalParticipant = participant === localParticipant || !participant;
@@ -135,7 +133,7 @@ const AudioLevelIndicator = observer(
     const canMute = participantOptions.includes('Mute') || isLocalParticipant;
 
     return (
-      <IconButton onClick={muteParticipant} disabled={!isHostIn || !canMute}>
+      <IconButton onClick={muteParticipant} disabled={!participantStore.isHostIn || !canMute}>
         {' '}
         {isTrackEnabled ? (
           <svg

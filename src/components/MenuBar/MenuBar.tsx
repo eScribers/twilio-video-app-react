@@ -16,7 +16,6 @@ import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevel
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 import Menu from './Menu/Menu';
-import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
 import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
@@ -102,9 +101,7 @@ const MenuBar = observer(() => {
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
-  const { isHostIn, isReporterIn } = useIsHostIn();
-  const [isHostInState, setIsHostInState] = useState(isHostIn);
-  const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
+  const [isReporterInState, setIsReporterInState] = useState(participantStore.isReporterIn);
   useDataTrackListener();
 
   if (isAutoRetryingToJoinRoom === false) {
@@ -156,20 +153,28 @@ const MenuBar = observer(() => {
     joinRoom(participantInformation);
   };
 
-  if (isHostIn !== isHostInState) {
-    if (isHostIn) {
-      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
-    } else {
-      participantStore.setLocalAudioTrackEnabled(false);
-      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+  const isReporterIn = participantStore.isReporterIn;
+
+  useEffect(() => {
+    if (!participantInformation?.partyType) {
+      return;
     }
-    setIsHostInState(isHostIn);
-  }
-  if (isReporterIn !== isReporterInState) {
-    if (!isReporterIn && participantInformation?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
-      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    if (isReporterIn === isReporterInState) return;
+
+    if (![PARTICIPANT_TYPES.HEARING_OFFICER, PARTICIPANT_TYPES.REPORTER].includes(participantInformation.partyType)) {
+      if (isReporterIn) {
+        roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      } else {
+        participantStore.setLocalAudioTrackEnabled(false);
+        roomStore.setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+      }
+    }
+
+    if (participantInformation.partyType === PARTICIPANT_TYPES.HEARING_OFFICER) {
+      if (!isReporterIn) roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    }
     setIsReporterInState(isReporterIn);
-  }
+  }, [participantInformation, participantStore, isReporterIn, isReporterInState, roomStore]);
 
   return (
     <AppBar className={classes.container} position="static">

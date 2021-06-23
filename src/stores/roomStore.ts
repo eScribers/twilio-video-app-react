@@ -50,7 +50,6 @@ class RoomStore {
     this.setIsConnecting(true);
     try {
       const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
-      this.setRoom(newRoom);
       this.setIsConnecting(false);
       const disconnect = () => newRoom.disconnect();
 
@@ -116,6 +115,8 @@ class RoomStore {
         this.rootStore.participantStore.removeParticipantSid(participant.sid);
         // updateScreenShareParticipant();
       };
+
+      this.setRoom(newRoom);
 
       this.room.on('participantConnected', participantConnected);
       this.room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
