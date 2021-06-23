@@ -39,7 +39,7 @@ class ParticipantStore {
 
   sortedParticipants: Participant[] = [];
 
-  selectedParticipant: null | LocalParticipant | Participant = null;
+  selectedParticipant: null | string = null;
 
   deviceList: MediaDeviceInfo[] = [];
 
@@ -83,22 +83,29 @@ class ParticipantStore {
 
   setParticipant(participant?: LocalParticipant) {
     this.participant = participant;
+    if (this.dominantSpeaker === null && participant) {
+      this.setDominantSpeaker(participant.identity);
+    }
   }
 
   addParticipant(participant: Participant) {
     this.setParticipants([...this.participants, participant]);
+    if (this.dominantSpeaker === null) {
+      this.setDominantSpeaker(participant.identity);
+    }
   }
 
   removeParticipantSid(participantSid: string) {
     this.setParticipants([...this.participants.filter(p => p.sid !== participantSid)]);
   }
 
-  setSelectedParticipant(participant: Participant | LocalParticipant | undefined) {
+  setSelectedParticipant(participant: string | undefined) {
+    if (!participant) return;
     if (this.selectedParticipant === participant) {
       this.selectedParticipant = null;
       return;
     }
-    this.selectedParticipant = participant as Participant;
+    this.selectedParticipant = participant;
   }
 
   setLocalAudioTrackEnabled(state: boolean) {
