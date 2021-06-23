@@ -11,7 +11,7 @@ const MainParticipant = observer(() => {
 
   const videoPriority =
     (mainParticipant === selectedParticipant || mainParticipant === participantStore.screenShareParticipant()) &&
-    mainParticipant?.identity !== participantStore.participant?.identity
+    mainParticipant !== participantStore.participant?.identity
       ? 'high'
       : null;
 
