@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react-hooks';
-import { RootStore } from '..';
+import { RootStore } from '../makeStore';
 import { sleep } from '../../utils';
 import { mockParticipant } from '../../utils/mocks';
 

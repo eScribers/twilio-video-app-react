@@ -1,40 +1,41 @@
 import React from 'react';
-import LocalVideoPreview from './LocalVideoPreview';
-import { IVideoContext } from '../VideoProvider';
+import rootStore, { RootStore } from '../../stores/makeStore';
 import { shallow } from 'enzyme';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import AvatarIcon from '../../icons/AvatarIcon';
+import { LocalVideoTrack } from 'twilio-video';
+import LocalVideoPreview from './LocalVideoPreview';
 
-jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../hooks/useMediaStreamTrack/useMediaStreamTrack');
-
-const mockedVideoContext = useVideoContext as jest.Mock<IVideoContext>;
+jest.mock('../../stores', () => {
+  return {
+    __esModule: true, // this property makes it work
+    default: rootStore,
+  };
+});
 
 describe('the LocalVideoPreview component', () => {
-  it('it should render a VideoTrack component when there is a "camera" track', () => {
-    mockedVideoContext.mockImplementation(() => {
-      return {
-        localTracks: [
-          {
-            name: 'camera-123456',
-            attach: jest.fn(),
-            detach: jest.fn(),
-            mediaStreamTrack: { getSettings: () => ({}) },
-          },
-        ],
-      } as any;
-    });
-    const wrapper = shallow(<LocalVideoPreview identity="Test User" />);
-    expect(wrapper.find('VideoTrack').exists()).toEqual(true);
+  beforeEach(() => {
+    let newStore = new RootStore();
+    rootStore.participantStore = newStore.participantStore;
   });
 
-  it('should render the AvatarIcon when there are no "camera" tracks', () => {
-    mockedVideoContext.mockImplementation(() => {
-      return {
-        localTracks: [{ name: 'microphone', attach: jest.fn(), detach: jest.fn() }],
-      } as any;
-    });
-    const wrapper = shallow(<LocalVideoPreview identity="Test User" />);
+  it('should render the AvatarIcon when there are no "camera" tracks', async () => {
+    let wrapper = shallow(<LocalVideoPreview identity="Test User" />);
     expect(wrapper.find(AvatarIcon).exists()).toEqual(true);
+  });
+
+  it('should render the video when there are is a "camera" track', async () => {
+    // @ts-expect-error
+    rootStore.participantStore.setVideoTrack({
+      name: 'camera-123456',
+      attach: jest.fn(),
+      detach: jest.fn(),
+      enable: jest.fn(),
+      disable: jest.fn(),
+      stop: jest.fn(),
+      mediaStreamTrack: { getSettings: () => ({}) },
+    } as LocalVideoTrack);
+
+    const wrapper = shallow(<LocalVideoPreview identity="Test User" />);
+    expect(wrapper.find('VideoTrack').exists()).toEqual(true);
   });
 });

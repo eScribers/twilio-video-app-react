@@ -1,5 +1,5 @@
 import EventEmitter from 'events';
-import { RootStore } from '..';
+import { RootStore } from '../makeStore';
 import Video from 'twilio-video';
 import { act } from '@testing-library/react';
 import { sleep } from '../../utils';

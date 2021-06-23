@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react-hooks';
-import { RootStore } from '..';
+import { RootStore } from '../makeStore';
 
 let mockDevices = [
   { deviceId: 1, label: '1', kind: 'audioinput' },

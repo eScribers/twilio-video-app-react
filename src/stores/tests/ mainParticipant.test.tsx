@@ -1,4 +1,4 @@
-import { RootStore } from '..';
+import { RootStore } from '../makeStore';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 import { act } from '@testing-library/react';
 

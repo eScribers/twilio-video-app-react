@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react-hooks';
-import { RootStore } from '..';
+import { RootStore } from '../makeStore';
 
 describe('the useDominantSpeaker hook', () => {
   const { roomStore, participantStore } = new RootStore();

@@ -1,5 +1,5 @@
 import { act } from '@testing-library/react-hooks';
-import { RootStore } from '../../stores';
+import { RootStore } from '../../stores/makeStore';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 

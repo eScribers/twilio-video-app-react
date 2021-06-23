@@ -1,6 +1,6 @@
 import { act } from '@testing-library/react-hooks';
 import { Participant } from 'twilio-video';
-import { RootStore } from '..';
+import { RootStore } from '../makeStore';
 import { mockParticipant } from '../../utils/mocks';
 
 describe('the useParticipants hook', () => {
