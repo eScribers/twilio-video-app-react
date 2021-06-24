@@ -1,31 +1,31 @@
 import React from 'react';
-import ConnectionOptions from './ConnectionOptions';
-import { initialSettings } from '../../../state/settings/settingsReducer';
-import { Select, TextField, Checkbox, FormControlLabel, Grid } from '@material-ui/core';
+import rootStore, { RootStore } from '../../../stores/makeStore';
+import { Select, TextField, FormControlLabel } from '@material-ui/core';
 import { shallow } from 'enzyme';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
-import useRoomState from '../../../hooks/useRoomState/useRoomState';
-import { getByTestId } from '@testing-library/dom';
+import ConnectionOptions from './ConnectionOptions';
 
-jest.mock('../../../hooks/useRoomState/useRoomState');
-jest.mock('../../../hooks/useAppState/useAppState');
-
-const mockUseAppState = useAppState as jest.Mock<any>;
-const mockUseRoomState = useRoomState as jest.Mock<any>;
-
-const mockDispatchSetting = jest.fn();
-mockUseAppState.mockImplementation(() => ({ settings: initialSettings, dispatchSetting: mockDispatchSetting }));
+jest.mock('../../../stores', () => {
+  return {
+    __esModule: true, // this property makes it work
+    default: rootStore,
+  };
+});
 
 describe('the ConnectionOptions component', () => {
-  afterEach(jest.clearAllMocks);
+  beforeEach(() => {
+    let newStore = new RootStore();
+    rootStore.participantStore = newStore.participantStore;
+    rootStore.roomStore = newStore.roomStore;
+  });
 
   it('when change view mode should dispatch settings changes', () => {
+    jest.spyOn(rootStore.roomStore, 'setSetting');
     const wrapper = shallow(<ConnectionOptions />);
     wrapper
       .find(Select)
       .find({ name: 'viewMode' })
       .simulate('change', { target: { value: 'grid 2 column', name: 'viewMode' } });
-    expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'grid 2 column', name: 'viewMode' });
+    expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('viewMode', 'grid 2 column');
   });
 
   it('when select advance setting, it shows advanced settings.', () => {
@@ -60,8 +60,6 @@ describe('the ConnectionOptions component', () => {
   });
 
   describe('when not connected to a room', () => {
-    mockUseRoomState.mockImplementation(() => 'disconnected');
-
     it('should render correctly', () => {
       const wrapper = shallow(<ConnectionOptions />);
       expect(wrapper).toMatchSnapshot();
@@ -69,37 +67,41 @@ describe('the ConnectionOptions component', () => {
 
     describe('when choose advance setting', () => {
       it('should dispatch settings changes', () => {
+        jest.spyOn(rootStore.roomStore, 'setSetting');
         const wrapper = shallow(<ConnectionOptions />);
         wrapper
           .find(Select)
           .find({ name: 'dominantSpeakerPriority' })
           .simulate('change', { target: { value: 'testValue', name: 'dominantSpeakerPriority' } });
-        expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'testValue', name: 'dominantSpeakerPriority' });
+        // expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'testValue', name: 'dominantSpeakerPriority' });
+        expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('dominantSpeakerPriority', 'testValue');
       });
 
       it('should not dispatch settings changes from a number field when there are non-digits in the value', () => {
+        jest.spyOn(rootStore.roomStore, 'setSetting');
         const wrapper = shallow(<ConnectionOptions />);
         wrapper
           .find(TextField)
           .find({ name: 'maxTracks' })
           .simulate('change', { target: { value: '123456a', name: 'maxTracks' } });
-        expect(mockDispatchSetting).not.toHaveBeenCalled();
+        expect(rootStore.roomStore.setSetting).not.toHaveBeenCalled();
       });
 
       it('should dispatch settings changes from a number field when there are only digits in the value', () => {
+        jest.spyOn(rootStore.roomStore, 'setSetting');
         const wrapper = shallow(<ConnectionOptions />);
         wrapper
           .find(TextField)
           .find({ name: 'maxTracks' })
           .simulate('change', { target: { value: '123456', name: 'maxTracks' } });
-        expect(mockDispatchSetting).toHaveBeenCalledWith({ value: '123456', name: 'maxTracks' });
+        expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('maxTracks', '123456');
       });
     });
   });
 
   describe('when connected to a room', () => {
-    mockUseRoomState.mockImplementation(() => 'connected');
     it('should render correctly', () => {
+      rootStore.roomStore.room.state = 'connected';
       const wrapper = shallow(<ConnectionOptions />);
       expect(wrapper).toMatchSnapshot();
     });
