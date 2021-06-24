@@ -187,7 +187,7 @@ class ParticipantStore {
       this.setVideoTrack(undefined);
       this.setPublishingVideoTrackInProgress(false);
     } else {
-      this.getLocalVideoTrack().then((track: LocalVideoTrack) => {
+      return this.getLocalVideoTrack().then((track: LocalVideoTrack) => {
         this.participant?.publishTrack(track, { priority: 'low' });
         // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
         // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
