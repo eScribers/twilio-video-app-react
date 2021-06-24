@@ -150,6 +150,10 @@ class RoomStore {
     this.settings = { ...this.settings, [key]: value };
   }
 
+  setSettings(settings: Settings) {
+    this.settings = settings;
+  }
+
   get roomState() {
     return this.room?.state || ROOM_STATE.DISCONNECTED;
   }
