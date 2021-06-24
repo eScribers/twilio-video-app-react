@@ -3,31 +3,108 @@
 exports[`the ParticipantStrip component should correctly render ParticipantInfo components 1`] = `
 <Styled(aside)>
   <Styled(div)>
-    <Participant
+    <Memo(wrappedComponent)
       isSelected={false}
-      onClick={[Function]}
-      participant={Object {}}
-    />
-    <Participant
-      isDominantSpeaker={true}
-      isSelected={false}
-      key="0"
       onClick={[Function]}
       participant={
         Object {
-          "sid": 0,
+          "addListener": [Function],
+          "audioTracks": Map {},
+          "dataTracks": Map {},
+          "emit": [Function],
+          "eventNames": [Function],
+          "getMaxListeners": [Function],
+          "identity": "local@Reporter@1",
+          "listenerCount": [Function],
+          "listeners": [Function],
+          "networkQualityLevel": null,
+          "networkQualityStats": null,
+          "off": [Function],
+          "once": [Function],
+          "prependListener": [Function],
+          "prependOnceListener": [Function],
+          "publishTrack": [Function],
+          "publishTracks": [Function],
+          "rawListeners": [Function],
+          "removeAllListeners": [Function],
+          "removeListener": [Function],
+          "setMaxListeners": [Function],
+          "setNetworkQualityConfiguration": [Function],
+          "setParameters": [Function],
+          "sid": "123",
+          "signalingRegion": "todo",
+          "state": "todo",
+          "tracks": Map {},
+          "unpublishTrack": [Function],
+          "unpublishTracks": [Function],
+          "videoTracks": Map {},
         }
       }
-      userIsSilenced={false}
     />
-    <Participant
-      isDominantSpeaker={true}
+    <Memo(wrappedComponent)
+      isDominantSpeaker={false}
       isSelected={false}
       key="1"
       onClick={[Function]}
       participant={
-        Object {
-          "sid": 1,
+        mockParticipant {
+          "addListener": [Function],
+          "audioTracks": Map {},
+          "dataTracks": Map {},
+          "emit": [Function],
+          "eventNames": [Function],
+          "getMaxListeners": [Function],
+          "identity": "participant1",
+          "listenerCount": [Function],
+          "listeners": [Function],
+          "networkQualityLevel": null,
+          "networkQualityStats": null,
+          "off": [Function],
+          "once": [Function],
+          "prependListener": [Function],
+          "prependOnceListener": [Function],
+          "rawListeners": [Function],
+          "removeAllListeners": [Function],
+          "removeListener": [Function],
+          "setMaxListeners": [Function],
+          "sid": "1",
+          "state": "todo",
+          "tracks": Map {},
+          "videoTracks": Map {},
+        }
+      }
+      userIsSilenced={false}
+    />
+    <Memo(wrappedComponent)
+      isDominantSpeaker={false}
+      isSelected={false}
+      key="2"
+      onClick={[Function]}
+      participant={
+        mockParticipant {
+          "addListener": [Function],
+          "audioTracks": Map {},
+          "dataTracks": Map {},
+          "emit": [Function],
+          "eventNames": [Function],
+          "getMaxListeners": [Function],
+          "identity": "participant2",
+          "listenerCount": [Function],
+          "listeners": [Function],
+          "networkQualityLevel": null,
+          "networkQualityStats": null,
+          "off": [Function],
+          "once": [Function],
+          "prependListener": [Function],
+          "prependOnceListener": [Function],
+          "rawListeners": [Function],
+          "removeAllListeners": [Function],
+          "removeListener": [Function],
+          "setMaxListeners": [Function],
+          "sid": "2",
+          "state": "todo",
+          "tracks": Map {},
+          "videoTracks": Map {},
         }
       }
       userIsSilenced={false}
