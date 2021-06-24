@@ -81,7 +81,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
                 userIsSilenced={!!participantStore.isSilenced}
-                onClick={() => participantStore.setSelectedParticipant(participant)}
+                onClick={() => participantStore.setSelectedParticipant(participant.identity)}
               />
             </Paper>
           </Grid>
