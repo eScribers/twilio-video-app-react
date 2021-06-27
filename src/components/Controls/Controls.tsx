@@ -1,13 +1,13 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import rootStore from '../../stores';
 import ToggleScreenShareButton from './ToogleScreenShareButton/ToggleScreenShareButton';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import { ROOM_STATE } from '../../utils/displayStrings';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
-import rootStore from '../../stores';
 import { observer } from 'mobx-react-lite';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
