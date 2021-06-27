@@ -65,7 +65,10 @@ class RoomStore {
       if (!this.rootStore.participantStore.participant)
         this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
 
-      const handleOnDisconnect = () => {
+      const handleOnDisconnect = (_room, error: TwilioError) => {
+        if (error) {
+          this.setError(error);
+        }
         this.rootStore.participantStore.disconnectParticipant();
         setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
         window.removeEventListener('beforeunload', disconnect);

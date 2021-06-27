@@ -234,10 +234,10 @@ class ParticipantStore {
     const remoteScreenShareParticipant = false;
     return (
       this.selectedParticipant ||
-      remoteScreenShareParticipant ||
+      this.screenShareParticipant()?.identity ||
       this.dominantSpeaker ||
-      this.participants[0] ||
-      this.participant
+      this.participants[0].identity ||
+      this.participant?.identity
     );
   }
 
@@ -414,7 +414,7 @@ class ParticipantStore {
   }
 
   screenShareParticipant() {
-    const isSomebodyShareingScreen = [...this.participants, this.participant].find(
+    const isSomebodySharingScreen = [...this.participants, this.participant].find(
       (participant: Participant | LocalParticipant | undefined) =>
         participant &&
         Array.from<TrackPublication>(participant.tracks.values()).find(track => {
@@ -424,12 +424,16 @@ class ParticipantStore {
           return false;
         })
     );
-    if (isSomebodyShareingScreen) {
-      this.setScreenSharingInProgress(true);
+    if (isSomebodySharingScreen) {
+      setImmediate(() => {
+        this.setScreenSharingInProgress(true);
+      });
     } else {
-      this.setScreenSharingInProgress(false);
+      setImmediate(() => {
+        this.setScreenSharingInProgress(false);
+      });
     }
-    return isSomebodyShareingScreen;
+    return isSomebodySharingScreen;
   }
 
   get isHostIn() {
