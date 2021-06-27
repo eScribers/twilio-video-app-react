@@ -67,7 +67,7 @@ class ParticipantStore {
   }
 
   setDevices(devices: MediaDeviceInfo[]) {
-    this.deviceList = devices;
+    this.deviceList = devices || [];
   }
 
   async getDevices() {

@@ -7,7 +7,7 @@ const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
 jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../hooks/useRoomState/useRoomState');
+// jest.mock('../../hooks/useRoomState/useRoomState');
 jest.mock('react-alert');
 
 global.alert = jest.fn();

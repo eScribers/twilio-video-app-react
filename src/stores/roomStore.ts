@@ -45,19 +45,13 @@ class RoomStore {
   async joinRoom(token: string, option?: ConnectOptions, onError?: Callback) {
     if (this.isConnecting) {
       console.log('Already connecting!');
-      return false;
+      return;
     }
     this.setIsConnecting(true);
     try {
       const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
       this.setIsConnecting(false);
       const disconnect = () => newRoom.disconnect();
-
-      newRoom.once(ROOM_STATE.DISCONNECTED, () => {
-        setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
-        window.removeEventListener('beforeunload', disconnect);
-        if (isMobile) window.removeEventListener('pagehide', disconnect);
-      });
 
       window.addEventListener('beforeunload', disconnect); // disconnect from the room when the user closes the browser
       if (isMobile) window.addEventListener('pagehide', disconnect);
@@ -70,12 +64,13 @@ class RoomStore {
 
       if (!this.rootStore.participantStore.participant)
         this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
-      newRoom.off(ROOM_STATE.DISCONNECTED, () => {
+
+      const handleOnDisconnect = () => {
         this.rootStore.participantStore.disconnectParticipant();
-      });
-      newRoom.on(ROOM_STATE.DISCONNECTED, () => {
-        this.rootStore.participantStore.disconnectParticipant();
-      });
+        setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
+        window.removeEventListener('beforeunload', disconnect);
+        if (isMobile) window.removeEventListener('pagehide', disconnect);
+      };
 
       // Assigning all existing participants to be on the participants store
       newRoom.participants?.forEach(participant => {
@@ -116,22 +111,31 @@ class RoomStore {
         // updateScreenShareParticipant();
       };
 
+      const handleRoomReconnecting = () => (this.room.state = 'reconnecting');
+      const handleRoomReconnected = () => (this.room.state = 'connected');
+
       this.setRoom(newRoom);
 
       this.room.on('participantConnected', participantConnected);
       this.room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
       this.room.on('participantDisconnected', handleParticipantDisconnected);
+      this.room.on(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
+      this.room.on(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
+      this.room.on(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       return () => {
         this.room.off('participantConnected', participantConnected);
         this.room.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
         this.room.off('participantDisconnected', handleParticipantDisconnected);
+        this.room.off(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
+        this.room.off(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
+        this.room.off(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       };
     } catch (err) {
       console.log(err.message);
       onError && onError(err);
       this.setIsConnecting(false);
     }
-    return true;
+    return;
   }
 
   setNotification(notification: INotification) {
