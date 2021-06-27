@@ -20,7 +20,9 @@ if (!global.definedMediaDevicesForJest) {
       enumerateDevices: mockEnumerateDevices,
       getUserMedia: mockGetUserMedia,
       addEventListener: jest.fn(),
+      getDisplayMedia: () => {},
     },
+    configurable: true,
   });
 }
 

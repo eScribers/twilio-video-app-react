@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import rootStore from '../../../stores';
 
 import Fab from '@material-ui/core/Fab';
 import ScreenShare from '@material-ui/icons/ScreenShare';
@@ -7,7 +8,6 @@ import StopScreenShare from '@material-ui/icons/StopScreenShare';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import useScreenShareToggle from '../../../hooks/useScreenShareToggle/useScreenShareToggle';
-import rootStore from '../../../stores';
 import { observer } from 'mobx-react-lite';
 
 export const SCREEN_SHARE_TEXT = 'Share Screen';
