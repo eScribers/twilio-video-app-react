@@ -113,6 +113,10 @@ describe('the MenuBar component', () => {
   //   expect(getByText('Join Room')).toBeDisabled();
   // });
 
+  // TEST if nothing happens when isAcquiringLocalTracks and trying to call acquire again
+
+  // TEST if theres an error shown when we have an error creating tracks
+
   // it('should update the URL to include the room name on submit', () => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(

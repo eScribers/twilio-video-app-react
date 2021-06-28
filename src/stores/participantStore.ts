@@ -126,6 +126,7 @@ class ParticipantStore {
         };
     try {
       const newTrack = await Video.createLocalAudioTrack(options);
+      if (!newTrack) throw new Error('Failed to create local audio track');
       this.setAudioTrack(newTrack);
 
       return newTrack;
@@ -146,8 +147,9 @@ class ParticipantStore {
       name: `camera-${Date.now()}`,
       ...(hasSelectedVideoDevice && { deviceId: { exact: selectedVideoDeviceId! } }),
     };
-
-    const newTrack = await Video.createLocalVideoTrack(options);
+    let newTrack;
+    newTrack = await Video.createLocalVideoTrack(options);
+    // if(newTrack)
     this.setVideoTrack(newTrack);
     return newTrack;
   }
@@ -176,7 +178,7 @@ class ParticipantStore {
   setPublishingVideoTrackInProgress(state: boolean) {
     this.publishingVideoTrackInProgress = state;
   }
-  toggleVideoEnabled() {
+  async toggleVideoEnabled() {
     if (this.publishingVideoTrackInProgress) return;
     this.setPublishingVideoTrackInProgress(true);
     if (this.localVideoTrack) {
@@ -187,18 +189,26 @@ class ParticipantStore {
       this.setVideoTrack(undefined);
       this.setPublishingVideoTrackInProgress(false);
     } else {
-      return this.getLocalVideoTrack().then((track: LocalVideoTrack) => {
-        this.participant?.publishTrack(track, { priority: 'low' });
-        // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
-        // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
-        setTimeout(() => {
-          this.setPublishingVideoTrackInProgress(false);
-        }, 200);
-      });
+      let track: LocalVideoTrack;
+      try {
+        track = await this.getLocalVideoTrack();
+      } catch (err) {
+        this.rootStore.roomStore.setError(err.message);
+        return Promise.reject(err);
+      }
+
+      this.participant?.publishTrack(track, { priority: 'low' });
+      // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
+      // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
+      setTimeout(() => {
+        this.setPublishingVideoTrackInProgress(false);
+      }, 200);
+      return track;
     }
+    return false;
   }
 
-  toggleAudioEnabled() {
+  async toggleAudioEnabled() {
     if (this.localAudioTrack) {
       if (this.localAudioTrack.isEnabled) {
         this.setLocalAudioTrackEnabled(false);
@@ -206,9 +216,10 @@ class ParticipantStore {
         this.setLocalAudioTrackEnabled(true);
       }
     } else {
-      this.getLocalAudioTrack();
+      return this.getLocalAudioTrack();
       // setNotification({ message: NOTIFICATION_MESSAGE.CANNOT_RECORD_AUDIO });
     }
+    return;
   }
 
   addDataTrack() {
