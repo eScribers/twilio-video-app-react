@@ -3,6 +3,7 @@ import ParticipantTracks from './ParticipantTracks';
 import { shallow } from 'enzyme';
 import usePublications from '../../hooks/usePublications/usePublications';
 import { useAppState } from '../../hooks/useAppState/useAppState';
+import Publication from '../Publication/Publication';
 
 jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/usePublications/usePublications', () =>
@@ -29,10 +30,11 @@ describe('the ParticipantTracks component', () => {
       { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
     ]);
     const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} />);
-    expect(wrapper.find('Publication').length).toBe(1);
+    expect(wrapper.find(Publication).length).toBe(1);
+
     expect(
       wrapper
-        .find('Publication')
+        .find(Publication)
         .at(0)
         .prop('publication')
     ).toEqual({ trackName: 'camera-123456', trackSid: 1, kind: 'video' });
@@ -45,10 +47,10 @@ describe('the ParticipantTracks component', () => {
         { trackName: 'camera-123456', trackSid: 1, kind: 'video' },
       ]);
       const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />);
-      expect(wrapper.find('Publication').length).toBe(1);
+      expect(wrapper.find(Publication).length).toBe(1);
       expect(
         wrapper
-          .find('Publication')
+          .find(Publication)
           .at(0)
           .prop('publication')
       ).toEqual({ trackName: 'screen', trackSid: 0, kind: 'video' });
@@ -57,10 +59,10 @@ describe('the ParticipantTracks component', () => {
     it('should render camera publications when a screen share publication is absent', () => {
       mockUsePublications.mockImplementation(() => [{ trackName: 'camera-123456', trackSid: 1, kind: 'video' }]);
       const wrapper = shallow(<ParticipantTracks participant={'mockParticipant' as any} enableScreenShare />);
-      expect(wrapper.find('Publication').length).toBe(1);
+      expect(wrapper.find(Publication).length).toBe(1);
       expect(
         wrapper
-          .find('Publication')
+          .find(Publication)
           .at(0)
           .prop('publication')
       ).toEqual({ trackName: 'camera-123456', trackSid: 1, kind: 'video' });
