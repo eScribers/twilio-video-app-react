@@ -250,7 +250,6 @@ class ParticipantStore {
   }
 
   get mainParticipant() {
-    const remoteScreenShareParticipant = false;
     return (
       this.selectedParticipant ||
       this.screenShareParticipant()?.identity ||

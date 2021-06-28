@@ -63,14 +63,14 @@ describe('the room store', () => {
   });
 
   it('should call onError and set isConnecting to false when there is an error', async () => {
-    const mockOnError = jest.fn();
     const mockVideoConnect = Video.connect as jest.Mock<any>;
-    mockVideoConnect.mockImplementationOnce(() => Promise.reject('mockError'));
+    mockVideoConnect.mockImplementationOnce(() => Promise.reject(new Error('mockError')));
     const { roomStore } = new RootStore();
+    jest.spyOn(roomStore, 'setError');
     await act(async () => {
-      await roomStore.joinRoom('token', {}, mockOnError);
+      await roomStore.joinRoom('token');
     });
-    expect(mockOnError).toHaveBeenCalledWith('mockError');
+    expect(roomStore.setError).toHaveBeenLastCalledWith('mockError');
     expect(roomStore.isConnecting).toBe(false);
   });
 

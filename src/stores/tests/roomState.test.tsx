@@ -1,19 +1,20 @@
-import { RootStore } from '../../stores/makeStore';
 import { act } from '@testing-library/react-hooks';
+import { RootStore } from '../../stores/makeStore';
 
 describe('the useRoomState hook', () => {
-  let rootStore;
+  let rootStore = new RootStore();
   let unmountRoom: (() => void) | undefined = () => {};
   beforeEach(() => {
     unmountRoom && unmountRoom();
-    jest.resetModules();
     jest.mock('../../stores', () => {
       return {
         __esModule: true, // this property makes it work
-        default: new RootStore(),
+        default: rootStore,
       };
     });
-    rootStore = require('../../stores').default;
+    let newStore = new RootStore();
+    rootStore.participantStore = newStore.participantStore;
+    rootStore.roomStore = newStore.roomStore;
   });
 
   it('should return "disconnected" by default', () => {

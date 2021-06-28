@@ -10,9 +10,6 @@ export default function useParticipantNetworkQualityLevel(participant: Participa
 
       setNetworkQualityLevel(newNetworkQualityLevel);
     };
-    // THIS IS CURRENTLY BROKEN:
-    console.log('THIS IS CURRENTLY BROKEN: Setting quality monitory', participant, participant?.networkQualityLevel);
-
     setNetworkQualityLevel(participant?.networkQualityLevel);
     participant.on('networkQualityLevelChanged', handleNewtorkQualityLevelChange);
     return () => {

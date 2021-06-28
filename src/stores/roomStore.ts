@@ -42,14 +42,17 @@ class RoomStore {
     this.isConnecting = isConnecting;
   }
 
-  async joinRoom(token: string, option?: ConnectOptions, onError?: Callback) {
+  async joinRoom(token: string) {
     if (this.isConnecting) {
       console.log('Already connecting!');
       return;
     }
     this.setIsConnecting(true);
     try {
-      const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
+      const newRoom = await Video.connect(token, {
+        ...this.options,
+        tracks: this.rootStore.participantStore.localTracks,
+      });
       this.setIsConnecting(false);
       const disconnect = () => newRoom.disconnect();
 
@@ -139,7 +142,7 @@ class RoomStore {
       };
     } catch (err) {
       console.log(err.message);
-      onError && onError(err);
+      this.setError(err.message);
       this.setIsConnecting(false);
     }
     return;
@@ -184,7 +187,10 @@ class RoomStore {
         },
       },
       dominantSpeaker: true,
-      networkQuality: { local: 1, remote: 1 },
+      networkQuality: {
+        local: 1, // LocalParticipant's Network Quality verbosity [1 - 3]
+        remote: 2, // RemoteParticipants' Network Quality verbosity [0 - 3]
+      },
       maxAudioBitrate: Number(this.settings.maxAudioBitrate),
       preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };
