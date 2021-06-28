@@ -1,21 +1,24 @@
 import React from 'react';
-import AudioInputList from './AudioInputList';
 import { SELECTED_AUDIO_INPUT_KEY } from '../../../../constants';
 import { Select, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
-import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import useDevices from '../../../../hooks/useDevices/useDevices';
+import rootStore, { RootStore } from '../../../../stores/makeStore';
+import { LocalAudioTrack } from 'twilio-video';
+import AudioInputList from './AudioInputList';
 
-jest.mock('../../../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../../../hooks/useDevices/useDevices');
+jest.mock('../../../../stores', () => {
+  return {
+    __esModule: true, // this property makes it work
+    default: rootStore,
+  };
+});
 
-const mockUseVideoContext = useVideoContext as jest.Mock<any>;
-const mockUseDevices = useDevices as jest.Mock<any>;
-const mockGetLocalAudiotrack = jest.fn(() => Promise.resolve);
-
-const mockDevice = {
+const mockDevice: MediaDeviceInfo = {
   deviceId: '123',
   label: 'mock device',
+  groupId: 'group1',
+  kind: 'audioinput',
+  toJSON: () => {},
 };
 
 const mockLocalTrack = {
@@ -27,15 +30,14 @@ const mockLocalTrack = {
   restart: jest.fn(),
 };
 
-mockUseVideoContext.mockImplementation(() => ({
-  room: {},
-  getLocalAudioTrack: mockGetLocalAudiotrack,
-  localTracks: [mockLocalTrack],
-}));
-
 describe('the AudioInputList component', () => {
+  beforeEach(() => {
+    let newStore = new RootStore();
+    rootStore.participantStore = newStore.participantStore;
+  });
   it('should display the name of the local audio track when only one is avaiable', () => {
-    mockUseDevices.mockImplementation(() => ({ audioInputDevices: [mockDevice] }));
+    // @ts-expect-error
+    rootStore.participantStore.setAudioTrack(mockLocalTrack as LocalAudioTrack);
     const wrapper = shallow(<AudioInputList />);
     expect(wrapper.find(Select).exists()).toBe(false);
     expect(
@@ -47,12 +49,6 @@ describe('the AudioInputList component', () => {
   });
 
   it('should display "No Local Audio" when there is no local audio track', () => {
-    mockUseDevices.mockImplementation(() => ({ audioInputDevices: [mockDevice] }));
-    mockUseVideoContext.mockImplementationOnce(() => ({
-      room: {},
-      getLocalAudioTrack: mockGetLocalAudiotrack,
-      localTracks: [],
-    }));
     const wrapper = shallow(<AudioInputList />);
     expect(
       wrapper
@@ -63,7 +59,10 @@ describe('the AudioInputList component', () => {
   });
 
   it('should render a Select menu when there are multiple audio input devices', () => {
-    mockUseDevices.mockImplementation(() => ({ audioInputDevices: [mockDevice, mockDevice] }));
+    rootStore.participantStore.setDevices([
+      { ...mockDevice, kind: 'audioinput' },
+      { ...mockDevice, kind: 'audioinput' },
+    ]);
     const wrapper = shallow(<AudioInputList />);
     expect(wrapper.find(Select).exists()).toBe(true);
     expect(
@@ -75,7 +74,10 @@ describe('the AudioInputList component', () => {
   });
 
   it('should save the deviceId in localStorage when the audio input device is changed', () => {
-    mockUseDevices.mockImplementation(() => ({ audioInputDevices: [mockDevice, mockDevice] }));
+    rootStore.participantStore.setDevices([
+      { ...mockDevice, kind: 'audioinput' },
+      { ...mockDevice, kind: 'audioinput' },
+    ]);
     const wrapper = shallow(<AudioInputList />);
     expect(window.localStorage.getItem(SELECTED_AUDIO_INPUT_KEY)).toBeFalsy();
     wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
@@ -83,7 +85,12 @@ describe('the AudioInputList component', () => {
   });
 
   it('should call track.restart with the new deviceId when the audio input device is changed', () => {
-    mockUseDevices.mockImplementation(() => ({ audioInputDevices: [mockDevice, mockDevice] }));
+    rootStore.participantStore.setDevices([
+      { ...mockDevice, kind: 'audioinput' },
+      { ...mockDevice, kind: 'audioinput' },
+    ]);
+    // @ts-expect-error
+    rootStore.participantStore.setAudioTrack(mockLocalTrack);
     const wrapper = shallow(<AudioInputList />);
     wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
     expect(mockLocalTrack.restart).toHaveBeenCalledWith({

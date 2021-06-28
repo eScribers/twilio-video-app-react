@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode } from 'react';
 import { ErrorCallback } from '../../types';
-import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
@@ -39,9 +38,6 @@ export const VideoProvider = observer(({ children }: VideoProviderProps) => {
     console.log(`ERROR: ${error.message}`, error);
     roomStore.setError(error);
   };
-
-  // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionErrors(room, roomStore.setError);
   useHandleTrackPublicationFailed(room, roomStore.setError);
   const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, roomStore.setError);
 

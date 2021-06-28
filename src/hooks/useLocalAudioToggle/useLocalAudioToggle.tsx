@@ -7,10 +7,7 @@ import rootStore from '../../stores';
 const useLocalAudioToggle = () => {
   const { roomStore, participantStore } = rootStore;
 
-  const { setNotification } = roomStore;
-
   const audioTrack = participantStore.localTracks.find(track => track?.kind === TRACK_TYPE.AUDIO) as LocalAudioTrack;
-
   const isEnabled = useIsTrackEnabled(audioTrack);
 
   const toggleAudioEnabled = useCallback(() => {
@@ -18,9 +15,9 @@ const useLocalAudioToggle = () => {
       audioTrack.isEnabled ? audioTrack.disable() : audioTrack.enable();
     } else {
       console.log('No audio track discovered');
-      setNotification({ message: NOTIFICATION_MESSAGE.CANNOT_RECORD_AUDIO });
+      roomStore.setNotification({ message: NOTIFICATION_MESSAGE.CANNOT_RECORD_AUDIO });
     }
-  }, [audioTrack, setNotification]);
+  }, [audioTrack, roomStore]);
 
   return [isEnabled, toggleAudioEnabled] as const;
 };

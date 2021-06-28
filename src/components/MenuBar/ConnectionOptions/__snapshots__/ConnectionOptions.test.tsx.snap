@@ -546,7 +546,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
         Bandwidth Profile Settings:
       </WithStyles(ForwardRef(Typography))>
       <WithStyles(ForwardRef(Typography))
-        hidden={false}
+        hidden={true}
         variant="body2"
       >
         These settings cannot be changed when connected to a room.
@@ -567,7 +567,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           Dominant Speaker Priority:
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           label="dominantSpeakerPriority"
           name="dominantSpeakerPriority"
@@ -605,7 +605,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           Track Switch Off Mode:
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           label="trackSwitchOffMode"
           name="trackSwitchOffMode"
@@ -638,7 +638,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
         className="makeStyles-formControl-1"
       >
         <WithStyles(ForwardRef(TextField))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           id="maxTracks"
           label="Max Tracks"
@@ -652,7 +652,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
         className="makeStyles-formControl-1"
       >
         <WithStyles(ForwardRef(TextField))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           id="maxAudioBitrate"
           label="Max Audio Bitrate"
@@ -680,7 +680,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           Render Dimension (Low Priority):
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           label="renderDimensionLow"
           name="renderDimensionLow"
@@ -760,7 +760,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           Render Dimension (Standard Priority):
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           label="renderDimensionStandard"
           name="renderDimensionStandard"
@@ -840,7 +840,7 @@ exports[`the ConnectionOptions component when not connected to a room should ren
           Render Dimension (High Priority):
         </WithStyles(ForwardRef(InputLabel))>
         <WithStyles(ForwardRef(Select))
-          disabled={true}
+          disabled={false}
           fullWidth={true}
           label="renderDimensionHigh"
           name="renderDimensionHigh"

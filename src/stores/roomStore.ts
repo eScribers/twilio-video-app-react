@@ -42,20 +42,19 @@ class RoomStore {
     this.isConnecting = isConnecting;
   }
 
-  async joinRoom(token: string, option?: ConnectOptions, onError?: Callback) {
-    if (this.isConnecting) return console.log('Already connecting!');
+  async joinRoom(token: string) {
+    if (this.isConnecting) {
+      console.log('Already connecting!');
+      return;
+    }
     this.setIsConnecting(true);
     try {
-      const newRoom = await Video.connect(token, { ...option, tracks: this.rootStore.participantStore.localTracks });
-      this.setRoom(newRoom);
+      const newRoom = await Video.connect(token, {
+        ...this.options,
+        tracks: this.rootStore.participantStore.localTracks,
+      });
       this.setIsConnecting(false);
       const disconnect = () => newRoom.disconnect();
-
-      newRoom.once(ROOM_STATE.DISCONNECTED, () => {
-        setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
-        window.removeEventListener('beforeunload', disconnect);
-        if (isMobile) window.removeEventListener('pagehide', disconnect);
-      });
 
       window.addEventListener('beforeunload', disconnect); // disconnect from the room when the user closes the browser
       if (isMobile) window.addEventListener('pagehide', disconnect);
@@ -66,16 +65,21 @@ class RoomStore {
       // All video publications are low by default, except MainParticipant (which is high)
       newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
 
-      this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
-      newRoom.off(ROOM_STATE.DISCONNECTED, () => {
+      if (!this.rootStore.participantStore.participant)
+        this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
+
+      const handleOnDisconnect = (_room, error: TwilioError) => {
+        if (error) {
+          this.setError(error);
+        }
         this.rootStore.participantStore.disconnectParticipant();
-      });
-      newRoom.on(ROOM_STATE.DISCONNECTED, () => {
-        this.rootStore.participantStore.disconnectParticipant();
-      });
+        setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
+        window.removeEventListener('beforeunload', disconnect);
+        if (isMobile) window.removeEventListener('pagehide', disconnect);
+      };
 
       // Assigning all existing participants to be on the participants store
-      newRoom.participants.forEach(participant => {
+      newRoom.participants?.forEach(participant => {
         this.rootStore.participantStore.addParticipant(participant);
       });
 
@@ -96,21 +100,52 @@ class RoomStore {
         if (result.os.name !== 'iOS') logInSound.play();
         this.rootStore.participantStore.addParticipant(participant);
       };
-      const participantDisconnected = (participant: RemoteParticipant) => {
+      const handleDominantSpeakerChanged = (newDominantSpeaker: RemoteParticipant) => {
+        if (newDominantSpeaker !== null) {
+          this.rootStore.participantStore.setDominantSpeaker(newDominantSpeaker);
+        }
+      };
+
+      // Since 'null' values are ignored, we will need to listen for the 'participantDisconnected'
+      // event, so we can set the dominantSpeaker to 'null' when they disconnect.
+      const handleParticipantDisconnected = (participant: RemoteParticipant) => {
+        if (this.rootStore.participantStore.dominantSpeaker === participant) {
+          return this.rootStore.participantStore.setDominantSpeaker(null);
+        }
         if (result.os.name !== 'iOS') logOutSound.play();
         this.rootStore.participantStore.removeParticipantSid(participant.sid);
+        // updateScreenShareParticipant();
       };
+
+      const handleRoomReconnecting = () => {
+        this.room.state = 'reconnecting';
+      };
+      const handleRoomReconnected = () => {
+        this.room.state = 'connected';
+      };
+
+      this.setRoom(newRoom);
+
       this.room.on('participantConnected', participantConnected);
-      this.room.on('participantDisconnected', participantDisconnected);
+      this.room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
+      this.room.on('participantDisconnected', handleParticipantDisconnected);
+      this.room.on(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
+      this.room.on(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
+      this.room.on(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       return () => {
         this.room.off('participantConnected', participantConnected);
-        this.room.off('participantDisconnected', participantDisconnected);
+        this.room.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
+        this.room.off('participantDisconnected', handleParticipantDisconnected);
+        this.room.off(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
+        this.room.off(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
+        this.room.off(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       };
     } catch (err) {
       console.log(err.message);
-      onError && onError(err);
+      this.setError(err.message);
       this.setIsConnecting(false);
     }
+    return;
   }
 
   setNotification(notification: INotification) {
@@ -127,6 +162,10 @@ class RoomStore {
 
   setSetting(key: keyof Settings, value: string) {
     this.settings = { ...this.settings, [key]: value };
+  }
+
+  setSettings(settings: Settings) {
+    this.settings = settings;
   }
 
   get roomState() {
@@ -148,7 +187,10 @@ class RoomStore {
         },
       },
       dominantSpeaker: true,
-      networkQuality: { local: 1, remote: 1 },
+      networkQuality: {
+        local: 1, // LocalParticipant's Network Quality verbosity [1 - 3]
+        remote: 2, // RemoteParticipants' Network Quality verbosity [0 - 3]
+      },
       maxAudioBitrate: Number(this.settings.maxAudioBitrate),
       preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };

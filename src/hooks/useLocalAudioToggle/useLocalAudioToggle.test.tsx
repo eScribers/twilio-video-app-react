@@ -1,29 +1,34 @@
 import { renderHook } from '@testing-library/react-hooks';
+import { LocalAudioTrack } from 'twilio-video';
+import rootStore, { RootStore } from '../../stores/makeStore';
 import useLocalAudioToggle from './useLocalAudioToggle';
-import useVideoContext from '../useVideoContext/useVideoContext';
-import { useAppState } from '../useAppState/useAppState';
 
-jest.mock('../useAppState/useAppState');
-jest.mock('../useVideoContext/useVideoContext');
 jest.mock('../useIsTrackEnabled/useIsTrackEnabled', () => () => true);
 
-const mockUseAppState = useAppState as jest.Mock<any>;
-const mockUseVideoContext = useVideoContext as jest.Mock<any>;
-
-mockUseAppState.mockImplementation(() => ({ setNotification: () => jest.fn() }));
+jest.mock('../../stores', () => {
+  return {
+    __esModule: true, // this property makes it work
+    default: rootStore,
+  };
+});
 
 describe('the useLocalAudioToggle hook', () => {
+  beforeEach(() => {
+    let newStore = new RootStore();
+    rootStore.participantStore = newStore.participantStore;
+  });
   it('should return the value from the useIsTrackEnabled hook', () => {
-    const mockLocalTrack = {
-      kind: 'audio',
+    // @ts-expect-error
+    rootStore.participantStore.setAudioTrack({
+      name: 'audio',
       isEnabled: true,
+      attach: jest.fn(),
+      detach: jest.fn(),
       enable: jest.fn(),
       disable: jest.fn(),
-    };
-
-    mockUseVideoContext.mockImplementation(() => ({
-      localTracks: [mockLocalTrack],
-    }));
+      stop: jest.fn(),
+      mediaStreamTrack: { getSettings: () => ({}) },
+    } as LocalAudioTrack);
 
     const { result } = renderHook(useLocalAudioToggle);
     expect(result.current).toEqual([true, expect.any(Function)]);
@@ -31,17 +36,19 @@ describe('the useLocalAudioToggle hook', () => {
 
   describe('toggleAudioEnabled function', () => {
     it('should call track.disable when track is enabled', () => {
+      // @ts-expect-error
       const mockLocalTrack = {
         kind: 'audio',
         isEnabled: true,
+        attach: jest.fn(),
+        detach: jest.fn(),
         enable: jest.fn(),
         disable: jest.fn(),
-      };
+        stop: jest.fn(),
+        mediaStreamTrack: { getSettings: () => ({}) },
+      } as LocalAudioTrack;
 
-      mockUseVideoContext.mockImplementation(() => ({
-        localTracks: [mockLocalTrack],
-      }));
-
+      rootStore.participantStore.setAudioTrack(mockLocalTrack);
       const { result } = renderHook(useLocalAudioToggle);
       result.current[1]();
       expect(mockLocalTrack.disable).toHaveBeenCalled();
@@ -49,16 +56,19 @@ describe('the useLocalAudioToggle hook', () => {
     });
 
     it('should call track.enable when track is disabled', () => {
+      // @ts-expect-error
       const mockLocalTrack = {
         kind: 'audio',
         isEnabled: false,
+        attach: jest.fn(),
+        detach: jest.fn(),
         enable: jest.fn(),
         disable: jest.fn(),
-      };
+        stop: jest.fn(),
+        mediaStreamTrack: { getSettings: () => ({}) },
+      } as LocalAudioTrack;
 
-      mockUseVideoContext.mockImplementation(() => ({
-        localTracks: [mockLocalTrack],
-      }));
+      rootStore.participantStore.setAudioTrack(mockLocalTrack);
 
       const { result } = renderHook(useLocalAudioToggle);
       result.current[1]();
@@ -67,10 +77,6 @@ describe('the useLocalAudioToggle hook', () => {
     });
 
     it('should not throw an error if track is undefined', () => {
-      mockUseVideoContext.mockImplementation(() => ({
-        localTracks: [],
-      }));
-
       const { result } = renderHook(useLocalAudioToggle);
       result.current[1]();
     });

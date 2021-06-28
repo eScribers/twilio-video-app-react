@@ -2,7 +2,9 @@ import React from 'react';
 import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import { Participant } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
+import { LocalParticipant } from 'twilio-video';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,16 +18,17 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IParticipantNameTag {
-  participant: Participant;
+  participant: Participant | LocalParticipant;
 }
 
-export const ParticipantNameTag = ({ participant }: IParticipantNameTag) => {
+export const ParticipantNameTag = observer(({ participant }: IParticipantNameTag) => {
   const classes = useStyles();
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
+  const { participantStore } = rootStore;
+  // const {
+  //   room: { localParticipant },
+  // } = useVideoContext();
 
-  const isLocalParticipant = participant === localParticipant;
+  const isLocalParticipant = participant.identity === participantStore.participant?.identity;
   const { partyType, isRegisteredUser, partyName } = ParticipantIdentity.Parse(participant.identity);
 
   return (
@@ -36,4 +39,4 @@ export const ParticipantNameTag = ({ participant }: IParticipantNameTag) => {
       {isLocalParticipant && ' (You)'}
     </Typography>
   );
-};
+});

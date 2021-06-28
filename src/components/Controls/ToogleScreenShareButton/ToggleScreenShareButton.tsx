@@ -1,5 +1,6 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
+import rootStore from '../../../stores';
 
 import Fab from '@material-ui/core/Fab';
 import ScreenShare from '@material-ui/icons/ScreenShare';
@@ -7,8 +8,7 @@ import StopScreenShare from '@material-ui/icons/StopScreenShare';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import useScreenShareToggle from '../../../hooks/useScreenShareToggle/useScreenShareToggle';
-import useScreenShareParticipant from '../../../hooks/useScreenShareParticipant/useScreenShareParticipant';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { observer } from 'mobx-react-lite';
 
 export const SCREEN_SHARE_TEXT = 'Share Screen';
 export const STOP_SCREEN_SHARE_TEXT = 'Stop Sharing Screen';
@@ -27,12 +27,15 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
+const ToggleScreenShareButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
-  const { room } = useVideoContext();
-  const screenShareParticipant = useScreenShareParticipant();
-  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(room, console.log);
-  const disableScreenShareButton = screenShareParticipant && screenShareParticipant !== room.localParticipant;
+  const { participantStore, roomStore } = rootStore;
+  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(roomStore.room, console.log);
+
+  const disableScreenShareButton =
+    participantStore.screenSharingInProgress &&
+    participantStore.screenShareParticipant() !== participantStore.participant;
+
   const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
   const isDisabled = props.disabled || disableScreenShareButton || !isScreenShareSupported;
 
@@ -66,4 +69,6 @@ export default function ToggleScreenShareButton(props: { disabled?: boolean }) {
       </div>
     </Tooltip>
   );
-}
+});
+
+export default ToggleScreenShareButton;

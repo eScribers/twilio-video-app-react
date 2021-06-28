@@ -15,6 +15,7 @@ import rootStore from '../../stores';
 import { TrackPublication } from 'twilio-video';
 import { LocalTrackPublication } from 'twilio-video';
 import { RemoteTrackPublication } from 'twilio-video';
+import { LocalParticipant } from 'twilio-video';
 
 const useStyles = makeStyles({
   container: {
@@ -76,7 +77,7 @@ const useStyles = makeStyles({
 });
 
 interface MainParticipantInfoProps {
-  participant: Participant;
+  participant: Participant | LocalParticipant;
   children: React.ReactNode;
 }
 

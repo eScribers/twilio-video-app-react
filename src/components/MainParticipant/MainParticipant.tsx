@@ -1,35 +1,40 @@
 import React from 'react';
 import MainParticipantInfo from '../MainParticipantInfo/MainParticipantInfo';
 import ParticipantTracks from '../ParticipantTracks/ParticipantTracks';
-import useScreenShareParticipant from '../../hooks/useScreenShareParticipant/useScreenShareParticipant';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../stores';
+import { Track } from 'twilio-video';
 
-const MainParticipant = observer(() => {
+const MainParticipant = () => {
   const { participantStore } = rootStore;
-  const { mainParticipant, participant } = participantStore;
-  const { selectedParticipant } = rootStore.participantStore;
-  const screenShareParticipant = useScreenShareParticipant();
+  const { mainParticipant, participant: localParticipant } = participantStore;
 
-  const videoPriority =
-    (mainParticipant === selectedParticipant || mainParticipant === screenShareParticipant) &&
-    mainParticipant.identity !== participantStore.participant?.identity
-      ? 'high'
-      : null;
+  let videoPriority = mainParticipant !== participantStore.participant?.identity ? 'high' : null;
+
+  if (mainParticipant === localParticipant?.identity) {
+    videoPriority = 'high';
+  }
+
+  if (!mainParticipant && typeof mainParticipant === 'string') return null;
+
+  const participant = [participantStore.participant, ...participantStore.participants].find(
+    p => p?.identity === mainParticipant
+  );
+  if (!participant) return null;
 
   return (
     /* audio is disabled for this participant component because this participant's audio 
        is already being rendered in the <ParticipantStrip /> component.  */
-    <MainParticipantInfo participant={mainParticipant}>
+    <MainParticipantInfo participant={participant}>
       <ParticipantTracks
-        participant={mainParticipant}
+        participant={participant}
         videoOnly
-        enableScreenShare={mainParticipant !== participant}
-        videoPriority={videoPriority}
-        isLocalParticipant={mainParticipant === participant}
+        enableScreenShare={mainParticipant !== localParticipant?.identity}
+        videoPriority={videoPriority as Track.Priority}
+        isLocalParticipant={mainParticipant === localParticipant?.identity}
       />
     </MainParticipantInfo>
   );
-});
+};
 
-export default MainParticipant;
+export default observer(MainParticipant);

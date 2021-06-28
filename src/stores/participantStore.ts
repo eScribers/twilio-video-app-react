@@ -1,8 +1,8 @@
 import { CreateLocalTrackOptions, LocalAudioTrack, LocalVideoTrack, LocalParticipant, Participant } from 'twilio-video';
-import { autorun, makeAutoObservable } from 'mobx';
+import { makeAutoObservable } from 'mobx';
 import sortParticipants from '../utils/sortParticipants';
 import roleChecker from '../utils/rbac/roleChecker';
-import Video, { LocalDataTrackOptions, LocalDataTrack, TwilioError } from 'twilio-video';
+import Video, { LocalDataTrack, TwilioError } from 'twilio-video';
 import { DEFAULT_VIDEO_CONSTRAINTS, SELECTED_VIDEO_INPUT_KEY } from '../constants';
 import { ParticipantIdentity } from '../utils/participantIdentity';
 import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
@@ -10,8 +10,9 @@ import axios from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { ParticipantInformation } from '../types/participantInformation';
 import moment, { Moment } from 'moment';
-import { NOTIFICATION_MESSAGE } from '../utils/displayStrings';
+import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../utils/rbac/ParticipantTypes';
+import { TrackPublication } from 'twilio-video';
 
 const query = new URLSearchParams(window.location.search);
 
@@ -38,17 +39,19 @@ class ParticipantStore {
 
   sortedParticipants: Participant[] = [];
 
-  selectedParticipant: null | LocalParticipant | Participant = null;
+  selectedParticipant: null | string = null;
 
   deviceList: MediaDeviceInfo[] = [];
 
-  dominantSpeaker: Participant | null = null;
+  dominantSpeaker: string | null = null;
 
   participantInformation: ParticipantInformation | null = null;
 
+  screenSharingInProgress: boolean = false;
+
   hasTriedAuthorisation: boolean = false;
 
-  isSilenced: boolean = false;
+  wasSilenced: boolean = false;
 
   constructor(rootStore: any) {
     this.rootStore = rootStore;
@@ -60,45 +63,25 @@ class ParticipantStore {
       this.addDataTrack();
     })();
 
-    autorun(() => {
-      if (
-        !this.participant?.identity.length ||
-        ParticipantIdentity.Parse(this.participant?.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
-      )
-        return;
-
-      if (!this.isSilenced && this.isSipClientConnected) {
-        this.rootStore.roomStore.setNotification({
-          message:
-            'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
-        });
-        console.log('You are silenced because of a zoiper call');
-        this.setIsSilenced(true);
-        if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
-      }
-      if (this.isSilenced && !this.isSipClientConnected) {
-        this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
-        console.log('Zoiper call disconnected, you are un-silenced');
-        this.setIsSilenced(false);
-      }
+    navigator.mediaDevices?.addEventListener('devicechange', () => {
+      this.getDevices();
     });
-
-    navigator.mediaDevices.addEventListener('devicechange', this.getDevices);
   }
 
   setDevices(devices: MediaDeviceInfo[]) {
-    this.deviceList = devices;
+    this.deviceList = devices || [];
   }
 
   async getDevices() {
-    await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    } catch (err) {
+      console.error('Failed to get devices!', err.message);
+      console.trace();
+      this.rootStore.roomStore.setError(err);
+    }
     const devices = await navigator.mediaDevices.enumerateDevices();
-    console.log('Got devices', devices);
     this.setDevices(devices);
-  }
-
-  setIsSilenced(state: boolean) {
-    this.isSilenced = state;
   }
 
   setParticipants(participants: Participant[]) {
@@ -106,24 +89,31 @@ class ParticipantStore {
     this.sortedParticipants = sortParticipants(participants);
   }
 
-  setParticipant(participant: LocalParticipant) {
+  setParticipant(participant?: LocalParticipant) {
     this.participant = participant;
+    if (this.dominantSpeaker === null && participant) {
+      this.setDominantSpeaker(participant.identity);
+    }
   }
 
   addParticipant(participant: Participant) {
     this.setParticipants([...this.participants, participant]);
+    if (this.dominantSpeaker === null) {
+      this.setDominantSpeaker(participant.identity);
+    }
   }
 
   removeParticipantSid(participantSid: string) {
     this.setParticipants([...this.participants.filter(p => p.sid !== participantSid)]);
   }
 
-  setSelectedParticipant(participant: Participant | LocalParticipant | undefined) {
+  setSelectedParticipant(participant: string | undefined) {
+    if (!participant) return;
     if (this.selectedParticipant === participant) {
       this.selectedParticipant = null;
       return;
     }
-    this.selectedParticipant = participant as Participant;
+    this.selectedParticipant = participant;
   }
 
   setLocalAudioTrackEnabled(state: boolean) {
@@ -144,6 +134,7 @@ class ParticipantStore {
         };
     try {
       const newTrack = await Video.createLocalAudioTrack(options);
+      if (!newTrack) throw new Error('Failed to create local audio track');
       this.setAudioTrack(newTrack);
 
       return newTrack;
@@ -164,8 +155,9 @@ class ParticipantStore {
       name: `camera-${Date.now()}`,
       ...(hasSelectedVideoDevice && { deviceId: { exact: selectedVideoDeviceId! } }),
     };
-
-    const newTrack = await Video.createLocalVideoTrack(options);
+    let newTrack;
+    newTrack = await Video.createLocalVideoTrack(options);
+    // if(newTrack)
     this.setVideoTrack(newTrack);
     return newTrack;
   }
@@ -194,7 +186,7 @@ class ParticipantStore {
   setPublishingVideoTrackInProgress(state: boolean) {
     this.publishingVideoTrackInProgress = state;
   }
-  toggleVideoEnabled() {
+  async toggleVideoEnabled() {
     if (this.publishingVideoTrackInProgress) return;
     this.setPublishingVideoTrackInProgress(true);
     if (this.localVideoTrack) {
@@ -205,18 +197,26 @@ class ParticipantStore {
       this.setVideoTrack(undefined);
       this.setPublishingVideoTrackInProgress(false);
     } else {
-      this.getLocalVideoTrack().then((track: LocalVideoTrack) => {
-        this.participant?.publishTrack(track, { priority: 'low' });
-        // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
-        // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
-        setTimeout(() => {
-          this.setPublishingVideoTrackInProgress(false);
-        }, 200);
-      });
+      let track: LocalVideoTrack;
+      try {
+        track = await this.getLocalVideoTrack();
+      } catch (err) {
+        this.rootStore.roomStore.setError(err.message);
+        return Promise.reject(err);
+      }
+
+      this.participant?.publishTrack(track, { priority: 'low' });
+      // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
+      // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
+      setTimeout(() => {
+        this.setPublishingVideoTrackInProgress(false);
+      }, 200);
+      return track;
     }
+    return false;
   }
 
-  toggleAudioEnabled() {
+  async toggleAudioEnabled() {
     if (this.localAudioTrack) {
       if (this.localAudioTrack.isEnabled) {
         this.setLocalAudioTrackEnabled(false);
@@ -224,30 +224,38 @@ class ParticipantStore {
         this.setLocalAudioTrackEnabled(true);
       }
     } else {
-      this.getLocalAudioTrack();
+      return this.getLocalAudioTrack();
       // setNotification({ message: NOTIFICATION_MESSAGE.CANNOT_RECORD_AUDIO });
     }
+    return;
   }
 
   addDataTrack() {
-    let localDataTrackOptions = {} as LocalDataTrackOptions;
-    localDataTrackOptions.maxRetransmits = 3;
-    localDataTrackOptions.ordered = true;
-    this.localDataTrack = new LocalDataTrack(localDataTrackOptions);
+    // let localDataTrackOptions = {} as LocalDataTrackOptions;
+    // localDataTrackOptions.maxRetransmits = 3;
+    // localDataTrackOptions.ordered = true;
+    // this.localDataTrack = new LocalDataTrack(localDataTrackOptions);
   }
 
-  setDominantSpeaker(participant: Participant) {
+  setDominantSpeaker(participant: string | null) {
     this.dominantSpeaker = participant;
+    if (participant === null) return;
+
+    // Reordering the participants to put the dominantSpeaker on top
+    const reorderParticipants = [...this.participants].filter(p => p.identity !== participant);
+    const foundParticipant = this.participants.find(p => p.identity === participant);
+    if (foundParticipant) {
+      this.setParticipants([foundParticipant, ...reorderParticipants]);
+    }
   }
 
   get mainParticipant() {
-    const remoteScreenShareParticipant = false;
     return (
       this.selectedParticipant ||
-      remoteScreenShareParticipant ||
+      this.screenShareParticipant()?.identity ||
       this.dominantSpeaker ||
-      this.participants[0] ||
-      this.participant
+      this.participants[0].identity ||
+      this.participant?.identity
     );
   }
 
@@ -417,6 +425,88 @@ class ParticipantStore {
 
     if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
     else window.location.replace(loginPageUrl);
+  }
+
+  setScreenSharingInProgress(state: boolean) {
+    if (this.screenSharingInProgress !== state) this.screenSharingInProgress = state;
+  }
+
+  screenShareParticipant() {
+    const isSomebodySharingScreen = [...this.participants, this.participant].find(
+      (participant: Participant | LocalParticipant | undefined) =>
+        participant &&
+        Array.from<TrackPublication>(participant.tracks.values()).find(track => {
+          if (track.trackName.includes(TRACK_TYPE.SCREEN)) {
+            return true;
+          }
+          return false;
+        })
+    );
+    if (isSomebodySharingScreen) {
+      setImmediate(() => {
+        this.setScreenSharingInProgress(true);
+      });
+    } else {
+      setImmediate(() => {
+        this.setScreenSharingInProgress(false);
+      });
+    }
+    return isSomebodySharingScreen;
+  }
+
+  get isHostIn() {
+    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    let result = false;
+    [...this.participants, this.participant].forEach(participant => {
+      if (
+        (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) ||
+        (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
+      ) {
+        result = true;
+      }
+      return;
+    });
+
+    return result;
+  }
+
+  get isReporterIn() {
+    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    let result = false;
+    [...this.participants, this.participant].forEach(participant => {
+      if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
+        result = true;
+      }
+    });
+    return result;
+  }
+
+  get isSilenced() {
+    let result = false;
+    if (
+      !this.participant?.identity ||
+      ParticipantIdentity.Parse(this.participant.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
+    ) {
+      this.wasSilenced = result;
+      return result;
+    }
+
+    if (!this.wasSilenced && this.isSipClientConnected) {
+      this.rootStore.roomStore.setNotification({
+        message:
+          'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
+      });
+      console.log('You are silenced because of a zoiper call');
+      result = true;
+      if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
+    }
+    if (this.wasSilenced && !this.isSipClientConnected) {
+      this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
+      console.log('Zoiper call disconnected, you are un-silenced');
+      result = false;
+    }
+    this.wasSilenced = result;
+    return result;
   }
 }
 

@@ -1,68 +1,32 @@
-import { act, renderHook } from '@testing-library/react-hooks';
-import EventEmitter from 'events';
-import useIsSilenced from './useIsSilenced';
-import useVideoContext from '../useVideoContext/useVideoContext';
+import { act } from '@testing-library/react-hooks';
+import { RootStore } from '../../stores/makeStore';
+import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
-import { useAppState } from '../useAppState/useAppState';
-
-jest.mock('../useVideoContext/useVideoContext');
-jest.mock('../useAppState/useAppState');
-
-const mockedVideoContext = useVideoContext as jest.Mock<any>;
-const mockUseAppState = useAppState as jest.Mock<any>;
-mockUseAppState.mockImplementation(() => ({ isSilenced: false, setIsSilenced: jest.fn() }));
-
-const mockLocalParticipant = new EventEmitter() as any;
-
-mockLocalParticipant.publishTrack = jest.fn(() => Promise.resolve('mockPublication'));
-mockLocalParticipant.unpublishTrack = jest.fn();
-
-function MockRoom() {
-  const mockRoom = new EventEmitter() as any;
-  const mockLocalParticipant = new EventEmitter() as any;
-  mockLocalParticipant.tracks = new Map();
-  mockLocalParticipant.identity = 'test@test';
-
-  mockRoom.localParticipant = mockLocalParticipant;
-  mockRoom.state = 'connected';
-  mockRoom.participants = new Map([]) as any;
-  return mockRoom;
-}
-const mockLocalTrack = {
-  kind: 'audio',
-  mediaStreamTrack: {
-    label: 'mock local audio track',
-    getSettings: () => ({ deviceId: '234' }),
-  },
-  restart: jest.fn(),
-  on: jest.fn(),
-  off: jest.fn(),
-};
-
-mockedVideoContext.mockImplementation(() => ({
-  room: MockRoom(),
-  onError: () => {},
-  localTracks: [mockLocalTrack],
-}));
 
 describe('the useIsSilenced hook', () => {
-  it('when there are no participants yet should return false', () => {
-    const { result } = renderHook(useIsSilenced);
-    console.log(result.current);
+  let roomStore: any;
+  let participantStore: any;
 
-    const [_isSilenced, setIsSilenced] = result.current;
-    expect(setIsSilenced).not.toHaveBeenCalled();
+  beforeEach(() => {
+    const rootStore = new RootStore();
+    roomStore = rootStore.roomStore;
+    participantStore = rootStore.participantStore;
   });
 
-  it('should return false when "participantConnected" is not the recorder', async () => {
-    const mockRoom = MockRoom();
-    const { result } = renderHook(useIsSilenced);
-    const [_isSilenced, setIsSilenced] = result.current;
+  it('when there are no participants yet should return false', () => {
+    expect(participantStore.isSilenced).toBe(false);
+  });
+
+  it('should return false when "participantConnected" is not the reporter', async () => {
+    let recordingParticipant = new mockParticipant(`newParticipant@${PARTICIPANT_TYPES.REPORTER_RECORDING}`);
     act(() => {
-      mockRoom.emit('participantConnected', { identity: `Reporter@${PARTICIPANT_TYPES.REPORTER_RECORDING}` });
+      participantStore.setParticipant(new mockLocalParticipant());
+      participantStore.addParticipant(recordingParticipant);
     });
-    setTimeout(() => {
-      expect(setIsSilenced).toHaveBeenCalledWith(true);
-    }, 2000);
+    expect(participantStore.isSilenced).toBe(true);
+    act(() => {
+      participantStore.removeParticipantSid(recordingParticipant.sid);
+    });
+    expect(participantStore.isSilenced).toBe(false);
   });
 });

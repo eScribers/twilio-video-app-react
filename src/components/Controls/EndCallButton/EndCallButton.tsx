@@ -1,11 +1,10 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-
 import CallEnd from '@material-ui/icons/CallEnd';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
-
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../stores';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -15,15 +14,14 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function EndCallButton() {
+const EndCallButton = observer(() => {
   const classes = useStyles();
-  const { room } = useVideoContext();
 
   return (
     <Tooltip
       id="endCall"
       title={'End Call'}
-      onClick={() => room.disconnect()}
+      onClick={() => rootStore.roomStore.room.disconnect()}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
@@ -32,4 +30,6 @@ export default function EndCallButton() {
       </Fab>
     </Tooltip>
   );
-}
+});
+
+export default EndCallButton;

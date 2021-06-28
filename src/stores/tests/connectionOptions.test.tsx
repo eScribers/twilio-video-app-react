@@ -1,11 +1,19 @@
-import { useAppState } from '../../hooks/useAppState/useAppState';
 import { Settings } from '../../state/settings/settingsReducer';
-import useConnectionOptions from './useConnectionOptions';
+import rootStore, { RootStore } from '../../stores/makeStore';
 
-const mockUseAppState = useAppState as jest.Mock<any>;
-jest.mock('../../hooks/useAppState/useAppState');
+jest.mock('../../stores', () => {
+  return {
+    __esModule: true, // this property makes it work
+    default: rootStore,
+  };
+});
 
 describe('the useConnectionOptions function', () => {
+  beforeEach(() => {
+    let newStore = new RootStore();
+    rootStore.participantStore = newStore.participantStore;
+    rootStore.roomStore = newStore.roomStore;
+  });
   it('should remove any undefined values from settings', () => {
     const settings: Settings = {
       trackSwitchOffMode: undefined,
@@ -28,12 +36,12 @@ describe('the useConnectionOptions function', () => {
       },
       dominantSpeaker: true,
       maxAudioBitrate: 0,
-      networkQuality: { local: 1, remote: 1 },
+      networkQuality: { local: 1, remote: 2 },
       preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };
 
-    mockUseAppState.mockImplementationOnce(() => ({ settings }));
-    expect(useConnectionOptions()).toEqual(result);
+    rootStore.roomStore.setSettings(settings);
+    expect(rootStore.roomStore.options).toEqual(result);
   });
 
   it('should correctly generate settings', () => {
@@ -73,45 +81,11 @@ describe('the useConnectionOptions function', () => {
       },
       dominantSpeaker: true,
       maxAudioBitrate: 0,
-      networkQuality: { local: 1, remote: 1 },
+      networkQuality: { local: 1, remote: 2 },
       preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };
 
-    mockUseAppState.mockImplementationOnce(() => ({ settings }));
-    expect(useConnectionOptions()).toEqual(result);
-  });
-
-  it('should disable simulcast when the room type is peer to peer', () => {
-    const settings: Settings = {
-      trackSwitchOffMode: 'detected',
-      dominantSpeakerPriority: 'high',
-      bandwidthProfileMode: 'collaboration',
-      maxTracks: '100',
-      maxAudioBitrate: '0',
-      renderDimensionLow: 'low',
-      renderDimensionStandard: '960p',
-      renderDimensionHigh: 'wide1080p',
-      viewMode: 'default_grid',
-    };
-
-    mockUseAppState.mockImplementationOnce(() => ({ settings, roomType: 'peer-to-peer' }));
-    expect(useConnectionOptions()).toMatchObject({ preferredVideoCodecs: [{ codec: 'VP8', simulcast: false }] });
-  });
-
-  it('should disable simulcast when the room type is "go"', () => {
-    const settings: Settings = {
-      trackSwitchOffMode: 'detected',
-      dominantSpeakerPriority: 'high',
-      bandwidthProfileMode: 'collaboration',
-      maxTracks: '100',
-      maxAudioBitrate: '0',
-      renderDimensionLow: 'low',
-      renderDimensionStandard: '960p',
-      renderDimensionHigh: 'wide1080p',
-      viewMode: 'default_grid',
-    };
-
-    mockUseAppState.mockImplementationOnce(() => ({ settings, roomType: 'go' }));
-    expect(useConnectionOptions()).toMatchObject({ preferredVideoCodecs: [{ codec: 'VP8', simulcast: false }] });
+    rootStore.roomStore.setSettings(settings);
+    expect(rootStore.roomStore.options).toEqual(result);
   });
 });

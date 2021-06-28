@@ -33,17 +33,20 @@ const ParticipantStripCollaboration = observer(() => {
       <ScrollContainer>
         <Participant
           participant={participantStore.participant}
-          isSelected={selectedParticipant === participantStore.participant}
-          onClick={() => participantStore.setSelectedParticipant(participantStore.participant)}
+          isSelected={selectedParticipant === participantStore.participant.identity}
+          onClick={() =>
+            participantStore.participant &&
+            participantStore.setSelectedParticipant(participantStore.participant.identity)
+          }
         />
         {sortedParticipants.map(participant => (
           <Participant
             key={participant.sid}
-            isDominantSpeaker={participant.identity === dominantSpeaker?.identity}
+            isDominantSpeaker={participant.identity === dominantSpeaker}
             participant={participant}
-            isSelected={selectedParticipant === participant}
+            isSelected={selectedParticipant === participant.identity}
             userIsSilenced={!!participantStore.isSilenced}
-            onClick={() => participantStore.setSelectedParticipant(participant)}
+            onClick={() => participantStore.setSelectedParticipant(participant.identity)}
           />
         ))}
       </ScrollContainer>

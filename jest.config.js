@@ -8,4 +8,9 @@ module.exports = {
   snapshotSerializers: ['enzyme-to-json/serializer'],
   setupFiles: ['<rootDir>/src/setupTests.ts'],
   reporters: ['default', 'jest-junit'],
+  globals: {
+    'ts-jest': {
+      diagnostics: false,
+    },
+  },
 };

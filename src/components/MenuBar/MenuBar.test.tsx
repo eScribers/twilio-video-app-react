@@ -7,7 +7,7 @@ const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
 jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../hooks/useRoomState/useRoomState');
+// jest.mock('../../hooks/useRoomState/useRoomState');
 jest.mock('react-alert');
 
 global.alert = jest.fn();
@@ -112,6 +112,10 @@ describe('the MenuBar component', () => {
   //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'Foo' } });
   //   expect(getByText('Join Room')).toBeDisabled();
   // });
+
+  // TEST if nothing happens when isAcquiringLocalTracks and trying to call acquire again
+
+  // TEST if theres an error shown when we have an error creating tracks
 
   // it('should update the URL to include the room name on submit', () => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
