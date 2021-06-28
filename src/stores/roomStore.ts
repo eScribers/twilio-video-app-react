@@ -114,8 +114,12 @@ class RoomStore {
         // updateScreenShareParticipant();
       };
 
-      const handleRoomReconnecting = () => (this.room.state = 'reconnecting');
-      const handleRoomReconnected = () => (this.room.state = 'connected');
+      const handleRoomReconnecting = () => {
+        this.room.state = 'reconnecting';
+      };
+      const handleRoomReconnected = () => {
+        this.room.state = 'connected';
+      };
 
       this.setRoom(newRoom);
 

@@ -63,7 +63,9 @@ class ParticipantStore {
       this.addDataTrack();
     })();
 
-    navigator.mediaDevices?.addEventListener('devicechange', this.getDevices);
+    navigator.mediaDevices?.addEventListener('devicechange', () => {
+      this.getDevices();
+    });
   }
 
   setDevices(devices: MediaDeviceInfo[]) {
