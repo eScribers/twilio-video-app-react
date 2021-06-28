@@ -5,7 +5,7 @@ import Video, { Room, ConnectOptions, TwilioError, RemoteParticipant } from 'twi
 import { isMobile, removeUndefineds } from '../utils';
 import { getResolution } from '../state/settings/renderDimensions';
 import { Settings, initialSettings } from '../state/settings/settingsReducer';
-import { Callback, IConfig, INotification } from '../types';
+import { IConfig, INotification } from '../types';
 import UAParser from 'ua-parser-js';
 import { Howl } from 'howler';
 
