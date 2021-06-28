@@ -73,7 +73,13 @@ class ParticipantStore {
   }
 
   async getDevices() {
-    await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
+    } catch (err) {
+      console.error('Failed to get devices!', err.message);
+      console.trace();
+      this.rootStore.roomStore.setError(err);
+    }
     const devices = await navigator.mediaDevices.enumerateDevices();
     this.setDevices(devices);
   }

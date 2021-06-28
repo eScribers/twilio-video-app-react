@@ -44,12 +44,14 @@ describe('the useLocalTracks hook', () => {
       await rootStore.participantStore.toggleAudioEnabled();
       await rootStore.participantStore.toggleVideoEnabled();
     });
-    expect(rootStore.participantStore.getLocalAudioTrack).toHaveBeenCalled();
+    expect(rootStore.participantStore.localAudioTrack).not.toBe(undefined);
     expect(rootStore.participantStore.getLocalVideoTrack).not.toHaveBeenCalled();
   });
 
   it('should create a local video track when no audio devices are present', async () => {
+    (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the store initialization
     const rootStore = new RootStore();
+    (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the test itself
     rootStore.participantStore.setParticipant(new mockLocalParticipant());
     if (!rootStore.participantStore.participant) throw new Error('No local participant detected');
     jest.spyOn(rootStore.participantStore, 'setAudioTrack');
@@ -60,12 +62,16 @@ describe('the useLocalTracks hook', () => {
       await rootStore.participantStore.toggleVideoEnabled();
     });
     expect(rootStore.participantStore.getLocalVideoTrack).toHaveBeenCalled();
-    expect(rootStore.participantStore.setAudioTrack).not.toHaveBeenCalled();
+    expect(rootStore.participantStore.localAudioTrack).toBe(undefined);
   });
 
   it('should not create any tracks when no input devices are present', async () => {
     (Video.createLocalVideoTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve());
+    (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the store initialization
     const rootStore = new RootStore();
+    expect(rootStore.participantStore.localAudioTrack).toBe(undefined);
+    (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the test itself
+
     rootStore.participantStore.setParticipant(new mockLocalParticipant());
     if (!rootStore.participantStore.participant) throw new Error('No local participant detected');
     jest.spyOn(rootStore.participantStore, 'setAudioTrack');
@@ -74,8 +80,9 @@ describe('the useLocalTracks hook', () => {
       await rootStore.participantStore.toggleAudioEnabled();
       await rootStore.participantStore.toggleVideoEnabled();
     });
+
     expect(rootStore.participantStore.localVideoTrack).toBe(undefined);
-    expect(rootStore.participantStore.setAudioTrack).not.toHaveBeenCalled();
+    expect(rootStore.participantStore.localAudioTrack).toBe(undefined);
   });
 
   it('should return an error when there is an error creating a track', async () => {
