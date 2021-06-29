@@ -5,9 +5,13 @@ import Video, { Room, ConnectOptions, TwilioError, RemoteParticipant } from 'twi
 import { isMobile, removeUndefineds } from '../utils';
 import { getResolution } from '../state/settings/renderDimensions';
 import { Settings, initialSettings } from '../state/settings/settingsReducer';
-import { Callback, IConfig, INotification } from '../types';
+import { IConfig, INotification } from '../types';
 import UAParser from 'ua-parser-js';
 import { Howl } from 'howler';
+import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
+import roleChecker from '../utils/rbac/roleChecker';
+import { ParticipantIdentity } from '../utils/participantIdentity';
+import axios from 'axios';
 
 class RoomStore {
   rootStore: any;
@@ -146,6 +150,36 @@ class RoomStore {
       this.setIsConnecting(false);
     }
     return;
+  }
+
+  async endConference() {
+    if (!this.rootStore.participantStore.participant?.identity)
+      throw new Error("Participant not connected, can't end conference");
+    const role = ParticipantIdentity.Parse(this.rootStore.participantStore.participant.identity).partyType;
+    const canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
+
+    if (!canEndConference || !role) throw new Error('No permission to end conference');
+
+    try {
+      const participantAuthToken = window.location.hash.substr(1);
+      const url = `${this.rootStore.roomStore.config.endPoint}/end-conference`;
+
+      const response = await axios({
+        url: url,
+        method: 'POST',
+        headers: {
+          Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
+        },
+        data: {
+          roomSid: this.room.sid,
+        },
+      });
+    } catch (err) {
+      console.error('Got error while trying to end conference,', err.message);
+      return false;
+    }
+
+    return true;
   }
 
   setNotification(notification: INotification) {

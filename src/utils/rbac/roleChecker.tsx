@@ -33,9 +33,11 @@ export default class roleChecker {
         (role === PARTICIPANT_TYPES.HEARING_OFFICER && remoteRole !== PARTICIPANT_TYPES.REPORTER) ||
         (role === PARTICIPANT_TYPES.REPORTER && remoteRole !== PARTICIPANT_TYPES.HEARING_OFFICER)
       );
-    } else {
-      return true;
     }
+    if (permission === ROLE_PERMISSIONS.END_CONFERENCE) {
+      return role === PARTICIPANT_TYPES.HEARING_OFFICER || role === PARTICIPANT_TYPES.REPORTER;
+    }
+    return true;
   }
 
   static getPossibleRole() {

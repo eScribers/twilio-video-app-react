@@ -18,6 +18,7 @@ export class MockTrack extends EventEmitter {
   stop = jest.fn();
   enable = jest.fn();
   disable = jest.fn();
+  disconnect = jest.fn();
   isEnabled = true;
 
   constructor(kind: string) {
