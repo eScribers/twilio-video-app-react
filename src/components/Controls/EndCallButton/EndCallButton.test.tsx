@@ -7,12 +7,11 @@ import { mockRoom } from '../../../__mocks__/twilio-video';
 
 describe('End Call button', () => {
   it('should disconnect from the room when clicked', () => {
-    // @ts-expect-error
-    rootStore.roomStore.room = mockRoom;
+    rootStore.roomsStore.room = mockRoom;
 
-    if (rootStore.roomStore.room) jest.spyOn(rootStore.roomStore.room, 'disconnect');
+    if (rootStore.roomsStore.room) jest.spyOn(rootStore.roomsStore.room, 'disconnect');
     const wrapper = shallow(<EndCallButton />);
     wrapper.simulate('click');
-    expect(rootStore.roomStore.room.disconnect).toHaveBeenCalled();
+    expect(rootStore.roomsStore.room.disconnect).toHaveBeenCalled();
   });
 });

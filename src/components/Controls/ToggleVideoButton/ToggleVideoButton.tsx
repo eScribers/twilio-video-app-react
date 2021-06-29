@@ -18,8 +18,8 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 const ToggleVideoButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
-  const { participantStore } = rootStore;
-  const localParticipant = participantStore.participant;
+  const { participantsStore } = rootStore;
+  const localParticipant = participantsStore.participant;
   const [, setDisabled] = useState(false);
   function handleVideoTrackPublishUnpublishInProgress(inProgress: any) {
     setDisabled(inProgress);
@@ -37,18 +37,18 @@ const ToggleVideoButton = observer((props: { disabled?: boolean }) => {
 
   return (
     <Tooltip
-      title={participantStore.localVideoTrack ? 'Video off' : 'Video on'}
+      title={participantsStore.localVideoTrack ? 'Video off' : 'Video on'}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >
       <Fab
         className={classes.fab}
         onClick={() => {
-          participantStore.toggleVideoEnabled();
+          participantsStore.toggleVideoEnabled();
         }}
         disabled={props.disabled}
       >
-        {participantStore.localVideoTrack ? <Videocam /> : <VideocamOff />}
+        {participantsStore.localVideoTrack ? <Videocam /> : <VideocamOff />}
       </Fab>
     </Tooltip>
   );

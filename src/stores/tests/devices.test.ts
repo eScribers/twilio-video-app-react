@@ -8,21 +8,21 @@ let mockDevices = [
 ];
 
 describe('the useDevices hook', () => {
-  let roomStore: any;
-  let participantStore: any;
+  let roomsStore: any;
+  let participantsStore: any;
 
   beforeEach(() => {
     const rootStore = new RootStore();
-    roomStore = rootStore.roomStore;
-    participantStore = rootStore.participantStore;
+    roomsStore = rootStore.roomsStore;
+    participantsStore = rootStore.participantsStore;
   });
 
   it('should correctly return a list of audio input devices', async () => {
     act(() => {
-      participantStore.setDevices(mockDevices);
+      participantsStore.setDevices(mockDevices);
     });
 
-    expect(participantStore.devices).toMatchInlineSnapshot(`
+    expect(participantsStore.devices).toMatchInlineSnapshot(`
       Object {
         "audioInputDevices": Array [
           Object {
@@ -61,7 +61,7 @@ describe('the useDevices hook', () => {
         ]);
     });
     setTimeout(() => {
-      expect(participantStore.devices.hasAudioInputDevices).toBe(false);
+      expect(participantsStore.devices.hasAudioInputDevices).toBe(false);
     });
   });
 
@@ -75,7 +75,7 @@ describe('the useDevices hook', () => {
         ]);
     });
     setTimeout(() => {
-      expect(participantStore.devices.hasVideoInputDevices).toBe(false);
+      expect(participantsStore.devices.hasVideoInputDevices).toBe(false);
     }, 50);
   });
 
@@ -83,7 +83,7 @@ describe('the useDevices hook', () => {
     // @ts-ignore
     navigator.mediaDevices.enumerateDevices = () => Promise.resolve(mockDevices);
     setTimeout(() => {
-      expect(participantStore.setDevices).toHaveBeenCalledWith(mockDevices);
+      expect(participantsStore.setDevices).toHaveBeenCalledWith(mockDevices);
     }, 200);
 
     act(() => {
@@ -92,7 +92,7 @@ describe('the useDevices hook', () => {
         Promise.resolve([{ deviceId: 2, label: '2', kind: 'audioinput' }]);
     });
     setTimeout(() => {
-      expect(participantStore.devices.audioInputDevices).toEqual([{ deviceId: 2, label: '2', kind: 'audioinput' }]);
+      expect(participantsStore.devices.audioInputDevices).toEqual([{ deviceId: 2, label: '2', kind: 'audioinput' }]);
     }, 50);
   });
 });

@@ -21,9 +21,9 @@ const useStyles = makeStyles({
 
 const VideoInputList = observer(() => {
   const classes = useStyles();
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
 
-  const localVideoTrack = participantStore.localTracks.find(track => track?.kind === 'video') as
+  const localVideoTrack = participantsStore.localTracks.find(track => track?.kind === 'video') as
     | LocalVideoTrack
     | undefined;
   const mediaStreamTrack = useMediaStreamTrack(localVideoTrack);
@@ -50,7 +50,7 @@ const VideoInputList = observer(() => {
           <VideoTrack isLocal track={localVideoTrack} />
         </div>
       )}
-      {participantStore.devices.videoInputDevices.length > 1 ? (
+      {participantsStore.devices.videoInputDevices.length > 1 ? (
         <FormControl fullWidth>
           <Typography variant="subtitle2" gutterBottom>
             Video Input
@@ -60,7 +60,7 @@ const VideoInputList = observer(() => {
             value={localVideoInputDeviceId || ''}
             variant="outlined"
           >
-            {participantStore.devices.videoInputDevices.map(device => (
+            {participantsStore.devices.videoInputDevices.map(device => (
               <MenuItem value={device.deviceId} key={device.deviceId}>
                 {device.label}
               </MenuItem>

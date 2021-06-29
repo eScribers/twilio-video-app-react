@@ -22,12 +22,12 @@ const mockUseScreenShareToggle = useScreenShareToggle as jest.Mock<any>;
 describe('the ToggleScreenShareButton component', () => {
   beforeEach(() => {
     const newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
-    rootStore.roomStore = newStore.roomStore;
+    rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore = newStore.roomsStore;
   });
 
   it('should render correctly when screenSharing is allowed', () => {
-    rootStore.roomStore.room.state = ROOM_STATE.CONNECTED;
+    rootStore.roomsStore.room.state = ROOM_STATE.CONNECTED;
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     const wrapper = shallow(<ToggleScreenShareButton />);
     expect(wrapper.find(ScreenShare).exists()).toBe(true);
@@ -42,12 +42,12 @@ describe('the ToggleScreenShareButton component', () => {
   });
 
   it('should render correctly when another user is sharing their screen', () => {
-    rootStore.roomStore.room.state = ROOM_STATE.CONNECTED;
+    rootStore.roomsStore.room.state = ROOM_STATE.CONNECTED;
     let participant = new mockParticipant();
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-    rootStore.participantStore.addParticipant(participant);
+    rootStore.participantsStore.addParticipant(participant);
 
-    rootStore.participantStore.setScreenSharingInProgress(true);
+    rootStore.participantsStore.setScreenSharingInProgress(true);
 
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     const wrapper = shallow(<ToggleScreenShareButton />);

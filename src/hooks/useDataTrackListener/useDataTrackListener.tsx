@@ -9,7 +9,7 @@ import { IMuteRemoteParticipantMessage } from '../../types';
 
 export default function useDataTrackListener() {
   const { room } = useVideoContext();
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
 
   useEffect(() => {
     const handleRemoteParticipant = (participant: RemoteParticipant) => {
@@ -39,7 +39,7 @@ export default function useDataTrackListener() {
         console.log(
           `Received mute participant message for this participant (${room.localParticipant.sid}). Disabling/Muting local audio track`
         );
-        // const audioTrack = participantStore.localTracks.find(x => x?.kind === TRACK_TYPE.AUDIO);
+        // const audioTrack = participantsStore.localTracks.find(x => x?.kind === TRACK_TYPE.AUDIO);
         // audioTrack?.disable();
       }
     }
@@ -54,5 +54,5 @@ export default function useDataTrackListener() {
     return () => {
       room.off('participantConnected', handleRemoteParticipant);
     };
-  }, [room, participantStore]);
+  }, [room, participantsStore]);
 }

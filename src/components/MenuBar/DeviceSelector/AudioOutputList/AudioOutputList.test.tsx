@@ -28,10 +28,10 @@ const mockDevice: MediaDeviceInfo = {
 describe('the AudioOutputList component', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
+    rootStore.participantsStore = newStore.participantsStore;
   });
   it('should display the name of the active output device if only one is available', () => {
-    rootStore.participantStore.setDevices([mockDevice]);
+    rootStore.participantsStore.setDevices([mockDevice]);
     const wrapper = shallow(<AudioOutputList />);
     expect(wrapper.find(Select).exists()).toBe(false);
     expect(
@@ -54,7 +54,7 @@ describe('the AudioOutputList component', () => {
   });
 
   it('should display a Select menu when multiple audio output devices are available', () => {
-    rootStore.participantStore.setDevices([mockDevice, mockDevice]);
+    rootStore.participantsStore.setDevices([mockDevice, mockDevice]);
     const wrapper = shallow(<AudioOutputList />);
     expect(wrapper.find(Select).exists()).toBe(true);
   });

@@ -36,20 +36,20 @@ describe('the AttachVisibilityHandler component', () => {
     });
 
     it('should correctly toggle video when it is already enabled', () => {
-      jest.spyOn(rootStore.participantStore, 'toggleVideoEnabled');
+      jest.spyOn(rootStore.participantsStore, 'toggleVideoEnabled');
       render(<AttachVisibilityHandler />);
 
       // @ts-ignore
       document.visibilityState = 'hidden';
       document.dispatchEvent(new Event('visibilitychange'));
-      expect(rootStore.participantStore.toggleVideoEnabled).toHaveBeenCalled();
+      expect(rootStore.participantsStore.toggleVideoEnabled).toHaveBeenCalled();
 
       jest.clearAllMocks();
 
       // @ts-ignore
       document.visibilityState = 'visible';
       document.dispatchEvent(new Event('visibilitychange'));
-      expect(rootStore.participantStore.toggleVideoEnabled).toHaveBeenCalled();
+      expect(rootStore.participantsStore.toggleVideoEnabled).toHaveBeenCalled();
     });
 
     it('should correctly toggle video when it is already disabled', () => {

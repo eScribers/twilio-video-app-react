@@ -83,8 +83,8 @@ interface MainParticipantInfoProps {
 
 const MainParticipantInfo = observer(({ participant, children }: MainParticipantInfoProps) => {
   const classes = useStyles();
-  const { participantStore } = rootStore;
-  const isLocal = participantStore.participant?.identity === participant?.identity;
+  const { participantsStore } = rootStore;
+  const isLocal = participantsStore.participant?.identity === participant?.identity;
 
   const publications = Array.from(participant.tracks.values()) as TrackPublication[];
   const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA)) as

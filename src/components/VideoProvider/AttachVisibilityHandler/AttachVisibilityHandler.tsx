@@ -14,11 +14,11 @@ import rootStore from '../../../stores';
 */
 
 const AttachVisibilityHandler = observer(() => {
-  const { participantStore, roomStore } = rootStore;
+  const { participantsStore, roomsStore } = rootStore;
   const shouldRepublishVideoOnForeground = useRef(false);
 
-  const room = roomStore.room;
-  const isVideoEnabled = participantStore.localVideoTrack;
+  const room = roomsStore.room;
+  const isVideoEnabled = participantsStore.localVideoTrack;
 
   useEffect(() => {
     if (isMobile) {
@@ -26,12 +26,12 @@ const AttachVisibilityHandler = observer(() => {
         // We don't need to unpublish the local video track if it has already been unpublished
         if (document.visibilityState === 'hidden' && isVideoEnabled) {
           shouldRepublishVideoOnForeground.current = true;
-          participantStore.toggleVideoEnabled();
+          participantsStore.toggleVideoEnabled();
 
           // Don't publish the local video track if it wasn't published before the app was backgrounded
         } else if (shouldRepublishVideoOnForeground.current) {
           shouldRepublishVideoOnForeground.current = false;
-          participantStore.toggleVideoEnabled();
+          participantsStore.toggleVideoEnabled();
         }
       };
 
@@ -40,7 +40,7 @@ const AttachVisibilityHandler = observer(() => {
         document.removeEventListener('visibilitychange', handleVisibilityChange);
       };
     }
-  }, [isVideoEnabled, room, participantStore]);
+  }, [isVideoEnabled, room, participantsStore]);
 
   return null;
 });

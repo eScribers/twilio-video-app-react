@@ -16,7 +16,7 @@ import { TrackPublication } from 'twilio-video';
 
 const query = new URLSearchParams(window.location.search);
 
-class ParticipantStore {
+class participantsStore {
   rootStore: any;
 
   userToken?: string;
@@ -78,7 +78,7 @@ class ParticipantStore {
     } catch (err) {
       console.error('Failed to get devices!', err.message);
       console.trace();
-      this.rootStore.roomStore.setError(err);
+      this.rootStore.roomsStore.setError(err);
     }
     const devices = await navigator.mediaDevices.enumerateDevices();
     this.setDevices(devices);
@@ -201,7 +201,7 @@ class ParticipantStore {
       try {
         track = await this.getLocalVideoTrack();
       } catch (err) {
-        this.rootStore.roomStore.setError(err.message);
+        this.rootStore.roomsStore.setError(err.message);
         return Promise.reject(err);
       }
 
@@ -326,12 +326,12 @@ class ParticipantStore {
   }
 
   async authoriseParticipant() {
-    if (!this.rootStore.roomStore.config.loaded)
+    if (!this.rootStore.roomsStore.config.loaded)
       return console.log("Tried authorizing participant but config hasn't loaded yet");
     if (this.hasTriedAuthorisation) return console.log('Tried to authorize participant but it was already authorized');
 
     const participantAuthToken = window.location.hash.substr(1);
-    const url = `${this.rootStore.roomStore.config.endPoint}/authorise-participant`;
+    const url = `${this.rootStore.roomsStore.config.endPoint}/authorise-participant`;
     console.log('attempting authorise ' + new Date().toLocaleTimeString());
     this.setHasTriedAuthorisation(true);
 
@@ -349,7 +349,7 @@ class ParticipantStore {
       return data.participantInfo;
     } catch (err) {
       console.log('Authorization failed: ', err.message);
-      this.rootStore.roomStore.setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
+      this.rootStore.roomsStore.setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
     }
 
     return false;
@@ -368,11 +368,11 @@ class ParticipantStore {
   }
 
   async getToken(participantInformation: ParticipantInformation) {
-    if (!this.rootStore.roomStore.config.loaded) return null;
+    if (!this.rootStore.roomsStore.config.loaded) return null;
     try {
       this.setIsFetchingToken(true);
       const participantAuthToken = window.location.hash.substr(1);
-      const url = `${this.rootStore.roomStore.config.endPoint}/token`;
+      const url = `${this.rootStore.roomsStore.config.endPoint}/token`;
       const { data: res } = await axios({
         url: url,
         method: 'POST',
@@ -409,7 +409,7 @@ class ParticipantStore {
   }
 
   async disconnectParticipant() {
-    const config = this.rootStore.roomStore.config;
+    const config = this.rootStore.roomsStore.config;
     if (!config.loaded || !this.participant) return null;
     const returnUrl = query.get('returnUrl');
 
@@ -455,7 +455,7 @@ class ParticipantStore {
   }
 
   get isHostIn() {
-    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
     let result = false;
     [...this.participants, this.participant].forEach(participant => {
       if (
@@ -471,7 +471,7 @@ class ParticipantStore {
   }
 
   get isReporterIn() {
-    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
     let result = false;
     [...this.participants, this.participant].forEach(participant => {
       if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
@@ -492,7 +492,7 @@ class ParticipantStore {
     }
 
     if (!this.wasSilenced && this.isSipClientConnected) {
-      this.rootStore.roomStore.setNotification({
+      this.rootStore.roomsStore.setNotification({
         message:
           'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
       });
@@ -501,7 +501,7 @@ class ParticipantStore {
       if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
     }
     if (this.wasSilenced && !this.isSipClientConnected) {
-      this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
+      this.rootStore.roomsStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
       console.log('Zoiper call disconnected, you are un-silenced');
       result = false;
     }
@@ -510,4 +510,4 @@ class ParticipantStore {
   }
 }
 
-export default ParticipantStore;
+export default participantsStore;

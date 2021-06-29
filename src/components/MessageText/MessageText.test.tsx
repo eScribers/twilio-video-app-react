@@ -6,11 +6,11 @@ import rootStore from '../../stores';
 
 describe('the MenuBar component', () => {
   it('should pop a message on load', () => {
-    const { roomStore } = rootStore;
-    jest.spyOn(roomStore, 'setNotification');
+    const { roomsStore } = rootStore;
+    jest.spyOn(roomsStore, 'setNotification');
 
     const message = 'Test text!';
     mount(<MessageText defaultMessage={Base64.encode(message)} />);
-    expect(roomStore.setNotification).toHaveBeenCalledWith({ message });
+    expect(roomsStore.setNotification).toHaveBeenCalledWith({ message });
   });
 });

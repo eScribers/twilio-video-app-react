@@ -15,11 +15,11 @@ jest.mock('../../stores', () => {
 describe('the useLocalAudioToggle hook', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
+    rootStore.participantsStore = newStore.participantsStore;
   });
   it('should return the value from the useIsTrackEnabled hook', () => {
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack({
+    rootStore.participantsStore.setAudioTrack({
       name: 'audio',
       isEnabled: true,
       attach: jest.fn(),
@@ -48,7 +48,7 @@ describe('the useLocalAudioToggle hook', () => {
         mediaStreamTrack: { getSettings: () => ({}) },
       } as LocalAudioTrack;
 
-      rootStore.participantStore.setAudioTrack(mockLocalTrack);
+      rootStore.participantsStore.setAudioTrack(mockLocalTrack);
       const { result } = renderHook(useLocalAudioToggle);
       result.current[1]();
       expect(mockLocalTrack.disable).toHaveBeenCalled();
@@ -68,7 +68,7 @@ describe('the useLocalAudioToggle hook', () => {
         mediaStreamTrack: { getSettings: () => ({}) },
       } as LocalAudioTrack;
 
-      rootStore.participantStore.setAudioTrack(mockLocalTrack);
+      rootStore.participantsStore.setAudioTrack(mockLocalTrack);
 
       const { result } = renderHook(useLocalAudioToggle);
       result.current[1]();

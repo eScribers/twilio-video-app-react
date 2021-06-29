@@ -9,9 +9,9 @@ export const selectedParticipantContext = createContext<selectedParticipantConte
 
 export default function useSelectedParticipant() {
   const setSelectedParticipant = participant => {
-    rootStore.participantStore.setSelectedParticipant(participant);
+    rootStore.participantsStore.setSelectedParticipant(participant);
   };
-  return [rootStore.participantStore.selectedParticipant, setSelectedParticipant];
+  return [rootStore.participantsStore.selectedParticipant, setSelectedParticipant];
 }
 
 // type SelectedParticipantProviderProps = {

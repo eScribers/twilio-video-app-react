@@ -35,8 +35,8 @@ const alertProviderOptions = {
 const logger: LogglyTracker = new LogglyTracker();
 const VideoApp = observer(() => {
   const { setIsAutoRetryingToJoinRoom, setWaitingNotification, waitingNotification } = useAppState();
-  const { roomStore } = rootStore;
-  const { notifications } = roomStore;
+  const { roomsStore } = rootStore;
+  const { notifications } = roomsStore;
 
   useEffect(() => {
     logger.push({
@@ -75,11 +75,11 @@ const VideoApp = observer(() => {
   return (
     <VideoProvider>
       {notifications?.[0]?.type !== 'error' ? null : (
-        <ErrorDialog dismissError={() => roomStore.dismissNotfication(notifications[0])} error={notifications[0]} />
+        <ErrorDialog dismissError={() => roomsStore.dismissNotfication(notifications[0])} error={notifications[0]} />
       )}
       {notifications?.[0]?.type !== 'notification' ? null : (
         <NotificationDialog
-          dismissNotification={() => roomStore.dismissNotfication(notifications[0])}
+          dismissNotification={() => roomsStore.dismissNotfication(notifications[0])}
           notification={notifications[0]}
         />
       )}

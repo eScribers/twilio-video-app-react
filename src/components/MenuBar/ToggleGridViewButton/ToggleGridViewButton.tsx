@@ -8,8 +8,8 @@ import { observer } from 'mobx-react-lite';
 import rootStore from '../../../stores';
 
 const ToggleGridViewButton = observer(() => {
-  const { roomStore } = rootStore;
-  const { settings } = roomStore;
+  const { roomsStore } = rootStore;
+  const { settings } = roomsStore;
   const [forceCollaboration, setForceCollaboration] = useState(false);
   const { width } = useWindowSize();
 
@@ -17,14 +17,14 @@ const ToggleGridViewButton = observer(() => {
     const indexOfCurrMode = ViewModeArray.indexOf(settings.viewMode);
     const indexOfNextMode = indexOfCurrMode + 1 < ViewModeArray.length ? indexOfCurrMode + 1 : 0;
     const nextView = ViewModeArray[indexOfNextMode];
-    roomStore.setSetting('viewMode' as keyof Settings, nextView);
+    roomsStore.setSetting('viewMode' as keyof Settings, nextView);
   };
 
   useEffect(() => {
     if (forceCollaboration === false) {
       if (width && width < 768) {
         setForceCollaboration(true);
-        roomStore.setSetting('viewMode' as keyof Settings, 'collaboration');
+        roomsStore.setSetting('viewMode' as keyof Settings, 'collaboration');
       }
     }
     if (forceCollaboration === true) {

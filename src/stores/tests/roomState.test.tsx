@@ -13,65 +13,65 @@ describe('the useRoomState hook', () => {
       };
     });
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
-    rootStore.roomStore = newStore.roomStore;
+    rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore = newStore.roomsStore;
   });
 
   it('should return "disconnected" by default', () => {
-    expect(rootStore.roomStore.room.state).toBe(undefined);
+    expect(rootStore.roomsStore.room.state).toBe(undefined);
   });
 
   it('should return "connected" if the room state is connected', async () => {
     await act(async () => {
-      unmountRoom = await rootStore.roomStore.joinRoom('');
-      rootStore.roomStore.room.state = 'connected';
+      unmountRoom = await rootStore.roomsStore.joinRoom('');
+      rootStore.roomsStore.room.state = 'connected';
     });
-    expect(rootStore.roomStore.room.state).toBe('connected');
+    expect(rootStore.roomsStore.room.state).toBe('connected');
   });
 
   it('should respond to the rooms "reconnecting" event', async () => {
     await act(async () => {
-      unmountRoom = await rootStore.roomStore.joinRoom('');
-      rootStore.roomStore.room.state = 'reconnecting';
-      rootStore.roomStore.room.emit('reconnecting');
+      unmountRoom = await rootStore.roomsStore.joinRoom('');
+      rootStore.roomsStore.room.state = 'reconnecting';
+      rootStore.roomsStore.room.emit('reconnecting');
     });
-    expect(rootStore.roomStore.room.state).toBe('reconnecting');
+    expect(rootStore.roomsStore.room.state).toBe('reconnecting');
   });
 
   it('should respond to the rooms "reconnected" event', async () => {
     await act(async () => {
-      unmountRoom = await rootStore.roomStore.joinRoom('');
-      rootStore.roomStore.room.state = 'connected';
-      rootStore.roomStore.room.emit('reconnected');
+      unmountRoom = await rootStore.roomsStore.joinRoom('');
+      rootStore.roomsStore.room.state = 'connected';
+      rootStore.roomsStore.room.emit('reconnected');
     });
-    expect(rootStore.roomStore.room.state).toBe('connected');
+    expect(rootStore.roomsStore.room.state).toBe('connected');
   });
 
   it('should respond to the rooms "disconnected" event', async () => {
     await act(async () => {
-      unmountRoom = await rootStore.roomStore.joinRoom('');
-      rootStore.roomStore.room.state = 'disconnected';
-      rootStore.roomStore.room.emit('disconnected');
+      unmountRoom = await rootStore.roomsStore.joinRoom('');
+      rootStore.roomsStore.room.state = 'disconnected';
+      rootStore.roomsStore.room.emit('disconnected');
     });
-    expect(rootStore.roomStore.room.state).toBe('disconnected');
+    expect(rootStore.roomsStore.room.state).toBe('disconnected');
   });
 
   it('tear down old listeners when receiving a new room', async () => {
     rootStore = require('../../stores').default;
     await act(async () => {
-      unmountRoom = await rootStore.roomStore.joinRoom('');
+      unmountRoom = await rootStore.roomsStore.joinRoom('');
     });
 
-    expect(rootStore.roomStore.room.listenerCount('disconnected')).toBe(1);
-    expect(rootStore.roomStore.room.listenerCount('reconnected')).toBe(1);
-    expect(rootStore.roomStore.room.listenerCount('reconnecting')).toBe(1);
+    expect(rootStore.roomsStore.room.listenerCount('disconnected')).toBe(1);
+    expect(rootStore.roomsStore.room.listenerCount('reconnected')).toBe(1);
+    expect(rootStore.roomsStore.room.listenerCount('reconnecting')).toBe(1);
 
     act(() => {
       unmountRoom && unmountRoom();
     });
 
-    expect(rootStore.roomStore.room.listenerCount('disconnected')).toBe(0);
-    expect(rootStore.roomStore.room.listenerCount('reconnected')).toBe(0);
-    expect(rootStore.roomStore.room.listenerCount('reconnecting')).toBe(0);
+    expect(rootStore.roomsStore.room.listenerCount('disconnected')).toBe(0);
+    expect(rootStore.roomsStore.room.listenerCount('reconnected')).toBe(0);
+    expect(rootStore.roomsStore.room.listenerCount('reconnecting')).toBe(0);
   });
 });

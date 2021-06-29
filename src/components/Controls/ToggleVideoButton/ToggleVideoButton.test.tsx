@@ -10,7 +10,7 @@ import { LocalVideoTrack } from 'twilio-video';
 
 describe('the ToggleVideoButton component', () => {
   it('should render correctly when video is enabled', () => {
-    rootStore.participantStore.localVideoTrack = {} as LocalVideoTrack;
+    rootStore.participantsStore.localVideoTrack = {} as LocalVideoTrack;
     const wrapper = shallow(<ToggleVideoButton />);
     expect(wrapper.find(Videocam).exists()).toBe(true);
     expect(wrapper.find(VideocamOff).exists()).toBe(false);
@@ -18,7 +18,7 @@ describe('the ToggleVideoButton component', () => {
   });
 
   it('should render correctly when video is disabled', () => {
-    rootStore.participantStore.localVideoTrack = undefined;
+    rootStore.participantsStore.localVideoTrack = undefined;
     const wrapper = shallow(<ToggleVideoButton />);
     expect(wrapper.find(Videocam).exists()).toBe(false);
     expect(wrapper.find(VideocamOff).exists()).toBe(true);
@@ -26,14 +26,14 @@ describe('the ToggleVideoButton component', () => {
   });
 
   it('should call the correct toggle function when clicked', () => {
-    jest.spyOn(rootStore.participantStore, 'toggleVideoEnabled');
+    jest.spyOn(rootStore.participantsStore, 'toggleVideoEnabled');
     const wrapper = shallow(<ToggleVideoButton />);
     wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
-    expect(rootStore.participantStore.toggleVideoEnabled).toHaveBeenCalled();
+    expect(rootStore.participantsStore.toggleVideoEnabled).toHaveBeenCalled();
   });
 
   it('should throttle the toggle function to 200ms', async () => {
-    jest.spyOn(rootStore.participantStore, 'setPublishingVideoTrackInProgress');
+    jest.spyOn(rootStore.participantsStore, 'setPublishingVideoTrackInProgress');
 
     const wrapper = shallow(<ToggleVideoButton />);
     const button = wrapper.find('WithStyles(ForwardRef(Fab))');
@@ -42,6 +42,6 @@ describe('the ToggleVideoButton component', () => {
     button.simulate('click'); // Should be ignored
     await sleep(200);
     button.simulate('click'); // Should register
-    expect(rootStore.participantStore.setPublishingVideoTrackInProgress).toHaveBeenCalledTimes(2);
+    expect(rootStore.participantsStore.setPublishingVideoTrackInProgress).toHaveBeenCalledTimes(2);
   });
 });

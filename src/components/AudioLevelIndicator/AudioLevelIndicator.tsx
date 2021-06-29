@@ -40,15 +40,15 @@ const AudioLevelIndicator = ({
   background?: string;
   participant?: Participant;
 }) => {
-  const { participantStore } = rootStore;
-  const track = audioTrack || participantStore.localAudioTrack;
+  const { participantsStore } = rootStore;
+  const track = audioTrack || participantsStore.localAudioTrack;
   const SIZE = size || 24;
   const y = 14;
   const SVGRectRef = useRef<SVGRectElement>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(track as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(track);
-  const localParticipant = rootStore.participantStore.participant;
+  const localParticipant = rootStore.participantsStore.participant;
   const isLocalParticipant = participant === localParticipant || !participant;
   const localParticipantType: string = !localParticipant
     ? ''
@@ -126,14 +126,14 @@ const AudioLevelIndicator = ({
     e.preventDefault();
     e.stopPropagation();
     if (participantOptions.includes('Mute') && participant) {
-      participantStore.muteOtherParticipant(participant);
-    } else participantStore.toggleAudioEnabled();
+      participantsStore.muteOtherParticipant(participant);
+    } else participantsStore.toggleAudioEnabled();
   };
 
   const canMute = participantOptions.includes('Mute') || isLocalParticipant;
 
   return (
-    <IconButton onClick={muteParticipant} disabled={!participantStore.isHostIn || !canMute}>
+    <IconButton onClick={muteParticipant} disabled={!participantsStore.isHostIn || !canMute}>
       {' '}
       {isTrackEnabled ? (
         <svg

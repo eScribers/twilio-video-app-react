@@ -31,14 +31,14 @@ export interface ParticipantGridProps {
 }
 
 const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const { sortedParticipants, selectedParticipant, participant: localParticipant } = participantStore;
+  const { sortedParticipants, selectedParticipant, participant: localParticipant } = participantsStore;
   const classes = useStyles();
 
-  const dominantIdentity = participantStore.dominantSpeaker;
+  const dominantIdentity = participantsStore.dominantSpeaker;
 
   useEffect(() => {
     if (currViewMode !== viewMode) {
@@ -68,7 +68,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
             <Participant
               participant={localParticipant}
               isSelected={selectedParticipant === localParticipant.identity}
-              onClick={() => participantStore.setSelectedParticipant(localParticipant.identity)}
+              onClick={() => participantsStore.setSelectedParticipant(localParticipant.identity)}
             />
           </Paper>
         </Grid>
@@ -80,8 +80,8 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
                 participant={participant}
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
-                userIsSilenced={!!participantStore.isSilenced}
-                onClick={() => participantStore.setSelectedParticipant(participant.identity)}
+                userIsSilenced={!!participantsStore.isSilenced}
+                onClick={() => participantsStore.setSelectedParticipant(participant.identity)}
               />
             </Paper>
           </Grid>

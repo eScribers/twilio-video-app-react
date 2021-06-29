@@ -4,29 +4,29 @@ import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
 
 describe('the useIsSilenced hook', () => {
-  let roomStore: any;
-  let participantStore: any;
+  let roomsStore: any;
+  let participantsStore: any;
 
   beforeEach(() => {
     const rootStore = new RootStore();
-    roomStore = rootStore.roomStore;
-    participantStore = rootStore.participantStore;
+    roomsStore = rootStore.roomsStore;
+    participantsStore = rootStore.participantsStore;
   });
 
   it('when there are no participants yet should return false', () => {
-    expect(participantStore.isSilenced).toBe(false);
+    expect(participantsStore.isSilenced).toBe(false);
   });
 
   it('should return false when "participantConnected" is not the reporter', async () => {
     let recordingParticipant = new mockParticipant(`newParticipant@${PARTICIPANT_TYPES.REPORTER_RECORDING}`);
     act(() => {
-      participantStore.setParticipant(new mockLocalParticipant());
-      participantStore.addParticipant(recordingParticipant);
+      participantsStore.setParticipant(new mockLocalParticipant());
+      participantsStore.addParticipant(recordingParticipant);
     });
-    expect(participantStore.isSilenced).toBe(true);
+    expect(participantsStore.isSilenced).toBe(true);
     act(() => {
-      participantStore.removeParticipantSid(recordingParticipant.sid);
+      participantsStore.removeParticipantSid(recordingParticipant.sid);
     });
-    expect(participantStore.isSilenced).toBe(false);
+    expect(participantsStore.isSilenced).toBe(false);
   });
 });

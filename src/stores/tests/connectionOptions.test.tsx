@@ -11,8 +11,8 @@ jest.mock('../../stores', () => {
 describe('the useConnectionOptions function', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
-    rootStore.roomStore = newStore.roomStore;
+    rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore = newStore.roomsStore;
   });
   it('should remove any undefined values from settings', () => {
     const settings: Settings = {
@@ -40,8 +40,8 @@ describe('the useConnectionOptions function', () => {
       preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };
 
-    rootStore.roomStore.setSettings(settings);
-    expect(rootStore.roomStore.options).toEqual(result);
+    rootStore.roomsStore.setSettings(settings);
+    expect(rootStore.roomsStore.options).toEqual(result);
   });
 
   it('should correctly generate settings', () => {
@@ -85,7 +85,7 @@ describe('the useConnectionOptions function', () => {
       preferredVideoCodecs: [{ codec: 'VP8', simulcast: true }],
     };
 
-    rootStore.roomStore.setSettings(settings);
-    expect(rootStore.roomStore.options).toEqual(result);
+    rootStore.roomsStore.setSettings(settings);
+    expect(rootStore.roomsStore.options).toEqual(result);
   });
 });

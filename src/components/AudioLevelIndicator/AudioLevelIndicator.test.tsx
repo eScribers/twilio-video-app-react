@@ -18,7 +18,7 @@ mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 describe('the AudioLevelIndicator component', () => {
   beforeEach(() => {
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack(new MockTrack('audioInput'));
+    rootStore.participantsStore.setAudioTrack(new MockTrack('audioInput'));
   });
   describe('when the audioTrack is not enabled', () => {
     mockedUseVideoContext.mockImplementation(() => ({ isConnecting: false, room: {}, localTracks: [] } as any));
