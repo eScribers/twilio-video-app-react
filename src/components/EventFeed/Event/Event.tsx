@@ -2,6 +2,9 @@ import React from 'react';
 import moment from 'moment';
 import { EventTypes, IEvent } from './types';
 import { createStyles, makeStyles, Theme } from '@material-ui/core';
+import { ParticipantIdentity } from '../../../utils/participantIdentity';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../stores';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -46,13 +49,18 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Event = ({ type, time, data, myIdentity }: IEvent & { myIdentity: string }) => {
+const Event = ({ type, time, data }: IEvent) => {
   const classes = useStyles();
+
+  const { participantStore } = rootStore;
+
+  const myIdentity = participantStore.participant?.identity || '';
+  const userName = data.user ? ParticipantIdentity.Parse(data.user).partyName : '';
 
   if (type === EventTypes.message) {
     return (
       <div className={`${classes.message} ${myIdentity === data.user ? classes.me : ''}`}>
-        <b className={classes.user}>{data.user}</b>
+        <b className={classes.user}>{userName}</b>
         <div className={classes.messageText}>
           {data.text}
           <i className={classes.time}>{moment(time).format('HH:mm')}</i>
@@ -65,7 +73,7 @@ const Event = ({ type, time, data, myIdentity }: IEvent & { myIdentity: string }
     <div className={classes.event}>
       <i />
       <div className={classes.messageText}>
-        {data.user ? `${data.user} ` : ''}
+        {userName ? `${userName} ` : ''}
         {data.text}
       </div>
       <i className={classes.time}>{moment(time).format('HH:mm')}</i>
@@ -73,4 +81,4 @@ const Event = ({ type, time, data, myIdentity }: IEvent & { myIdentity: string }
   );
 };
 
-export default Event;
+export default observer(Event);

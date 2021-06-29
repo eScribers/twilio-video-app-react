@@ -87,7 +87,7 @@ describe('the useLocalTracks hook', () => {
 
   it('should return an error when there is an error creating a track', async () => {
     (Video.createLocalVideoTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.reject('testError'));
-    expect(rootStore.participantStore.getLocalVideoTrack()).rejects.toBe('testError');
+    await expect(rootStore.participantStore.getLocalVideoTrack()).rejects.toBe('testError');
   });
 
   describe('the removeLocalVideoTrack function', () => {

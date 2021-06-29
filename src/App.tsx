@@ -17,7 +17,8 @@ import { observer } from 'mobx-react-lite';
 const Container = styled('div')({
   display: 'grid',
   gridTemplateRows: 'auto 1fr',
-  gridTemplateColumns: '1fr 400px',
+  transition: '.3s ease-out all',
+  overflowX: 'hidden',
 });
 
 const Main = styled('main')({
@@ -42,7 +43,9 @@ const App = observer(() => {
   }
 
   return (
-    <Container style={{ height }}>
+    <Container
+      style={{ height, gridTemplateColumns: roomStore.roomState === ROOM_STATE.DISCONNECTED ? '1fr 0px' : '1fr 400px' }}
+    >
       <div>
         <MessageText />
         <MenuBar />

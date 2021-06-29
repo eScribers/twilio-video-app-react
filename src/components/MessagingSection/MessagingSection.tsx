@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme: Theme) =>
     tabs: {
       backgroundColor: '#303030',
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr 1fr',
+      gridTemplateColumns: '1fr 1fr',
       gridTemplateRows: '40px',
     },
     tab: {
@@ -49,19 +49,16 @@ const Tab = ({ name, children, tab: currentTab, setTab, classes }) => (
 
 const MessagingSection = () => {
   const classes = useStyles();
-  const [tab, setTab] = useState('participantList');
+  const [tab, setTab] = useState('eventFeed');
 
   return (
     <div className={classes.sideMenu}>
       <div className={classes.tabs}>
-        <Tab {...{ tab, setTab, classes }} name="participantList">
-          Participants
-        </Tab>
         <Tab {...{ tab, setTab, classes }} name="eventFeed">
           Chat
         </Tab>
-        <Tab {...{ tab, setTab, classes }} name="settings">
-          Settings
+        <Tab {...{ tab, setTab, classes }} name="participantList">
+          Participants
         </Tab>
       </div>
       {tab === 'participantList' && <ParticipantsList />}

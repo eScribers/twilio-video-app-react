@@ -15,7 +15,3 @@ export interface IEvent {
   time: Date;
   data: IEventData;
 }
-
-export interface IEventFeed {
-  events?: IEvent[];
-}

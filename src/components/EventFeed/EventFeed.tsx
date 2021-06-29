@@ -1,40 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import { EventTypes, IEvent, IEventFeed } from './Event/types';
 import Event from './Event/Event';
-
-const mockData: IEvent[] = [
-  {
-    type: EventTypes.message,
-    time: new Date(),
-    data: {
-      text: 'Hi world!',
-      user: 'Gal',
-    },
-  },
-  {
-    type: EventTypes.message,
-    time: new Date(),
-    data: {
-      text: 'Hi world 2!',
-      user: 'Tal',
-    },
-  },
-  {
-    type: EventTypes.event,
-    time: new Date(),
-    data: {
-      text: 'went off record',
-      user: 'Gal',
-    },
-  },
-];
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     EventFeedWrapper: {
       display: 'grid',
-      gridTemplateRows: '1fr 50px',
+      gridTemplateRows: '1fr 60px',
       gridTemplateColumns: '100%',
       width: '400px',
     },
@@ -69,31 +43,38 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const EventFeed = ({ events = mockData }: IEventFeed) => {
+const EventFeed = () => {
   const classes = useStyles();
-  // const [eventsState, setEventsState] = useState(events);
-  const [eventsState] = useState(events);
+  const [message, setMessage] = useState('');
+  const { eventStore } = rootStore;
+
+  const { events } = eventStore;
 
   useEffect(() => {
     document.querySelector('.pin-to-bottom')?.scrollTo({ top: 1000000 });
-    // setTimeout(() =>{
-    //   setEventsState([...eventsState, eventsState[eventsState.length - 3]]);
-    // }, 2000)
-  }, [eventsState]);
+  }, [events]);
+
+  const submitMessage = e => {
+    e.preventDefault();
+    (async () => {
+      eventStore.sendMessage(message);
+      setMessage('');
+    })();
+  };
 
   return (
     <div className={classes.EventFeedWrapper}>
       <div className={`${classes.feed} pin-to-bottom`}>
-        {eventsState.map((event, key) => (
-          <Event {...event} myIdentity="Gal" key={key} />
+        {events.map((event, key) => (
+          <Event {...event} key={key} />
         ))}
       </div>
-      <div className={classes.inputWrapper}>
-        <input className={classes.input} />
+      <form className={classes.inputWrapper} onSubmit={submitMessage}>
+        <input className={classes.input} value={message} onChange={e => setMessage(e.target.value)} />
         <button className={classes.sendButton}>Send</button>
-      </div>
+      </form>
     </div>
   );
 };
 
-export default EventFeed;
+export default observer(EventFeed);
