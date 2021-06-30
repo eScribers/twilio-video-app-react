@@ -19,8 +19,8 @@ const [REMOVE, MUTE] = ['Remove', 'Mute'];
 const ITEM_HEIGHT = 48;
 
 const ParticipantDropDown = observer(({ participant, isAudioEnabled }: ParticipantDropDownProps) => {
-  const { participantStore } = rootStore;
-  const options = getParticipantOptions(participant, participantStore.localParticipantType, !isAudioEnabled);
+  const { participantsStore } = rootStore;
+  const options = getParticipantOptions(participant, participantsStore.localParticipantType, !isAudioEnabled);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = event => {
@@ -32,9 +32,9 @@ const ParticipantDropDown = observer(({ participant, isAudioEnabled }: Participa
     event.stopPropagation();
     setAnchorEl(null);
 
-    if (option === MUTE) participantStore.muteOtherParticipant(participant);
+    if (option === MUTE) participantsStore.muteOtherParticipant(participant);
 
-    if (option === REMOVE) participantStore.removeOtherParticipant(participant);
+    if (option === REMOVE) participantsStore.removeOtherParticipant(participant);
   };
 
   return (

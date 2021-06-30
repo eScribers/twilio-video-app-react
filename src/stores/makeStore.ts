@@ -1,6 +1,6 @@
-import ParticipantStore from './participantStore';
-import RoomStore from './roomStore';
 import EventStore from './eventStore';
+import ParticipantsStore from './participantsStore';
+import RoomsStore from './roomsStore';
 
 // Enable navigator for jest testing only
 if (typeof jest !== 'undefined') {
@@ -9,15 +9,15 @@ if (typeof jest !== 'undefined') {
 }
 
 export class RootStore {
-  participantStore: ParticipantStore;
+  participantsStore: ParticipantsStore;
 
-  roomStore: RoomStore;
+  roomsStore: RoomsStore;
 
   eventStore: EventStore;
 
   constructor() {
-    this.participantStore = new ParticipantStore(this);
-    this.roomStore = new RoomStore(this);
+    this.participantsStore = new ParticipantsStore(this);
+    this.roomsStore = new RoomsStore(this);
     this.eventStore = new EventStore(this);
   }
 }

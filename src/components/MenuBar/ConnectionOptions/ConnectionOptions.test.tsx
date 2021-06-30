@@ -14,18 +14,18 @@ jest.mock('../../../stores', () => {
 describe('the ConnectionOptions component', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
-    rootStore.roomStore = newStore.roomStore;
+    rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore = newStore.roomsStore;
   });
 
   it('when change view mode should dispatch settings changes', () => {
-    jest.spyOn(rootStore.roomStore, 'setSetting');
+    jest.spyOn(rootStore.roomsStore, 'setSetting');
     const wrapper = shallow(<ConnectionOptions />);
     wrapper
       .find(Select)
       .find({ name: 'viewMode' })
       .simulate('change', { target: { value: 'grid 2 column', name: 'viewMode' } });
-    expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('viewMode', 'grid 2 column');
+    expect(rootStore.roomsStore.setSetting).toHaveBeenCalledWith('viewMode', 'grid 2 column');
   });
 
   it('when select advance setting, it shows advanced settings.', () => {
@@ -67,41 +67,41 @@ describe('the ConnectionOptions component', () => {
 
     describe('when choose advance setting', () => {
       it('should dispatch settings changes', () => {
-        jest.spyOn(rootStore.roomStore, 'setSetting');
+        jest.spyOn(rootStore.roomsStore, 'setSetting');
         const wrapper = shallow(<ConnectionOptions />);
         wrapper
           .find(Select)
           .find({ name: 'dominantSpeakerPriority' })
           .simulate('change', { target: { value: 'testValue', name: 'dominantSpeakerPriority' } });
         // expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'testValue', name: 'dominantSpeakerPriority' });
-        expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('dominantSpeakerPriority', 'testValue');
+        expect(rootStore.roomsStore.setSetting).toHaveBeenCalledWith('dominantSpeakerPriority', 'testValue');
       });
 
       it('should not dispatch settings changes from a number field when there are non-digits in the value', () => {
-        jest.spyOn(rootStore.roomStore, 'setSetting');
+        jest.spyOn(rootStore.roomsStore, 'setSetting');
         const wrapper = shallow(<ConnectionOptions />);
         wrapper
           .find(TextField)
           .find({ name: 'maxTracks' })
           .simulate('change', { target: { value: '123456a', name: 'maxTracks' } });
-        expect(rootStore.roomStore.setSetting).not.toHaveBeenCalled();
+        expect(rootStore.roomsStore.setSetting).not.toHaveBeenCalled();
       });
 
       it('should dispatch settings changes from a number field when there are only digits in the value', () => {
-        jest.spyOn(rootStore.roomStore, 'setSetting');
+        jest.spyOn(rootStore.roomsStore, 'setSetting');
         const wrapper = shallow(<ConnectionOptions />);
         wrapper
           .find(TextField)
           .find({ name: 'maxTracks' })
           .simulate('change', { target: { value: '123456', name: 'maxTracks' } });
-        expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('maxTracks', '123456');
+        expect(rootStore.roomsStore.setSetting).toHaveBeenCalledWith('maxTracks', '123456');
       });
     });
   });
 
   describe('when connected to a room', () => {
     it('should render correctly', () => {
-      rootStore.roomStore.room.state = 'connected';
+      rootStore.roomsStore.room.state = 'connected';
       const wrapper = shallow(<ConnectionOptions />);
       expect(wrapper).toMatchSnapshot();
     });

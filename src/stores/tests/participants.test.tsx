@@ -4,30 +4,30 @@ import { RootStore } from '../makeStore';
 import { mockParticipant } from '../../utils/mocks';
 
 describe('the useParticipants hook', () => {
-  let roomStore: any;
-  let participantStore: any;
+  let roomsStore: any;
+  let participantsStore: any;
   const participant1 = new mockParticipant('participant1@participant');
   const participant2 = new mockParticipant('participant2@participant');
   beforeEach(() => {
     const rootStore = new RootStore();
-    roomStore = rootStore.roomStore;
-    participantStore = rootStore.participantStore;
+    roomsStore = rootStore.roomsStore;
+    participantsStore = rootStore.participantsStore;
 
-    participantStore.addParticipant(participant1);
-    participantStore.addParticipant(participant2);
+    participantsStore.addParticipant(participant1);
+    participantsStore.addParticipant(participant2);
   });
 
   it('should return an array of mockParticipant.tracks by default', () => {
-    const identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    const identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
     expect(identitiesArray).toEqual(['participant1@participant', 'participant2@participant']);
   });
 
   it('should return respond to "participantConnected" events', async () => {
     const participant3 = new mockParticipant('participant3@participant');
     act(() => {
-      participantStore.addParticipant(participant3);
+      participantsStore.addParticipant(participant3);
     });
-    const identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    const identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
     expect(identitiesArray).toEqual([
       'participant1@participant',
       'participant2@participant',
@@ -37,18 +37,18 @@ describe('the useParticipants hook', () => {
 
   it('should return respond to "participantDisconnected" events', async () => {
     act(() => {
-      participantStore.removeParticipantSid(participant1.sid);
+      participantsStore.removeParticipantSid(participant1.sid);
     });
-    const identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    const identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
     expect(identitiesArray).toEqual(['participant2@participant']);
   });
 
   it('should reorder participants when the dominant speaker changes', () => {
     const participant3 = new mockParticipant('participant3@participant');
     act(() => {
-      participantStore.addParticipant(participant3);
+      participantsStore.addParticipant(participant3);
     });
-    let identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    let identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
 
     expect(identitiesArray).toEqual([
       'participant1@participant',
@@ -56,25 +56,25 @@ describe('the useParticipants hook', () => {
       'participant3@participant',
     ]);
     act(() => {
-      participantStore.setDominantSpeaker('participant2@participant');
+      participantsStore.setDominantSpeaker('participant2@participant');
     });
-    identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
     expect(identitiesArray).toEqual([
       'participant2@participant',
       'participant1@participant',
       'participant3@participant',
     ]);
     act(() => {
-      participantStore.setDominantSpeaker('participant3@participant');
+      participantsStore.setDominantSpeaker('participant3@participant');
     });
-    identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
     expect(identitiesArray).toEqual([
       'participant3@participant',
       'participant2@participant',
       'participant1@participant',
     ]);
-    participantStore.setDominantSpeaker(null);
-    identitiesArray = participantStore.participants.map((participant: Participant) => participant.identity);
+    participantsStore.setDominantSpeaker(null);
+    identitiesArray = participantsStore.participants.map((participant: Participant) => participant.identity);
 
     expect(identitiesArray).toEqual([
       'participant3@participant',
@@ -86,10 +86,10 @@ describe('the useParticipants hook', () => {
   it('should clean up listeners on unmount', async () => {
     let unmount = () => {};
     await act(async () => {
-      unmount = await roomStore.joinRoom();
+      unmount = await roomsStore.joinRoom();
     });
     unmount();
-    expect(roomStore.room.listenerCount('participantConnected')).toBe(0);
-    expect(roomStore.room.listenerCount('participantDisconnected')).toBe(0);
+    expect(roomsStore.room.listenerCount('participantConnected')).toBe(0);
+    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(0);
   });
 });

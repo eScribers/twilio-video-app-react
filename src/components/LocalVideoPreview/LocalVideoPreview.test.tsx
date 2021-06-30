@@ -15,7 +15,7 @@ jest.mock('../../stores', () => {
 describe('the LocalVideoPreview component', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
+    rootStore.participantsStore = newStore.participantsStore;
   });
 
   it('should render the AvatarIcon when there are no "camera" tracks', async () => {
@@ -25,7 +25,7 @@ describe('the LocalVideoPreview component', () => {
 
   it('should render the video when there are is a "camera" track', async () => {
     // @ts-expect-error
-    rootStore.participantStore.setVideoTrack({
+    rootStore.participantsStore.setVideoTrack({
       name: 'camera-123456',
       attach: jest.fn(),
       detach: jest.fn(),

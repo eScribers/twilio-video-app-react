@@ -23,12 +23,12 @@ interface IParticipantNameTag {
 
 export const ParticipantNameTag = observer(({ participant }: IParticipantNameTag) => {
   const classes = useStyles();
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
   // const {
   //   room: { localParticipant },
   // } = useVideoContext();
 
-  const isLocalParticipant = participant.identity === participantStore.participant?.identity;
+  const isLocalParticipant = participant.identity === participantsStore.localParticipant?.participant?.identity;
   const { partyType, isRegisteredUser, partyName } = ParticipantIdentity.Parse(participant.identity);
 
   return (

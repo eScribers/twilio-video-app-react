@@ -12,12 +12,11 @@ class EventStore {
   }
 
   async sendMessage(message: string) {
-    const identity = this.rootStore.participantStore.participant?.identity;
+    const identity = this.rootStore.participantsStore.localParticipant?.participant?.identity;
 
     if (!identity) throw new Error('No participant detected');
     // if() throw new Error('Sync not connected yet');
     if (message.length === 0) return;
-    console.log(identity);
 
     const newEvent = {
       type: EventTypes.message,

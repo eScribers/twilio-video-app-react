@@ -26,30 +26,30 @@ function getMockTrack(name: string, deviceId?: string) {
 describe('the useLocalVideoToggle hook', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
+    rootStore.participantsStore = newStore.participantsStore;
   });
   it('should return true when a localVideoTrack exists', () => {
     // @ts-expect-error
-    rootStore.participantStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);
-    expect(rootStore.participantStore.localVideoTrack?.name).toEqual('camera-123456');
+    rootStore.participantsStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);
+    expect(rootStore.participantsStore.localVideoTrack?.name).toEqual('camera-123456');
   });
 
   it('should return false when a localVideoTrack does not exist', () => {
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack(getMockTrack('microphone') as LocalAudioTrack);
-    expect(rootStore.participantStore.localVideoTrack).toEqual(undefined);
+    rootStore.participantsStore.setAudioTrack(getMockTrack('microphone') as LocalAudioTrack);
+    expect(rootStore.participantsStore.localVideoTrack).toEqual(undefined);
   });
 
   describe('toggleVideoEnabled function', () => {
     beforeEach(() => {
       let newStore = new RootStore();
-      rootStore.participantStore = newStore.participantStore;
+      rootStore.participantsStore = newStore.participantsStore;
     });
     it('should remove track when toggling an active video track', () => {
       // @ts-expect-error
-      rootStore.participantStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);
-      rootStore.participantStore.toggleVideoEnabled();
-      expect(rootStore.participantStore.localVideoTrack).toEqual(undefined);
+      rootStore.participantsStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);
+      rootStore.participantsStore.toggleVideoEnabled();
+      expect(rootStore.participantsStore.localVideoTrack).toEqual(undefined);
     });
 
     it('should call localParticipant.unpublishTrack when a localVideoTrack and localParticipant exists', () => {
@@ -57,28 +57,28 @@ describe('the useLocalVideoToggle hook', () => {
       const mockLocalTrack = getMockTrack('camera-123456') as LocalVideoTrack;
       const localParticipant = new mockLocalParticipant();
       jest.spyOn(localParticipant, 'unpublishTrack');
-      rootStore.participantStore.setParticipant(localParticipant);
-      rootStore.participantStore.setVideoTrack(mockLocalTrack);
-      rootStore.participantStore.toggleVideoEnabled();
+      rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
+      rootStore.participantsStore.setVideoTrack(mockLocalTrack);
+      rootStore.participantsStore.toggleVideoEnabled();
 
       expect(localParticipant.unpublishTrack).toHaveBeenCalledWith(mockLocalTrack);
     });
 
     it('should call getLocalVideoTrack when a localVideoTrack does not exist', async () => {
-      jest.spyOn(rootStore.participantStore, 'getLocalVideoTrack');
-      rootStore.participantStore.toggleVideoEnabled();
-      expect(rootStore.participantStore.getLocalVideoTrack).toHaveBeenCalled();
+      jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
+      rootStore.participantsStore.toggleVideoEnabled();
+      expect(rootStore.participantsStore.getLocalVideoTrack).toHaveBeenCalled();
     });
 
     it('should call mockLocalParticipant.publishTrack when a localVideoTrack does not exist and localParticipant does exist', async () => {
       const localParticipant = new mockLocalParticipant();
       jest.spyOn(localParticipant, 'publishTrack');
-      rootStore.participantStore.setParticipant(localParticipant);
+      rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       // @ts-expect-error
       const mockTrack = getMockTrack('mockTrack') as LocalVideoTrack;
-      rootStore.participantStore.getLocalVideoTrack = async () => mockTrack;
+      rootStore.participantsStore.getLocalVideoTrack = async () => mockTrack;
       await act(async () => {
-        await rootStore.participantStore.toggleVideoEnabled();
+        await rootStore.participantsStore.toggleVideoEnabled();
       });
 
       expect(localParticipant.publishTrack).toHaveBeenCalledWith(mockTrack, { priority: 'low' });
@@ -86,15 +86,15 @@ describe('the useLocalVideoToggle hook', () => {
 
     it('should not call mockLocalParticipant.publishTrack when isPublishing is true', async () => {
       const localParticipant = new mockLocalParticipant();
-      jest.spyOn(rootStore.participantStore, 'getLocalVideoTrack');
-      rootStore.participantStore.setParticipant(localParticipant);
+      jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
+      rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       // @ts-expect-error
       const mockTrack = getMockTrack('mockTrack') as LocalVideoTrack;
       await act(async () => {
-        await rootStore.participantStore.toggleVideoEnabled();
+        await rootStore.participantsStore.toggleVideoEnabled();
       });
-      rootStore.participantStore.toggleVideoEnabled(); // Should be ignored because isPublishing is true
-      expect(rootStore.participantStore.getLocalVideoTrack).toHaveBeenCalledTimes(1);
+      rootStore.participantsStore.toggleVideoEnabled(); // Should be ignored because isPublishing is true
+      expect(rootStore.participantsStore.getLocalVideoTrack).toHaveBeenCalledTimes(1);
     });
 
     it('should call onError when publishTrack throws an error', async () => {
@@ -104,11 +104,11 @@ describe('the useLocalVideoToggle hook', () => {
       const localParticipant = new mockLocalParticipant();
 
       localParticipant.publishTrack = jest.fn(() => Promise.reject('mockError'));
-      rootStore.participantStore.getLocalVideoTrack = mockGetLocalVideoTrack;
-      rootStore.participantStore.setParticipant(localParticipant);
+      rootStore.participantsStore.getLocalVideoTrack = mockGetLocalVideoTrack;
+      rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       await act(async () => {
         try {
-          await rootStore.participantStore.toggleVideoEnabled();
+          await rootStore.participantsStore.toggleVideoEnabled();
         } catch (err) {
           mockOnError(err);
         }

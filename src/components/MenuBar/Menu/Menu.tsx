@@ -8,7 +8,7 @@ import SettingsDialog from '../SettingsDialog/SettingsDialog';
 import rootStore from '../../../stores';
 
 const Menu = () => {
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
   const [aboutOpen, setAboutOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -22,10 +22,10 @@ const Menu = () => {
       <MenuContainer open={menuOpen} onClose={() => setMenuOpen(state => !state)} anchorEl={anchorRef.current}>
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
-        {!participantStore.muteableParticipants.length ? null : (
+        {!participantsStore.muteableParticipants.length ? null : (
           <MenuItem
             onClick={() => {
-              participantStore.muteAllNoneModerators();
+              participantsStore.muteAllNoneModerators();
               setMenuOpen(false);
             }}
           >

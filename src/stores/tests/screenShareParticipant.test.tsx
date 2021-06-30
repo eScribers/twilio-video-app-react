@@ -4,104 +4,104 @@ import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 
 function createRootStore() {
   const rootStore = new RootStore();
-  const { roomStore, participantStore } = rootStore;
+  const { roomsStore, participantsStore } = rootStore;
   const localParticipant = new mockLocalParticipant();
 
-  participantStore.setParticipant(localParticipant);
+  participantsStore.localParticipant?.setParticipant(localParticipant);
 
-  roomStore.room.state = 'connected';
+  roomsStore.room.state = 'connected';
   return rootStore;
 }
 
 describe('the useScreenShareParticipant hook', () => {
-  let roomStore, participantStore;
+  let roomsStore, participantsStore;
   beforeEach(() => {
     const rootStore = createRootStore();
-    roomStore = rootStore.roomStore;
-    participantStore = rootStore.participantStore;
+    roomsStore = rootStore.roomsStore;
+    participantsStore = rootStore.participantsStore;
   });
 
   it('return undefined when there are no participants sharing their screen', () => {
-    expect(participantStore.screenShareParticipant()).toEqual(undefined);
+    expect(participantsStore.screenShareParticipant()).toEqual(undefined);
   });
 
   it('should return the localParticipant when they are sharing their screen', () => {
     const participant = new mockLocalParticipant();
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-    participantStore.setParticipant(participant);
+    participantsStore.localParticipant?.setParticipant(participant);
 
-    expect(participantStore.screenShareParticipant()).toEqual(participantStore.participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant.participant);
   });
 
   it('should return a remoteParticipant when they are sharing their screen', () => {
     const participant = new mockParticipant();
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-    participantStore.addParticipant(participant);
-    expect(participantStore.screenShareParticipant()).toEqual(participant);
+    participantsStore.addParticipant(participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participant);
   });
 
   it('should respond to "trackPublished" and "trackUnpublished" events emitted from the localParticipant', () => {
-    expect(participantStore.screenShareParticipant()).toEqual(undefined);
+    expect(participantsStore.screenShareParticipant()).toEqual(undefined);
 
     act(() => {
-      participantStore.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-      participantStore.participant.emit('trackPublished');
+      participantsStore.localParticipant.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
+      participantsStore.localParticipant.participant.emit('trackPublished');
     });
 
-    expect(participantStore.screenShareParticipant()).toEqual(participantStore.participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant.participant);
 
     act(() => {
-      participantStore.participant.tracks = new Map([]);
-      participantStore.participant.emit('trackUnpublished');
+      participantsStore.localParticipant.participant.tracks = new Map([]);
+      participantsStore.localParticipant.participant.emit('trackUnpublished');
     });
 
-    expect(participantStore.screenShareParticipant()).toEqual(undefined);
+    expect(participantsStore.screenShareParticipant()).toEqual(undefined);
   });
 
   it('should respond to "trackPublished" and "trackUnpublished" events emitted from the room', () => {
     const participant = new mockParticipant();
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
 
-    expect(participantStore.screenShareParticipant()).toEqual(undefined);
+    expect(participantsStore.screenShareParticipant()).toEqual(undefined);
 
     act(() => {
-      participantStore.addParticipant(participant);
-      roomStore.room.emit('trackPublished');
+      participantsStore.addParticipant(participant);
+      roomsStore.room.emit('trackPublished');
     });
 
-    expect(participantStore.screenShareParticipant()).toEqual(participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participant);
 
     act(() => {
       participant.tracks = new Map([]);
-      roomStore.room.emit('trackUnpublished');
+      roomsStore.room.emit('trackUnpublished');
     });
 
-    expect(participantStore.screenShareParticipant()).toEqual(undefined);
+    expect(participantsStore.screenShareParticipant()).toEqual(undefined);
   });
 
   it('should respond to "participantDisconnected" events emitted from the room', () => {
     const participant = new mockParticipant();
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-    participantStore.addParticipant(participant);
+    participantsStore.addParticipant(participant);
 
-    expect(participantStore.screenShareParticipant()).toEqual(participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participant);
 
     act(() => {
-      participantStore.removeParticipantSid(participant.sid);
-      roomStore.room.emit('participantDisconnected');
+      participantsStore.removeParticipantSid(participant.sid);
+      roomsStore.room.emit('participantDisconnected');
     });
 
-    expect(participantStore.screenShareParticipant()).toEqual(undefined);
+    expect(participantsStore.screenShareParticipant()).toEqual(undefined);
   });
 
   it('should clean up all listeners when unmounted', async () => {
     let unmount = () => {};
     await act(async () => {
-      unmount = await roomStore.joinRoom();
+      unmount = await roomsStore.joinRoom();
     });
 
-    expect(roomStore.room.listenerCount('participantDisconnected')).toBe(1);
+    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(1);
     unmount();
-    expect(roomStore.room.listenerCount('participantDisconnected')).toBe(0);
+    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(0);
   });
 });

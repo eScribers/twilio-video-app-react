@@ -21,7 +21,7 @@ const EndCallButton = observer(() => {
     <Tooltip
       id="endCall"
       title={'End Call'}
-      onClick={() => rootStore.roomStore.room.disconnect()}
+      onClick={() => rootStore.roomsStore.room.disconnect()}
       placement="top"
       PopperProps={{ disablePortal: true }}
     >

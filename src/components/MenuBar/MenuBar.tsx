@@ -93,14 +93,14 @@ const MenuBar = observer(() => {
     setWaitingNotification,
     // logger,
   } = useAppState();
-  const { roomStore, participantStore } = rootStore;
-  const { isConnecting, config } = roomStore;
-  const { isFetchingUserToken, participantInformation } = participantStore;
+  const { roomsStore, participantsStore } = rootStore;
+  const { isConnecting, config } = roomsStore;
+  const { isFetchingUserToken, participantInformation } = participantsStore;
 
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
-  const [isReporterInState, setIsReporterInState] = useState(participantStore.isReporterIn);
+  const [isReporterInState, setIsReporterInState] = useState(participantsStore.isReporterIn);
   useDataTrackListener();
 
   if (isAutoRetryingToJoinRoom === false) {
@@ -112,10 +112,10 @@ const MenuBar = observer(() => {
 
     var response = null as any;
     try {
-      response = await participantStore.getToken(participantInformation);
+      response = await participantsStore.getToken(participantInformation);
     } catch (err) {
-      if (err.response) roomStore.setError({ message: err.response.data } as TwilioError);
-      else roomStore.setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
+      if (err.response) roomsStore.setError({ message: err.response.data } as TwilioError);
+      else roomsStore.setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
       return;
@@ -130,11 +130,11 @@ const MenuBar = observer(() => {
         }, RETRY_INTERVAL);
         setRetryJoinRoomAttemptTimerId(timeoutObj);
       } else {
-        roomStore.setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+        roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
       }
     } else {
       setWaitingNotification(null);
-      await roomStore.joinRoom(response);
+      await roomsStore.joinRoom(response);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
@@ -143,15 +143,15 @@ const MenuBar = observer(() => {
   const configLoaded = config.loaded;
   useEffect(() => {
     if (configLoaded) {
-      participantStore.authoriseParticipant();
+      participantsStore.authoriseParticipant();
     }
-  }, [participantStore, configLoaded]);
+  }, [participantsStore, configLoaded]);
 
   const handleSubmit = () => {
     joinRoom(participantInformation);
   };
 
-  const isReporterIn = participantStore.isReporterIn;
+  const isReporterIn = participantsStore.isReporterIn;
 
   useEffect(() => {
     if (!participantInformation?.partyType) {
@@ -161,24 +161,24 @@ const MenuBar = observer(() => {
 
     if (![PARTICIPANT_TYPES.HEARING_OFFICER, PARTICIPANT_TYPES.REPORTER].includes(participantInformation.partyType)) {
       if (isReporterIn) {
-        roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+        roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       } else {
-        participantStore.setLocalAudioTrackEnabled(false);
-        roomStore.setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+        participantsStore.setLocalAudioTrackEnabled(false);
+        roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
       }
     }
 
     if (participantInformation.partyType === PARTICIPANT_TYPES.HEARING_OFFICER) {
-      if (!isReporterIn) roomStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+      if (!isReporterIn) roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
     }
     setIsReporterInState(isReporterIn);
-  }, [participantInformation, participantStore, isReporterIn, isReporterInState, roomStore]);
+  }, [participantInformation, participantsStore, isReporterIn, isReporterInState, roomsStore]);
 
   return (
     <AppBar className={classes.container} position="static">
       <Toolbar>
         <img src="/escribers-logo-transparent.png" height="64px" alt="eScribers" />
-        {roomStore.roomState === ROOM_STATE.DISCONNECTED ? (
+        {roomsStore.roomState === ROOM_STATE.DISCONNECTED ? (
           <>
             <Online>
               <Button

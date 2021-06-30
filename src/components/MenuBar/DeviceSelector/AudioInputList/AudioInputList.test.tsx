@@ -33,11 +33,11 @@ const mockLocalTrack = {
 describe('the AudioInputList component', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
+    rootStore.participantsStore = newStore.participantsStore;
   });
   it('should display the name of the local audio track when only one is avaiable', () => {
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack(mockLocalTrack as LocalAudioTrack);
+    rootStore.participantsStore.setAudioTrack(mockLocalTrack as LocalAudioTrack);
     const wrapper = shallow(<AudioInputList />);
     expect(wrapper.find(Select).exists()).toBe(false);
     expect(
@@ -59,7 +59,7 @@ describe('the AudioInputList component', () => {
   });
 
   it('should render a Select menu when there are multiple audio input devices', () => {
-    rootStore.participantStore.setDevices([
+    rootStore.participantsStore.setDevices([
       { ...mockDevice, kind: 'audioinput' },
       { ...mockDevice, kind: 'audioinput' },
     ]);
@@ -74,7 +74,7 @@ describe('the AudioInputList component', () => {
   });
 
   it('should save the deviceId in localStorage when the audio input device is changed', () => {
-    rootStore.participantStore.setDevices([
+    rootStore.participantsStore.setDevices([
       { ...mockDevice, kind: 'audioinput' },
       { ...mockDevice, kind: 'audioinput' },
     ]);
@@ -85,12 +85,12 @@ describe('the AudioInputList component', () => {
   });
 
   it('should call track.restart with the new deviceId when the audio input device is changed', () => {
-    rootStore.participantStore.setDevices([
+    rootStore.participantsStore.setDevices([
       { ...mockDevice, kind: 'audioinput' },
       { ...mockDevice, kind: 'audioinput' },
     ]);
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack(mockLocalTrack);
+    rootStore.participantsStore.setAudioTrack(mockLocalTrack);
     const wrapper = shallow(<AudioInputList />);
     wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });
     expect(mockLocalTrack.restart).toHaveBeenCalledWith({

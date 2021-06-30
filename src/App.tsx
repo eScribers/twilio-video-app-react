@@ -29,7 +29,7 @@ const query = new URLSearchParams(window.location.search);
 const returnUrl = query.get('returnUrl');
 
 const App = observer(() => {
-  const { roomStore } = rootStore;
+  const { roomsStore } = rootStore;
 
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
@@ -44,13 +44,16 @@ const App = observer(() => {
 
   return (
     <Container
-      style={{ height, gridTemplateColumns: roomStore.roomState === ROOM_STATE.DISCONNECTED ? '1fr 0px' : '1fr 400px' }}
+      style={{
+        height,
+        gridTemplateColumns: roomsStore.roomState === ROOM_STATE.DISCONNECTED ? '1fr 0px' : '1fr 400px',
+      }}
     >
       <div>
         <MessageText />
         <MenuBar />
         <Main>
-          {roomStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
+          {roomsStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
           <Controls />
         </Main>
         <ReconnectingNotification />

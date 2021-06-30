@@ -26,12 +26,12 @@ interface ParticipantTracksProps {
 const ParticipantTracks = observer(
   ({ participant, videoOnly, enableScreenShare, videoPriority, isLocalParticipant }: ParticipantTracksProps) => {
     const publications = usePublications(participant);
-    const { roomStore } = rootStore;
+    const { roomsStore } = rootStore;
     let somebodySharesScreen = false;
     somebodySharesScreen = somebodySharesScreen || publications.some(p => p.trackName.includes(TRACK_TYPE.SCREEN));
     useEffect(() => {
-      if (somebodySharesScreen) roomStore.setSetting('viewMode' as keyof Settings, VIEW_MODE.collaboration);
-    }, [somebodySharesScreen, roomStore]);
+      if (somebodySharesScreen) roomsStore.setSetting('viewMode' as keyof Settings, VIEW_MODE.collaboration);
+    }, [somebodySharesScreen, roomsStore]);
 
     let filteredPublications: TrackPublication[];
 
