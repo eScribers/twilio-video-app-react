@@ -59,7 +59,7 @@ const useStyles = makeStyles((theme: Theme) => ({
 const LocalVideoPreview = observer(({ identity }: { identity: string }) => {
   const classes = useStyles();
 
-  const videoTrack = rootStore.participantStore.localTracks.find(track =>
+  const videoTrack = rootStore.participantsStore.localTracks.find(track =>
     track?.name.includes('camera')
   ) as LocalVideoTrack;
 

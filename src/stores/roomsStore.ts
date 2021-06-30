@@ -13,7 +13,7 @@ import roleChecker from '../utils/rbac/roleChecker';
 import { ParticipantIdentity } from '../utils/participantIdentity';
 import axios from 'axios';
 
-class RoomStore {
+class roomsStore {
   rootStore: any;
 
   room: Room = new EventEmitter() as Room;
@@ -55,7 +55,7 @@ class RoomStore {
     try {
       const newRoom = await Video.connect(token, {
         ...this.options,
-        tracks: this.rootStore.participantStore.localTracks,
+        tracks: this.rootStore.participantsStore.localTracks,
       });
       this.setIsConnecting(false);
       const disconnect = () => newRoom.disconnect();
@@ -69,14 +69,14 @@ class RoomStore {
       // All video publications are low by default, except MainParticipant (which is high)
       newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
 
-      if (!this.rootStore.participantStore.participant)
-        this.rootStore.participantStore.setParticipant(newRoom.localParticipant);
+      if (!this.rootStore.participantsStore.localParticipant?.participant)
+        this.rootStore.participantsStore.localParticipant?.setParticipant(newRoom.localParticipant);
 
       const handleOnDisconnect = (_room, error: TwilioError) => {
         if (error) {
           this.setError(error);
         }
-        this.rootStore.participantStore.disconnectParticipant();
+        this.rootStore.participantsStore.disconnectParticipant();
         setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
         window.removeEventListener('beforeunload', disconnect);
         if (isMobile) window.removeEventListener('pagehide', disconnect);
@@ -84,7 +84,7 @@ class RoomStore {
 
       // Assigning all existing participants to be on the participants store
       newRoom.participants?.forEach(participant => {
-        this.rootStore.participantStore.addParticipant(participant);
+        this.rootStore.participantsStore.addParticipant(participant);
       });
 
       // Free to use sounds:
@@ -102,22 +102,22 @@ class RoomStore {
 
       const participantConnected = (participant: RemoteParticipant) => {
         if (result.os.name !== 'iOS') logInSound.play();
-        this.rootStore.participantStore.addParticipant(participant);
+        this.rootStore.participantsStore.addParticipant(participant);
       };
       const handleDominantSpeakerChanged = (newDominantSpeaker: RemoteParticipant) => {
         if (newDominantSpeaker !== null) {
-          this.rootStore.participantStore.setDominantSpeaker(newDominantSpeaker);
+          this.rootStore.participantsStore.setDominantSpeaker(newDominantSpeaker);
         }
       };
 
       // Since 'null' values are ignored, we will need to listen for the 'participantDisconnected'
       // event, so we can set the dominantSpeaker to 'null' when they disconnect.
       const handleParticipantDisconnected = (participant: RemoteParticipant) => {
-        if (this.rootStore.participantStore.dominantSpeaker === participant) {
-          return this.rootStore.participantStore.setDominantSpeaker(null);
+        if (this.rootStore.participantsStore.dominantSpeaker === participant) {
+          return this.rootStore.participantsStore.setDominantSpeaker(null);
         }
         if (result.os.name !== 'iOS') logOutSound.play();
-        this.rootStore.participantStore.removeParticipantSid(participant.sid);
+        this.rootStore.participantsStore.removeParticipantSid(participant.sid);
         // updateScreenShareParticipant();
       };
 
@@ -255,4 +255,4 @@ class RoomStore {
   }
 }
 
-export default RoomStore;
+export default roomsStore;

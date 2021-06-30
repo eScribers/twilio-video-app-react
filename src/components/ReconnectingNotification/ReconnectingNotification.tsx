@@ -23,12 +23,12 @@ const useStyles = makeStyles({
 
 const ReconnectingNotification = observer(() => {
   const classes = useStyles();
-  const { roomStore } = rootStore;
+  const { roomsStore } = rootStore;
 
   return (
     <Snackbar
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      open={roomStore.roomState === ROOM_STATE.RECONNECTING}
+      open={roomsStore.roomState === ROOM_STATE.RECONNECTING}
     >
       <SnackbarContent
         className={classes.snackbar}

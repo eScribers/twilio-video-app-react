@@ -30,19 +30,19 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const EndCallButton = observer(() => {
   const [modalOpen, setModalOpen] = useState(false);
-  const { roomStore, participantStore } = rootStore;
+  const { roomsStore, participantsStore } = rootStore;
   const classes = useStyles();
 
   let canEndConference = false;
-  if (participantStore.participant?.identity) {
-    const role = ParticipantIdentity.Parse(participantStore.participant.identity).partyType;
+  if (participantsStore.localParticipant.participant?.identity) {
+    const role = ParticipantIdentity.Parse(participantsStore.localParticipant.participant.identity).partyType;
 
     canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
   }
 
   const handleClick = () => {
     if (!canEndConference) {
-      roomStore.room.disconnect();
+      roomsStore.room.disconnect();
 
       return;
     }
@@ -70,7 +70,7 @@ const EndCallButton = observer(() => {
               variant="outlined"
               size="medium"
               id="leave-conference"
-              onClick={() => roomStore.room.disconnect()}
+              onClick={() => roomsStore.room.disconnect()}
             >
               Leave conference
             </Button>
@@ -79,7 +79,7 @@ const EndCallButton = observer(() => {
               variant="outlined"
               size="medium"
               id="end-conference"
-              onClick={() => roomStore.endConference()}
+              onClick={() => roomsStore.endConference()}
               color="secondary"
             >
               End conference

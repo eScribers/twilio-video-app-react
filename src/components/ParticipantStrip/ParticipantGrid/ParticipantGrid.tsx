@@ -31,14 +31,14 @@ export interface ParticipantGridProps {
 }
 
 const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const { sortedParticipants, selectedParticipant, participant: localParticipant } = participantStore;
+  const { sortedParticipants, selectedParticipant, localParticipant } = participantsStore;
   const classes = useStyles();
 
-  const dominantIdentity = participantStore.dominantSpeaker;
+  const dominantIdentity = participantsStore.dominantSpeaker;
 
   useEffect(() => {
     if (currViewMode !== viewMode) {
@@ -59,16 +59,16 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
     }
   }, [viewMode, currViewMode]);
 
-  if (!localParticipant) return null;
+  if (!localParticipant?.participant) return null;
   return (
     <div className={classes.root}>
       <Grid container spacing={3} className={classes.scrollable}>
         <Grid item xs={12} sm={6} md={mdState} lg={lgState}>
           <Paper className={classes.paper}>
             <Participant
-              participant={localParticipant}
-              isSelected={selectedParticipant === localParticipant.identity}
-              onClick={() => participantStore.setSelectedParticipant(localParticipant.identity)}
+              participant={localParticipant.participant}
+              isSelected={selectedParticipant === localParticipant.participant.identity}
+              onClick={() => participantsStore.setSelectedParticipant(localParticipant.participant.identity)}
             />
           </Paper>
         </Grid>
@@ -80,8 +80,8 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
                 participant={participant}
                 isSelected={selectedParticipant === participant}
                 isDominantSpeaker={dominantIdentity === participant.identity}
-                userIsSilenced={!!participantStore.isSilenced}
-                onClick={() => participantStore.setSelectedParticipant(participant.identity)}
+                userIsSilenced={!!participantsStore.isSilenced}
+                onClick={() => participantsStore.setSelectedParticipant(participant.identity)}
               />
             </Paper>
           </Grid>

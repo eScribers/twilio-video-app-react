@@ -9,10 +9,10 @@ import { observer } from 'mobx-react-lite';
 import rootStore from '../../../../stores';
 
 const AudioInputList = observer(() => {
-  const { participantStore } = rootStore;
-  const { devices } = participantStore;
+  const { participantsStore } = rootStore;
+  const { devices } = participantsStore;
 
-  const localAudioTrack = participantStore.localTracks.find(
+  const localAudioTrack = participantsStore.localTracks.find(
     track => track?.kind === TRACK_TYPE.AUDIO
   ) as LocalAudioTrack;
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);

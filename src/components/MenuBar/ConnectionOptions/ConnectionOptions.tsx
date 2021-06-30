@@ -42,19 +42,19 @@ const RenderDimensionItems = RenderDimensions.map(({ label, value }) => (
 
 const ConnectionOptions = observer(({ className, hidden }: { className?: string; hidden?: boolean }) => {
   const classes = useStyles();
-  const { roomStore } = rootStore;
-  const { settings } = roomStore;
+  const { roomsStore } = rootStore;
+  const { settings } = roomsStore;
 
-  const isDisabled = roomStore.roomState !== ROOM_STATE.DISCONNECTED;
+  const isDisabled = roomsStore.roomState !== ROOM_STATE.DISCONNECTED;
   const { width } = useWindowSize();
 
   const onlyCollaboration = width && width < 768;
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
-      roomStore.setSetting(e.target.name as keyof Settings, e.target.value as string);
+      roomsStore.setSetting(e.target.name as keyof Settings, e.target.value as string);
     },
-    [roomStore]
+    [roomsStore]
   );
 
   const handleNumberChange = useCallback(

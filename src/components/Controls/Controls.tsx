@@ -41,22 +41,22 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const Controls = observer(() => {
   const classes = useStyles();
-  const { roomStore, participantStore } = rootStore;
-  const partyType = !participantStore.participant
+  const { roomsStore, participantsStore } = rootStore;
+  const partyType = !participantsStore.localParticipant?.participant
     ? ''
-    : ParticipantIdentity.Parse(participantStore.participant.identity).partyType;
-  const isReconnecting = roomStore.roomState === ROOM_STATE.RECONNECTING;
-  const isdisconnected = roomStore.roomState === ROOM_STATE.DISCONNECTED;
+    : ParticipantIdentity.Parse(participantsStore.localParticipant?.participant?.identity).partyType;
+  const isReconnecting = roomsStore.roomState === ROOM_STATE.RECONNECTING;
+  const isdisconnected = roomsStore.roomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
-  const showControls = isUserActive || roomStore.roomState === ROOM_STATE.DISCONNECTED;
-  const canToggleMute = [PARTICIPANT_TYPES.HEARING_OFFICER].includes(partyType) || participantStore.isReporterIn;
+  const showControls = isUserActive || roomsStore.roomState === ROOM_STATE.DISCONNECTED;
+  const canToggleMute = [PARTICIPANT_TYPES.HEARING_OFFICER].includes(partyType) || participantsStore.isReporterIn;
   const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !canToggleMute;
 
   return (
     <div className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={isReconnecting} />
-      {roomStore.roomState !== ROOM_STATE.DISCONNECTED && (
+      {roomsStore.roomState !== ROOM_STATE.DISCONNECTED && (
         <>
           <ToggleScreenShareButton disabled={isReconnecting} />
           <EndCallButton />

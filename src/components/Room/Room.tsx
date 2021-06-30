@@ -22,8 +22,8 @@ const Container = styled('div')(({ theme }) => ({
 }));
 
 const Room = observer(() => {
-  const { roomStore } = rootStore;
-  const { settings } = roomStore;
+  const { roomsStore } = rootStore;
+  const { settings } = roomsStore;
 
   if (settings.viewMode.includes('grid')) {
     return <ParticipantGrid viewMode={settings.viewMode} />;

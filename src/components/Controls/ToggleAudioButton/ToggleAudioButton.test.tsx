@@ -10,7 +10,7 @@ describe('the ToggleAudioButton component', () => {
   it('should render correctly when audio is enabled', () => {
     let track = new MockTrack('audioInput');
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack(track);
+    rootStore.participantsStore.setAudioTrack(track);
     const wrapper = shallow(<ToggleAudioButton />);
     expect(wrapper.find(Mic).exists()).toBe(true);
     expect(wrapper.find(MicOff).exists()).toBe(false);
@@ -26,7 +26,7 @@ describe('the ToggleAudioButton component', () => {
     let track = new MockTrack('audioInput');
     track.isEnabled = false;
     // @ts-expect-error
-    rootStore.participantStore.setAudioTrack(track);
+    rootStore.participantsStore.setAudioTrack(track);
     const wrapper = shallow(<ToggleAudioButton />);
     expect(wrapper.find(Mic).exists()).toBe(false);
     expect(wrapper.find(MicOff).exists()).toBe(true);
@@ -39,10 +39,10 @@ describe('the ToggleAudioButton component', () => {
   });
 
   it('should call the correct toggle function when clicked', () => {
-    if (rootStore.participantStore) jest.spyOn(rootStore.participantStore, 'toggleAudioEnabled');
+    if (rootStore.participantsStore) jest.spyOn(rootStore.participantsStore, 'toggleAudioEnabled');
 
     const wrapper = shallow(<ToggleAudioButton />);
     wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
-    expect(rootStore.participantStore.toggleAudioEnabled).toHaveBeenCalled();
+    expect(rootStore.participantsStore.toggleAudioEnabled).toHaveBeenCalled();
   });
 });

@@ -19,16 +19,16 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ToggleAudioButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
 
-  const isAudioEnabled = useIsTrackEnabled(participantStore.localAudioTrack as LocalAudioTrack | RemoteAudioTrack);
+  const isAudioEnabled = useIsTrackEnabled(participantsStore.localAudioTrack as LocalAudioTrack | RemoteAudioTrack);
 
   return (
     <Tooltip title={isAudioEnabled ? 'Mute' : 'Unmute'} placement="top" PopperProps={{ disablePortal: true }}>
       <span>
         <Fab
           className={classes.fab}
-          onClick={() => participantStore.toggleAudioEnabled()}
+          onClick={() => participantsStore.toggleAudioEnabled()}
           disabled={props.disabled}
           data-cy-audio-toggle
         >

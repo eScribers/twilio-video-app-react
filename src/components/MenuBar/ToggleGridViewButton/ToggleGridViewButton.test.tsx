@@ -21,8 +21,8 @@ jest.mock('../../../stores', () => {
 describe('the ToggleGridViewButton', () => {
   beforeEach(() => {
     let newStore = new RootStore();
-    rootStore.participantStore = newStore.participantStore;
-    rootStore.roomStore = newStore.roomStore;
+    rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore = newStore.roomsStore;
     global.innerWidth = 1280;
     global.innerHeight = 1024;
     global.dispatchEvent(new Event('resize'));
@@ -34,7 +34,7 @@ describe('the ToggleGridViewButton', () => {
   });
 
   it('should render collaboration view', async () => {
-    jest.spyOn(rootStore.roomStore, 'setSetting');
+    jest.spyOn(rootStore.roomsStore, 'setSetting');
     const wrapper = mount(<ToggleGridViewButton />);
     act(() => {
       // Change the viewport to 750px.
@@ -42,27 +42,27 @@ describe('the ToggleGridViewButton', () => {
       // // Trigger the window resize event.
       global.dispatchEvent(new Event('resize'));
     });
-    expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('viewMode', 'collaboration');
+    expect(rootStore.roomsStore.setSetting).toHaveBeenCalledWith('viewMode', 'collaboration');
   });
 
   it('should not change viewMode', async () => {
-    jest.spyOn(rootStore.roomStore, 'setSetting');
-    const wrapper = mount(<ToggleGridViewButton />);
+    jest.spyOn(rootStore.roomsStore, 'setSetting');
+    const wrapper = shallow(<ToggleGridViewButton />);
     act(() => {
       // Change the viewport to 750px.
       global.innerWidth = 800;
       // // Trigger the window resize event.
       global.dispatchEvent(new Event('resize'));
     });
-    expect(rootStore.roomStore.setSetting).not.toHaveBeenCalled();
+    expect(rootStore.roomsStore.setSetting).not.toHaveBeenCalled();
   });
 
   it('should render the next view mode', () => {
-    jest.spyOn(rootStore.roomStore, 'setSetting');
+    jest.spyOn(rootStore.roomsStore, 'setSetting');
     const wrapper = shallow(<ToggleGridViewButton />);
     act(() => {
       wrapper.find(IconButton).simulate('click');
     });
-    expect(rootStore.roomStore.setSetting).toHaveBeenCalledWith('viewMode', 'grid 2 column');
+    expect(rootStore.roomsStore.setSetting).toHaveBeenCalledWith('viewMode', 'grid 2 column');
   });
 });

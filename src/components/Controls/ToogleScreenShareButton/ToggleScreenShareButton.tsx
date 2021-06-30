@@ -29,12 +29,12 @@ const useStyles = makeStyles((theme: Theme) =>
 
 const ToggleScreenShareButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
-  const { participantStore, roomStore } = rootStore;
-  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(roomStore.room, console.log);
+  const { participantsStore, roomsStore } = rootStore;
+  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(roomsStore.room, console.log);
 
   const disableScreenShareButton =
-    participantStore.screenSharingInProgress &&
-    participantStore.screenShareParticipant() !== participantStore.participant;
+    participantsStore.screenSharingInProgress &&
+    participantsStore.screenShareParticipant() !== participantsStore.localParticipant?.participant;
 
   const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
   const isDisabled = props.disabled || disableScreenShareButton || !isScreenShareSupported;

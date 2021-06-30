@@ -6,10 +6,10 @@ import rootStore from '../../stores';
 import { Track } from 'twilio-video';
 
 const MainParticipant = () => {
-  const { participantStore } = rootStore;
-  const { mainParticipant, participant: localParticipant } = participantStore;
+  const { participantsStore } = rootStore;
+  const { mainParticipant, participant: localParticipant } = participantsStore;
 
-  let videoPriority = mainParticipant !== participantStore.participant?.identity ? 'high' : null;
+  let videoPriority = mainParticipant !== participantsStore.localParticipant?.participant?.identity ? 'high' : null;
 
   if (mainParticipant === localParticipant?.identity) {
     videoPriority = 'high';
@@ -17,7 +17,7 @@ const MainParticipant = () => {
 
   if (!mainParticipant && typeof mainParticipant === 'string') return null;
 
-  const participant = [participantStore.participant, ...participantStore.participants].find(
+  const participant = [participantsStore.localParticipant?.participant, ...participantsStore.participants].find(
     p => p?.identity === mainParticipant
   );
   if (!participant) return null;

@@ -9,81 +9,81 @@ describe('the room store', () => {
   it('should return an empty room when no token is provided', () => {
     const rootStore = new RootStore();
 
-    expect(rootStore.roomStore.room).toEqual(new EventEmitter());
+    expect(rootStore.roomsStore.room).toEqual(new EventEmitter());
   });
 
   it('should create a room', async () => {
-    const { roomStore } = new RootStore();
-    jest.spyOn(roomStore, 'setIsConnecting');
+    const { roomsStore } = new RootStore();
+    jest.spyOn(roomsStore, 'setIsConnecting');
     jest.spyOn(Video, 'connect');
-    expect(roomStore.isConnecting).toBe(false);
+    expect(roomsStore.isConnecting).toBe(false);
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
-    expect(roomStore.setIsConnecting).toHaveBeenCalledWith(true);
+    expect(roomsStore.setIsConnecting).toHaveBeenCalledWith(true);
     expect(Video.connect).toHaveBeenCalledTimes(1);
-    expect(roomStore.room.disconnect).not.toHaveBeenCalled();
-    expect(roomStore.isConnecting).toBe(false);
+    expect(roomsStore.room.disconnect).not.toHaveBeenCalled();
+    expect(roomsStore.isConnecting).toBe(false);
   });
 
   it('should set the priority of video tracks to low', async () => {
-    const { roomStore, participantStore } = new RootStore();
+    const { roomsStore, participantsStore } = new RootStore();
 
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
-    expect(participantStore.participant?.videoTracks[0].setPriority).toHaveBeenCalledWith('low');
+    expect(participantsStore.localParticipant.participant?.videoTracks[0].setPriority).toHaveBeenCalledWith('low');
   });
 
   it('should return a room after connecting to a room', async () => {
-    const { roomStore } = new RootStore();
+    const { roomsStore } = new RootStore();
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
-    expect(roomStore.room.state).toEqual('connected');
+    expect(roomsStore.room.state).toEqual('connected');
   });
 
   it('should add a listener for the "beforeUnload" event when connected to a room', async () => {
     jest.spyOn(window, 'addEventListener');
-    const { roomStore } = new RootStore();
+    const { roomsStore } = new RootStore();
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
     expect(window.addEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
   });
 
   it('should remove the listener for the "beforeUnload" event when the room is disconnected', async () => {
     jest.spyOn(window, 'removeEventListener');
-    const { roomStore } = new RootStore();
+    const { roomsStore } = new RootStore();
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
-    roomStore.room.emit('disconnected');
+    roomsStore.room.emit('disconnected');
     expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
   });
 
   it('should call onError and set isConnecting to false when there is an error', async () => {
     const mockVideoConnect = Video.connect as jest.Mock<any>;
     mockVideoConnect.mockImplementationOnce(() => Promise.reject(new Error('mockError')));
-    const { roomStore } = new RootStore();
-    jest.spyOn(roomStore, 'setError');
+    const { roomsStore } = new RootStore();
+    jest.spyOn(roomsStore, 'setError');
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
-    expect(roomStore.setError).toHaveBeenLastCalledWith('mockError');
-    expect(roomStore.isConnecting).toBe(false);
+    expect(roomsStore.setError).toHaveBeenLastCalledWith('mockError');
+    expect(roomsStore.isConnecting).toBe(false);
   });
 
   it('should reset the room object on disconnect', async () => {
-    const { roomStore } = new RootStore();
+    const { roomsStore } = new RootStore();
     await act(async () => {
-      await roomStore.joinRoom('token');
+      await roomsStore.joinRoom('token');
     });
 
-    expect(roomStore.room.state).toBe('connected');
-    roomStore.room.emit('disconnected');
+    expect(roomsStore.room.state).toBe('connected');
+    roomsStore.room.emit('disconnected');
     await sleep(50);
-    expect(roomStore.room.state).toBe(undefined);
+    expect(roomsStore.room.state).toBe(undefined);
   });
 
   describe('when isMobile is true', () => {
@@ -92,21 +92,21 @@ describe('the room store', () => {
 
     it('should add a listener for the "pagehide" event when connected to a room', async () => {
       jest.spyOn(window, 'addEventListener');
-      const { roomStore } = new RootStore();
+      const { roomsStore } = new RootStore();
       await act(async () => {
-        await roomStore.joinRoom('token');
+        await roomsStore.joinRoom('token');
       });
       expect(window.addEventListener).toHaveBeenCalledWith('pagehide', expect.any(Function));
     });
 
     it('should remove the listener for the "pagehide" event when the room is disconnected', async () => {
       jest.spyOn(window, 'removeEventListener');
-      const { roomStore } = new RootStore();
+      const { roomsStore } = new RootStore();
       await act(async () => {
-        await roomStore.joinRoom('token');
+        await roomsStore.joinRoom('token');
       });
       await sleep(50);
-      roomStore.room.emit('disconnected');
+      roomsStore.room.emit('disconnected');
       expect(window.removeEventListener).toHaveBeenCalledWith('pagehide', expect.any(Function));
     });
   });

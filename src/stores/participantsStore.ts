@@ -13,17 +13,18 @@ import moment, { Moment } from 'moment';
 import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../utils/rbac/ParticipantTypes';
 import { TrackPublication } from 'twilio-video';
+import localParticipantStore from './localParticipantStore';
 
 const query = new URLSearchParams(window.location.search);
 
-class ParticipantStore {
+class participantsStore {
   rootStore: any;
 
   userToken?: string;
 
   isFetchingUserToken: boolean = false;
 
-  participant?: LocalParticipant;
+  localParticipant?: localParticipantStore;
 
   joinTime?: Moment;
 
@@ -55,6 +56,7 @@ class ParticipantStore {
 
   constructor(rootStore: any) {
     this.rootStore = rootStore;
+    this.localParticipant = new localParticipantStore(rootStore, this);
     makeAutoObservable(this);
     (async () => {
       await this.getDevices();
@@ -78,7 +80,7 @@ class ParticipantStore {
     } catch (err) {
       console.error('Failed to get devices!', err.message);
       console.trace();
-      this.rootStore.roomStore.setError(err);
+      this.rootStore.roomsStore.setError(err);
     }
     const devices = await navigator.mediaDevices.enumerateDevices();
     this.setDevices(devices);
@@ -87,13 +89,6 @@ class ParticipantStore {
   setParticipants(participants: Participant[]) {
     this.participants = participants;
     this.sortedParticipants = sortParticipants(participants);
-  }
-
-  setParticipant(participant?: LocalParticipant) {
-    this.participant = participant;
-    if (this.dominantSpeaker === null && participant) {
-      this.setDominantSpeaker(participant.identity);
-    }
   }
 
   addParticipant(participant: Participant) {
@@ -190,9 +185,9 @@ class ParticipantStore {
     if (this.publishingVideoTrackInProgress) return;
     this.setPublishingVideoTrackInProgress(true);
     if (this.localVideoTrack) {
-      const localTrackPublication = this.participant?.unpublishTrack(this.localVideoTrack);
+      const localTrackPublication = this.localParticipant?.participant?.unpublishTrack(this.localVideoTrack);
       // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-      this.participant?.emit('trackUnpublished', localTrackPublication);
+      this.localParticipant?.participant?.emit('trackUnpublished', localTrackPublication);
       this.localVideoTrack.stop();
       this.setVideoTrack(undefined);
       this.setPublishingVideoTrackInProgress(false);
@@ -201,11 +196,11 @@ class ParticipantStore {
       try {
         track = await this.getLocalVideoTrack();
       } catch (err) {
-        this.rootStore.roomStore.setError(err.message);
+        this.rootStore.roomsStore.setError(err.message);
         return Promise.reject(err);
       }
 
-      this.participant?.publishTrack(track, { priority: 'low' });
+      this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
       // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
       // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
       setTimeout(() => {
@@ -255,24 +250,19 @@ class ParticipantStore {
       this.screenShareParticipant()?.identity ||
       this.dominantSpeaker ||
       this.participants[0].identity ||
-      this.participant?.identity
+      this.localParticipant?.participant?.identity
     );
-  }
-
-  get localParticipantType() {
-    if (!this.participant?.identity) return '';
-    const localParticipantType: string = ParticipantIdentity.Parse(this.participant?.identity || '').partyType;
-    return localParticipantType;
   }
 
   get muteableParticipants() {
     let muteableParticipants: Participant[] = this.participants.filter(participant => {
       let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
-      if (this.localParticipantType === remoteParticipantPartyType) return false;
+      if (!this.localParticipant?.participantType) return false;
+      if (this.localParticipant?.participantType === remoteParticipantPartyType) return false;
       if (
         roleChecker.doesRoleHavePermission(
           ROLE_PERMISSIONS.MUTE_PARTICIPANT,
-          this.localParticipantType,
+          this.localParticipant?.participantType,
           remoteParticipantPartyType
         )
       )
@@ -292,7 +282,10 @@ class ParticipantStore {
   }
 
   get isReporter() {
-    return ParticipantIdentity.Parse(this.participant?.identity || '')['partyType'] === PARTICIPANT_TYPES.REPORTER;
+    return (
+      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '')['partyType'] ===
+      PARTICIPANT_TYPES.REPORTER
+    );
   }
 
   muteAllNoneModerators() {
@@ -326,12 +319,12 @@ class ParticipantStore {
   }
 
   async authoriseParticipant() {
-    if (!this.rootStore.roomStore.config.loaded)
+    if (!this.rootStore.roomsStore.config.loaded)
       return console.log("Tried authorizing participant but config hasn't loaded yet");
     if (this.hasTriedAuthorisation) return console.log('Tried to authorize participant but it was already authorized');
 
     const participantAuthToken = window.location.hash.substr(1);
-    const url = `${this.rootStore.roomStore.config.endPoint}/authorise-participant`;
+    const url = `${this.rootStore.roomsStore.config.endPoint}/authorise-participant`;
     console.log('attempting authorise ' + new Date().toLocaleTimeString());
     this.setHasTriedAuthorisation(true);
 
@@ -349,7 +342,7 @@ class ParticipantStore {
       return data.participantInfo;
     } catch (err) {
       console.log('Authorization failed: ', err.message);
-      this.rootStore.roomStore.setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
+      this.rootStore.roomsStore.setError({ message: 'Could not authorize participant; ' + err } as TwilioError);
     }
 
     return false;
@@ -368,11 +361,11 @@ class ParticipantStore {
   }
 
   async getToken(participantInformation: ParticipantInformation) {
-    if (!this.rootStore.roomStore.config.loaded) return null;
+    if (!this.rootStore.roomsStore.config.loaded) return null;
     try {
       this.setIsFetchingToken(true);
       const participantAuthToken = window.location.hash.substr(1);
-      const url = `${this.rootStore.roomStore.config.endPoint}/token`;
+      const url = `${this.rootStore.roomsStore.config.endPoint}/token`;
       const { data: res } = await axios({
         url: url,
         method: 'POST',
@@ -409,12 +402,13 @@ class ParticipantStore {
   }
 
   async disconnectParticipant() {
-    const config = this.rootStore.roomStore.config;
-    if (!config.loaded || !this.participant) return null;
+    const config = this.rootStore.roomsStore.config;
+    if (!config.loaded || !this.localParticipant?.participant) return null;
     const returnUrl = query.get('returnUrl');
 
     let isRegistered: boolean =
-      this.participant.identity?.length > 0 && ParticipantIdentity.Parse(this.participant.identity).isRegisteredUser;
+      this.localParticipant?.participant.identity?.length > 0 &&
+      ParticipantIdentity.Parse(this.localParticipant?.participant.identity).isRegisteredUser;
 
     if (this.joinTime && moment().isSameOrAfter(this.joinTime.add(3, 'hours').add(50, 'minutes'))) {
       return window.location.reload();
@@ -432,7 +426,7 @@ class ParticipantStore {
   }
 
   screenShareParticipant() {
-    const isSomebodySharingScreen = [...this.participants, this.participant].find(
+    const isSomebodySharingScreen = [...this.participants, this.localParticipant?.participant].find(
       (participant: Participant | LocalParticipant | undefined) =>
         participant &&
         Array.from<TrackPublication>(participant.tracks.values()).find(track => {
@@ -455,9 +449,9 @@ class ParticipantStore {
   }
 
   get isHostIn() {
-    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
     let result = false;
-    [...this.participants, this.participant].forEach(participant => {
+    [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (
         (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) ||
         (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
@@ -471,9 +465,9 @@ class ParticipantStore {
   }
 
   get isReporterIn() {
-    if (this.rootStore.roomStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
     let result = false;
-    [...this.participants, this.participant].forEach(participant => {
+    [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
         result = true;
       }
@@ -484,15 +478,16 @@ class ParticipantStore {
   get isSilenced() {
     let result = false;
     if (
-      !this.participant?.identity ||
-      ParticipantIdentity.Parse(this.participant.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
+      !this.localParticipant?.participant?.identity ||
+      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '').partyType !==
+        PARTICIPANT_TYPES.REPORTER
     ) {
       this.wasSilenced = result;
       return result;
     }
 
     if (!this.wasSilenced && this.isSipClientConnected) {
-      this.rootStore.roomStore.setNotification({
+      this.rootStore.roomsStore.setNotification({
         message:
           'Dear reporter, a Zoiper call has been connected. You are automatically muted and all incoming audio from this tab is silenced in order to prevent the audio from being played twice. Please mute/unmute yourself directly from Zoiper',
       });
@@ -501,7 +496,7 @@ class ParticipantStore {
       if (this.localAudioTrack) this.setLocalAudioTrackEnabled(false);
     }
     if (this.wasSilenced && !this.isSipClientConnected) {
-      this.rootStore.roomStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
+      this.rootStore.roomsStore.setNotification({ message: 'Zoiper call disconnected. Please unmute yourself' });
       console.log('Zoiper call disconnected, you are un-silenced');
       result = false;
     }
@@ -510,4 +505,4 @@ class ParticipantStore {
   }
 }
 
-export default ParticipantStore;
+export default participantsStore;

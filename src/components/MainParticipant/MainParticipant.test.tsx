@@ -8,13 +8,13 @@ import rootStore from '../../stores';
 const localParticipant = new mockLocalParticipant();
 
 describe('the MainParticipant component', () => {
-  rootStore.participantStore.setParticipant(localParticipant);
+  rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
 
   it('should set the videoPriority to high when the main participant is the selected participant', () => {
     const localParticipant = new mockLocalParticipant();
     localParticipant.tracks = new Map();
     localParticipant.tracks.set(0, { trackName: 'screen' });
-    rootStore.participantStore.setParticipant(localParticipant);
+    rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
     const wrapper = shallow(<MainParticipant />);
     expect(wrapper.find(ParticipantTracks).prop('videoPriority')).toBe('high');
   });
@@ -23,7 +23,7 @@ describe('the MainParticipant component', () => {
     const participant = new mockParticipant();
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'screen' });
-    rootStore.participantStore.addParticipant(participant);
+    rootStore.participantsStore.addParticipant(participant);
     const wrapper = shallow(<MainParticipant />);
     expect(wrapper.find(ParticipantTracks).prop('videoPriority')).toBe('high');
   });
@@ -32,7 +32,7 @@ describe('the MainParticipant component', () => {
     const localParticipant = new mockLocalParticipant();
     localParticipant.tracks = new Map();
     localParticipant.tracks.set(0, { trackName: 'screen' });
-    rootStore.participantStore.setParticipant(localParticipant);
+    rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
 
     const wrapper = shallow(<MainParticipant />);
 
