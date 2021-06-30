@@ -153,16 +153,17 @@ class roomsStore {
   }
 
   async endConference() {
-    if (!this.rootStore.participantStore.participant?.identity)
+    if (!this.rootStore.participantsStore.localParticipant.participant?.identity)
       throw new Error("Participant not connected, can't end conference");
-    const role = ParticipantIdentity.Parse(this.rootStore.participantStore.participant.identity).partyType;
+    const role = ParticipantIdentity.Parse(this.rootStore.participantsStore.localParticipant.participant.identity)
+      .partyType;
     const canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
 
     if (!canEndConference || !role) throw new Error('No permission to end conference');
 
     try {
       const participantAuthToken = window.location.hash.substr(1);
-      const url = `${this.rootStore.roomStore.config.endPoint}/end-conference`;
+      const url = `${this.config.endPoint}/end-conference`;
 
       await axios({
         url: url,

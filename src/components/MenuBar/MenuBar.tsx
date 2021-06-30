@@ -159,7 +159,7 @@ const MenuBar = observer(() => {
     if (!participantInformation?.partyType) {
       return;
     }
-    if (isReporterIn === isReporterInState) return;
+    if (isReporterIn === isReporterInState || roomsStore.roomState !== ROOM_STATE.CONNECTED) return;
 
     if (![PARTICIPANT_TYPES.HEARING_OFFICER, PARTICIPANT_TYPES.REPORTER].includes(participantInformation.partyType)) {
       if (isReporterIn) {

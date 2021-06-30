@@ -14,7 +14,7 @@ describe('the MainParticipant component', () => {
     const localParticipant = new mockLocalParticipant();
     localParticipant.tracks = new Map();
     localParticipant.tracks.set(0, { trackName: 'screen' });
-    rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
+    rootStore.participantsStore.localParticipant.setParticipant(localParticipant);
     const wrapper = shallow(<MainParticipant />);
     expect(wrapper.find(ParticipantTracks).prop('videoPriority')).toBe('high');
   });

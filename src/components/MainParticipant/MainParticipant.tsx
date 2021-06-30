@@ -7,11 +7,11 @@ import { Track } from 'twilio-video';
 
 const MainParticipant = () => {
   const { participantsStore } = rootStore;
-  const { mainParticipant, participant: localParticipant } = participantsStore;
+  const { mainParticipant, localParticipant } = participantsStore;
 
   let videoPriority = mainParticipant !== participantsStore.localParticipant?.participant?.identity ? 'high' : null;
 
-  if (mainParticipant === localParticipant?.identity) {
+  if (mainParticipant === localParticipant.participant?.identity) {
     videoPriority = 'high';
   }
 
@@ -29,9 +29,9 @@ const MainParticipant = () => {
       <ParticipantTracks
         participant={participant}
         videoOnly
-        enableScreenShare={mainParticipant !== localParticipant?.identity}
+        enableScreenShare={mainParticipant !== localParticipant?.participant?.identity}
         videoPriority={videoPriority as Track.Priority}
-        isLocalParticipant={mainParticipant === localParticipant?.identity}
+        isLocalParticipant={mainParticipant === localParticipant?.participant?.identity}
       />
     </MainParticipantInfo>
   );

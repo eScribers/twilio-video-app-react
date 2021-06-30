@@ -10,9 +10,8 @@ jest.mock('axios');
 
 describe('End Call button', () => {
   beforeEach(() => {
-    // @ts-expect-error
     rootStore.roomsStore.room = mockRoom;
-    rootStore.participantStore.setParticipant(undefined);
+    rootStore.participantsStore.localParticipant.setParticipant(undefined);
     jest.restoreAllMocks();
   });
   it('should disconnect from the room when clicked', () => {
@@ -33,7 +32,7 @@ describe('End Call button', () => {
 
   it('should call leave conference when clicked as a non-moderator', () => {
     let participant = new mockLocalParticipant('test@Parent@2');
-    rootStore.participantsStore.setParticipant(participant);
+    rootStore.participantsStore.localParticipant.setParticipant(participant);
 
     if (rootStore.roomsStore.room) jest.spyOn(rootStore.roomsStore, 'endConference');
     if (rootStore.roomsStore.room) jest.spyOn(rootStore.roomsStore.room, 'disconnect');
@@ -62,13 +61,13 @@ describe('End Call button', () => {
     const wrapper = shallow(<EndCallButton />);
 
     let participant = new mockLocalParticipant();
-    rootStore.participantStore.setParticipant(participant);
+    rootStore.participantsStore.localParticipant.setParticipant(participant);
 
     wrapper.find('#end-conference').simulate('click');
     await expect(rootStore.roomsStore.endConference()).resolves.toBeTruthy();
 
     participant.identity = 'test@Parent@2';
-    rootStore.participantStore.setParticipant(participant);
+    rootStore.participantsStore.localParticipant.setParticipant(participant);
 
     await expect(rootStore.roomsStore.endConference()).rejects.toThrow(`No permission to end conference`);
   });
