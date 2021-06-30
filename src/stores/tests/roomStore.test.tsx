@@ -32,7 +32,7 @@ describe('the room store', () => {
     await act(async () => {
       await roomsStore.joinRoom('token');
     });
-    expect(participantsStore.localParticipant.participant?.videoTracks[0].setPriority).toHaveBeenCalledWith('low');
+    expect(participantsStore.localParticipant?.participant?.videoTracks[0].setPriority).toHaveBeenCalledWith('low');
   });
 
   it('should return a room after connecting to a room', async () => {

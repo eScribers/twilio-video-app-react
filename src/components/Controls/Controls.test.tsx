@@ -26,7 +26,6 @@ describe('the Controls component', () => {
 
     it('should have the "active" class', () => {
       rootStore.roomsStore.room.state = ROOM_STATE.DISCONNECTED;
-      console.log(rootStore);
 
       const wrapper = shallow(<Controls />);
       expect(wrapper.find('div').prop('className')).toContain('showControls');
@@ -34,7 +33,6 @@ describe('the Controls component', () => {
 
     it('should not render the ToggleScreenShare and EndCall buttons when not connected to a room', () => {
       rootStore.roomsStore.room.state = ROOM_STATE.DISCONNECTED;
-      console.log(rootStore.roomsStore.roomState);
 
       const wrapper = shallow(<Controls />);
       expect(wrapper.find(EndCallButton).exists()).toBe(false);

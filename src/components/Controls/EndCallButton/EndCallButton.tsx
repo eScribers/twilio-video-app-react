@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const EndCallButton = observer(() => {
+const EndCallButton = () => {
   const classes = useStyles();
 
   return (
@@ -30,6 +30,6 @@ const EndCallButton = observer(() => {
       </Fab>
     </Tooltip>
   );
-});
+};
 
-export default EndCallButton;
+export default observer(EndCallButton);

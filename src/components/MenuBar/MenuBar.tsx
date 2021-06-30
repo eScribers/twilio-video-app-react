@@ -86,7 +86,7 @@ const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
   </div>
 );
 
-const MenuBar = observer(() => {
+const MenuBar = () => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
   const {
@@ -263,6 +263,6 @@ const MenuBar = observer(() => {
       />
     </AppBar>
   );
-});
+};
 
-export default MenuBar;
+export default observer(MenuBar);

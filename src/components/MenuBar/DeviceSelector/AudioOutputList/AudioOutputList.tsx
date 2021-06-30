@@ -4,7 +4,7 @@ import { useAppState } from '../../../../hooks/useAppState/useAppState';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../../../stores';
 
-const AudioOutputList = observer(() => {
+const AudioOutputList = () => {
   const { participantsStore } = rootStore;
   const { activeSinkId, setActiveSinkId } = useAppState();
   const activeOutputLabel = participantsStore.devices.audioOutputDevices.find(
@@ -34,6 +34,6 @@ const AudioOutputList = observer(() => {
       )}
     </div>
   );
-});
+};
 
-export default AudioOutputList;
+export default observer(AudioOutputList);

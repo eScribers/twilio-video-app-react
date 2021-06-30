@@ -7,6 +7,7 @@ import { mockRoom } from '../../../__mocks__/twilio-video';
 
 describe('End Call button', () => {
   it('should disconnect from the room when clicked', () => {
+    // @ts-expect-error
     rootStore.roomsStore.room = mockRoom;
 
     if (rootStore.roomsStore.room) jest.spyOn(rootStore.roomsStore.room, 'disconnect');
