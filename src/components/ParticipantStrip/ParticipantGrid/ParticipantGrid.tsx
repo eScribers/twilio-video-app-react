@@ -68,7 +68,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
             <Participant
               participant={localParticipant.participant}
               isSelected={selectedParticipant === localParticipant.participant.identity}
-              onClick={() => participantsStore.setSelectedParticipant(localParticipant.participant.identity)}
+              onClick={() => participantsStore.setSelectedParticipant(localParticipant.participant?.identity)}
             />
           </Paper>
         </Grid>

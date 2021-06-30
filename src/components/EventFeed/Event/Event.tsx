@@ -52,9 +52,9 @@ const useStyles = makeStyles((theme: Theme) =>
 const Event = ({ type, time, data }: IEvent) => {
   const classes = useStyles();
 
-  const { participantStore } = rootStore;
+  const { participantsStore } = rootStore;
 
-  const myIdentity = participantStore.participant?.identity || '';
+  const myIdentity = participantsStore.localParticipant?.participant?.identity || '';
   const userName = data.user ? ParticipantIdentity.Parse(data.user).partyName : '';
 
   if (type === EventTypes.message) {

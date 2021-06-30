@@ -35,8 +35,8 @@ const ParticipantStripCollaboration = observer(() => {
           participant={participantsStore.localParticipant.participant}
           isSelected={selectedParticipant === participantsStore.localParticipant.participant.identity}
           onClick={() =>
-            participantsStore.localParticipant.participant &&
-            participantsStore.setSelectedParticipant(participantsStore.localParticipant.participant.identity)
+            participantsStore.localParticipant?.participant &&
+            participantsStore.setSelectedParticipant(participantsStore.localParticipant?.participant.identity)
           }
         />
         {sortedParticipants.map(participant => (

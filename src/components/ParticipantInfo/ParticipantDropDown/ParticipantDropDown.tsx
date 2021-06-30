@@ -20,7 +20,8 @@ const ITEM_HEIGHT = 48;
 
 const ParticipantDropDown = observer(({ participant, isAudioEnabled }: ParticipantDropDownProps) => {
   const { participantsStore } = rootStore;
-  const options = getParticipantOptions(participant, participantsStore.localParticipantType, !isAudioEnabled);
+  const role = participantsStore.localParticipant?.participantType || '';
+  const options = getParticipantOptions(participant, role, !isAudioEnabled);
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = event => {
