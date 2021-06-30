@@ -13,6 +13,7 @@ import moment, { Moment } from 'moment';
 import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../utils/rbac/ParticipantTypes';
 import { TrackPublication } from 'twilio-video';
+import localParticipantStore from './localParticipantStore';
 
 const query = new URLSearchParams(window.location.search);
 
@@ -23,7 +24,7 @@ class participantsStore {
 
   isFetchingUserToken: boolean = false;
 
-  participant?: LocalParticipant;
+  localParticipant?: localParticipantStore;
 
   joinTime?: Moment;
 
@@ -55,6 +56,7 @@ class participantsStore {
 
   constructor(rootStore: any) {
     this.rootStore = rootStore;
+    this.localParticipant = new localParticipantStore(rootStore, this);
     makeAutoObservable(this);
     (async () => {
       await this.getDevices();
@@ -87,13 +89,6 @@ class participantsStore {
   setParticipants(participants: Participant[]) {
     this.participants = participants;
     this.sortedParticipants = sortParticipants(participants);
-  }
-
-  setParticipant(participant?: LocalParticipant) {
-    this.participant = participant;
-    if (this.dominantSpeaker === null && participant) {
-      this.setDominantSpeaker(participant.identity);
-    }
   }
 
   addParticipant(participant: Participant) {
@@ -190,9 +185,9 @@ class participantsStore {
     if (this.publishingVideoTrackInProgress) return;
     this.setPublishingVideoTrackInProgress(true);
     if (this.localVideoTrack) {
-      const localTrackPublication = this.participant?.unpublishTrack(this.localVideoTrack);
+      const localTrackPublication = this.localParticipant?.participant?.unpublishTrack(this.localVideoTrack);
       // TODO: remove when SDK implements this event. See: https://issues.corp.twilio.com/browse/JSDK-2592
-      this.participant?.emit('trackUnpublished', localTrackPublication);
+      this.localParticipant?.participant?.emit('trackUnpublished', localTrackPublication);
       this.localVideoTrack.stop();
       this.setVideoTrack(undefined);
       this.setPublishingVideoTrackInProgress(false);
@@ -205,7 +200,7 @@ class participantsStore {
         return Promise.reject(err);
       }
 
-      this.participant?.publishTrack(track, { priority: 'low' });
+      this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
       // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
       // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
       setTimeout(() => {
@@ -255,24 +250,19 @@ class participantsStore {
       this.screenShareParticipant()?.identity ||
       this.dominantSpeaker ||
       this.participants[0].identity ||
-      this.participant?.identity
+      this.localParticipant?.participant?.identity
     );
-  }
-
-  get localParticipantType() {
-    if (!this.participant?.identity) return '';
-    const localParticipantType: string = ParticipantIdentity.Parse(this.participant?.identity || '').partyType;
-    return localParticipantType;
   }
 
   get muteableParticipants() {
     let muteableParticipants: Participant[] = this.participants.filter(participant => {
       let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
-      if (this.localParticipantType === remoteParticipantPartyType) return false;
+      if (!this.localParticipant?.participantType) return false;
+      if (this.localParticipant?.participantType === remoteParticipantPartyType) return false;
       if (
         roleChecker.doesRoleHavePermission(
           ROLE_PERMISSIONS.MUTE_PARTICIPANT,
-          this.localParticipantType,
+          this.localParticipant?.participantType,
           remoteParticipantPartyType
         )
       )
@@ -292,7 +282,10 @@ class participantsStore {
   }
 
   get isReporter() {
-    return ParticipantIdentity.Parse(this.participant?.identity || '')['partyType'] === PARTICIPANT_TYPES.REPORTER;
+    return (
+      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '')['partyType'] ===
+      PARTICIPANT_TYPES.REPORTER
+    );
   }
 
   muteAllNoneModerators() {
@@ -410,11 +403,12 @@ class participantsStore {
 
   async disconnectParticipant() {
     const config = this.rootStore.roomsStore.config;
-    if (!config.loaded || !this.participant) return null;
+    if (!config.loaded || !this.localParticipant?.participant) return null;
     const returnUrl = query.get('returnUrl');
 
     let isRegistered: boolean =
-      this.participant.identity?.length > 0 && ParticipantIdentity.Parse(this.participant.identity).isRegisteredUser;
+      this.localParticipant?.participant.identity?.length > 0 &&
+      ParticipantIdentity.Parse(this.localParticipant?.participant.identity).isRegisteredUser;
 
     if (this.joinTime && moment().isSameOrAfter(this.joinTime.add(3, 'hours').add(50, 'minutes'))) {
       return window.location.reload();
@@ -432,7 +426,7 @@ class participantsStore {
   }
 
   screenShareParticipant() {
-    const isSomebodySharingScreen = [...this.participants, this.participant].find(
+    const isSomebodySharingScreen = [...this.participants, this.localParticipant?.participant].find(
       (participant: Participant | LocalParticipant | undefined) =>
         participant &&
         Array.from<TrackPublication>(participant.tracks.values()).find(track => {
@@ -457,7 +451,7 @@ class participantsStore {
   get isHostIn() {
     if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
     let result = false;
-    [...this.participants, this.participant].forEach(participant => {
+    [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (
         (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) ||
         (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
@@ -473,7 +467,7 @@ class participantsStore {
   get isReporterIn() {
     if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
     let result = false;
-    [...this.participants, this.participant].forEach(participant => {
+    [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
         result = true;
       }
@@ -484,8 +478,9 @@ class participantsStore {
   get isSilenced() {
     let result = false;
     if (
-      !this.participant?.identity ||
-      ParticipantIdentity.Parse(this.participant.identity || '').partyType !== PARTICIPANT_TYPES.REPORTER
+      !this.localParticipant?.participant?.identity ||
+      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '').partyType !==
+        PARTICIPANT_TYPES.REPORTER
     ) {
       this.wasSilenced = result;
       return result;

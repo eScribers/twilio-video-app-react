@@ -20,7 +20,7 @@ describe('The ParticipantNameTag component', () => {
   beforeEach(jest.clearAllMocks);
 
   beforeEach(() => {
-    rootStore.participantsStore.setParticipant(new mockLocalParticipant());
+    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant());
   });
 
   it('should add "(You)" to the participants identity when they are the localParticipant', () => {

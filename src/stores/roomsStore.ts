@@ -65,8 +65,8 @@ class roomsStore {
       // All video publications are low by default, except MainParticipant (which is high)
       newRoom.localParticipant.videoTracks.forEach(publication => publication.setPriority('low'));
 
-      if (!this.rootStore.participantsStore.participant)
-        this.rootStore.participantsStore.setParticipant(newRoom.localParticipant);
+      if (!this.rootStore.participantsStore.localParticipant?.participant)
+        this.rootStore.participantsStore.localParticipant?.setParticipant(newRoom.localParticipant);
 
       const handleOnDisconnect = (_room, error: TwilioError) => {
         if (error) {

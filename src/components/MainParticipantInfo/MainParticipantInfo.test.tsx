@@ -27,7 +27,7 @@ describe('the MainParticipantInfo component', () => {
     mockUseTrack.mockImplementation((track: any) => track);
     mockUseIsTrackSwitchedOff.mockImplementation(() => false);
 
-    rootStore.participantsStore.setParticipant();
+    rootStore.participantsStore.localParticipant?.setParticipant();
   });
 
   it('should render the AvatarIcon component when no video tracks are published', () => {
@@ -92,7 +92,7 @@ describe('the MainParticipantInfo component', () => {
     let participant = new mockLocalParticipant('@mockIdentity');
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
-    rootStore.participantsStore.setParticipant(participant);
+    rootStore.participantsStore.localParticipant?.setParticipant(participant);
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
     expect(wrapper.text()).toContain('mockIdentity (You)');
   });

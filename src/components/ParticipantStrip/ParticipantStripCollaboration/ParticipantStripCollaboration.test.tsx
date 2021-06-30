@@ -33,7 +33,7 @@ describe('the ParticipantStrip component', () => {
   it('should correctly render ParticipantInfo components', () => {
     const localParticipant = new mockLocalParticipant();
     // @ts-expect-error
-    rootStore.participantsStore.setParticipant({ ...localParticipant, sid: '123' });
+    rootStore.participantsStore.localParticipant?.setParticipant({ ...localParticipant, sid: '123' });
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
     const participant1 = new mockParticipant('participant1', '1');
@@ -46,7 +46,7 @@ describe('the ParticipantStrip component', () => {
   it('should add the isSelected prop to the local participant when it is selected', () => {
     const localParticipant = new mockLocalParticipant();
     // @ts-expect-error
-    rootStore.participantsStore.setParticipant({ ...localParticipant, sid: '123' });
+    rootStore.participantsStore.localParticipant?.setParticipant({ ...localParticipant, sid: '123' });
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
     const participant1 = new mockParticipant('participant1', '1');
@@ -67,7 +67,7 @@ describe('the ParticipantStrip component', () => {
   it('should add the isSelected prop to the first remote participant when it is selected', () => {
     const localParticipant = new mockLocalParticipant();
     // @ts-expect-error
-    rootStore.participantsStore.setParticipant({ ...localParticipant, sid: '123' });
+    rootStore.participantsStore.localParticipant?.setParticipant({ ...localParticipant, sid: '123' });
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
     const participant1 = new mockParticipant('participant1', '1');

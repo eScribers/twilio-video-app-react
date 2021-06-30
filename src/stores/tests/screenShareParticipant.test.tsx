@@ -7,7 +7,7 @@ function createRootStore() {
   const { roomsStore, participantsStore } = rootStore;
   const localParticipant = new mockLocalParticipant();
 
-  participantsStore.setParticipant(localParticipant);
+  participantsStore.localParticipant?.setParticipant(localParticipant);
 
   roomsStore.room.state = 'connected';
   return rootStore;
@@ -28,9 +28,9 @@ describe('the useScreenShareParticipant hook', () => {
   it('should return the localParticipant when they are sharing their screen', () => {
     const participant = new mockLocalParticipant();
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-    participantsStore.setParticipant(participant);
+    participantsStore.localParticipant?.setParticipant(participant);
 
-    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant.participant);
   });
 
   it('should return a remoteParticipant when they are sharing their screen', () => {
@@ -44,15 +44,15 @@ describe('the useScreenShareParticipant hook', () => {
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
 
     act(() => {
-      participantsStore.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-      participantsStore.participant.emit('trackPublished');
+      participantsStore.localParticipant.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
+      participantsStore.localParticipant.participant.emit('trackPublished');
     });
 
-    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant.participant);
 
     act(() => {
-      participantsStore.participant.tracks = new Map([]);
-      participantsStore.participant.emit('trackUnpublished');
+      participantsStore.localParticipant.participant.tracks = new Map([]);
+      participantsStore.localParticipant.participant.emit('trackUnpublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);

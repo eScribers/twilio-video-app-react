@@ -35,7 +35,7 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
   const [currViewMode, setCurrViewMode] = useState('');
   const [lgState, setLgState] = useState<any>(3);
   const [mdState, setMdState] = useState<any>(4);
-  const { sortedParticipants, selectedParticipant, participant: localParticipant } = participantsStore;
+  const { sortedParticipants, selectedParticipant, localParticipant } = participantsStore;
   const classes = useStyles();
 
   const dominantIdentity = participantsStore.dominantSpeaker;
@@ -59,16 +59,16 @@ const ParticipantGrid = observer(({ viewMode }: ParticipantGridProps) => {
     }
   }, [viewMode, currViewMode]);
 
-  if (!localParticipant) return null;
+  if (!localParticipant?.participant) return null;
   return (
     <div className={classes.root}>
       <Grid container spacing={3} className={classes.scrollable}>
         <Grid item xs={12} sm={6} md={mdState} lg={lgState}>
           <Paper className={classes.paper}>
             <Participant
-              participant={localParticipant}
-              isSelected={selectedParticipant === localParticipant.identity}
-              onClick={() => participantsStore.setSelectedParticipant(localParticipant.identity)}
+              participant={localParticipant.participant}
+              isSelected={selectedParticipant === localParticipant.participant.identity}
+              onClick={() => participantsStore.setSelectedParticipant(localParticipant.participant.identity)}
             />
           </Paper>
         </Grid>

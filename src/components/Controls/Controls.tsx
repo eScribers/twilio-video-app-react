@@ -42,9 +42,9 @@ const useStyles = makeStyles((theme: Theme) =>
 const Controls = observer(() => {
   const classes = useStyles();
   const { roomsStore, participantsStore } = rootStore;
-  const partyType = !participantsStore.participant
+  const partyType = !participantsStore.localParticipant?.participant
     ? ''
-    : ParticipantIdentity.Parse(participantsStore.participant.identity).partyType;
+    : ParticipantIdentity.Parse(participantsStore.localParticipant?.participant?.identity).partyType;
   const isReconnecting = roomsStore.roomState === ROOM_STATE.RECONNECTING;
   const isdisconnected = roomsStore.roomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();

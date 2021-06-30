@@ -26,17 +26,17 @@ const ParticipantStripCollaboration = observer(() => {
   const { dominantSpeaker } = participantsStore;
   const { sortedParticipants, selectedParticipant } = participantsStore;
 
-  if (!participantsStore.participant) return null;
+  if (!participantsStore.localParticipant?.participant) return null;
 
   return (
     <Container>
       <ScrollContainer>
         <Participant
-          participant={participantsStore.participant}
-          isSelected={selectedParticipant === participantsStore.participant.identity}
+          participant={participantsStore.localParticipant.participant}
+          isSelected={selectedParticipant === participantsStore.localParticipant.participant.identity}
           onClick={() =>
-            participantsStore.participant &&
-            participantsStore.setSelectedParticipant(participantsStore.participant.identity)
+            participantsStore.localParticipant.participant &&
+            participantsStore.setSelectedParticipant(participantsStore.localParticipant.participant.identity)
           }
         />
         {sortedParticipants.map(participant => (

@@ -34,7 +34,7 @@ const ToggleScreenShareButton = observer((props: { disabled?: boolean }) => {
 
   const disableScreenShareButton =
     participantsStore.screenSharingInProgress &&
-    participantsStore.screenShareParticipant() !== participantsStore.participant;
+    participantsStore.screenShareParticipant() !== participantsStore.localParticipant?.participant;
 
   const isScreenShareSupported = navigator.mediaDevices && navigator.mediaDevices.getDisplayMedia;
   const isDisabled = props.disabled || disableScreenShareButton || !isScreenShareSupported;

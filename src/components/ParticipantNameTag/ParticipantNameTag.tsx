@@ -28,7 +28,7 @@ export const ParticipantNameTag = observer(({ participant }: IParticipantNameTag
   //   room: { localParticipant },
   // } = useVideoContext();
 
-  const isLocalParticipant = participant.identity === participantsStore.participant?.identity;
+  const isLocalParticipant = participant.identity === participantsStore.localParticipant?.participant?.identity;
   const { partyType, isRegisteredUser, partyName } = ParticipantIdentity.Parse(participant.identity);
 
   return (

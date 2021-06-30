@@ -14,7 +14,7 @@ describe('the useIsHostIn hook', () => {
 
   it('when there are no participants yet should return true', () => {
     act(() => {
-      participantsStore.setParticipant(new mockParticipant());
+      participantsStore.localParticipant?.setParticipant(new mockParticipant());
     });
     expect(participantsStore.isHostIn).toEqual(true);
   });

@@ -9,7 +9,7 @@ const MainParticipant = () => {
   const { participantsStore } = rootStore;
   const { mainParticipant, participant: localParticipant } = participantsStore;
 
-  let videoPriority = mainParticipant !== participantsStore.participant?.identity ? 'high' : null;
+  let videoPriority = mainParticipant !== participantsStore.localParticipant?.participant?.identity ? 'high' : null;
 
   if (mainParticipant === localParticipant?.identity) {
     videoPriority = 'high';
@@ -17,7 +17,7 @@ const MainParticipant = () => {
 
   if (!mainParticipant && typeof mainParticipant === 'string') return null;
 
-  const participant = [participantsStore.participant, ...participantsStore.participants].find(
+  const participant = [participantsStore.localParticipant?.participant, ...participantsStore.participants].find(
     p => p?.identity === mainParticipant
   );
   if (!participant) return null;

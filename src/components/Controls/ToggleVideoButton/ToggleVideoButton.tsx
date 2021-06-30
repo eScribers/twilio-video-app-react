@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const ToggleVideoButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
   const { participantsStore } = rootStore;
-  const localParticipant = participantsStore.participant;
+  const localParticipant = participantsStore.localParticipant?.participant;
   const [, setDisabled] = useState(false);
   function handleVideoTrackPublishUnpublishInProgress(inProgress: any) {
     setDisabled(inProgress);

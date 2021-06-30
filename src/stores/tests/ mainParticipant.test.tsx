@@ -17,7 +17,7 @@ describe('the useMainParticipant hook', () => {
     const participant = new mockParticipant();
     act(() => {
       participantsStore.setDominantSpeaker(participant.identity);
-      participantsStore.setParticipant(localParticipant);
+      participantsStore.localParticipant?.setParticipant(localParticipant);
     });
     expect(participantsStore.dominantSpeaker).toBe(participant.identity);
   });
@@ -29,7 +29,7 @@ describe('the useMainParticipant hook', () => {
     act(() => {
       participantsStore.addParticipant(participant1);
       participantsStore.addParticipant(participant2);
-      participantsStore.setParticipant(localParticipant);
+      participantsStore.localParticipant?.setParticipant(localParticipant);
     });
     expect(participantsStore.dominantSpeaker).toBe('participant1@participant');
   });
@@ -37,7 +37,7 @@ describe('the useMainParticipant hook', () => {
   it('should return the local participant if it exists', () => {
     const localParticipant = new mockLocalParticipant('localParticipant@participant');
     act(() => {
-      participantsStore.setParticipant(localParticipant);
+      participantsStore.localParticipant?.setParticipant(localParticipant);
     });
     expect(participantsStore.dominantSpeaker).toBe('localParticipant@participant');
   });
@@ -49,7 +49,7 @@ describe('the useMainParticipant hook', () => {
     act(() => {
       participantsStore.addParticipant(participant1);
       participantsStore.addParticipant(participant2);
-      participantsStore.setParticipant(localParticipant);
+      participantsStore.localParticipant?.setParticipant(localParticipant);
       participantsStore.setSelectedParticipant(participant2.identity);
     });
     expect(participantsStore.mainParticipant).toBe('selected@participant');

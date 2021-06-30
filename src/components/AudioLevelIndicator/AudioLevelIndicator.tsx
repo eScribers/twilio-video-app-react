@@ -48,7 +48,7 @@ const AudioLevelIndicator = ({
   const [analyser, setAnalyser] = useState<AnalyserNode>();
   const isTrackEnabled = useIsTrackEnabled(track as LocalAudioTrack | RemoteAudioTrack);
   const mediaStreamTrack = useMediaStreamTrack(track);
-  const localParticipant = rootStore.participantsStore.participant;
+  const localParticipant = rootStore.participantsStore.localParticipant?.participant;
   const isLocalParticipant = participant === localParticipant || !participant;
   const localParticipantType: string = !localParticipant
     ? ''
