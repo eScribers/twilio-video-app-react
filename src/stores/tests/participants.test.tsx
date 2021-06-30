@@ -89,7 +89,7 @@ describe('the useParticipants hook', () => {
       unmount = await roomsStore.joinRoom();
     });
     unmount();
-    expect(roomsStore.room.listenerCount('participantConnected')).toBe(0);
-    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(0);
+    expect(roomsStore.currentRoom.listenerCount('participantConnected')).toBe(0);
+    expect(roomsStore.currentRoom.listenerCount('participantDisconnected')).toBe(0);
   });
 });

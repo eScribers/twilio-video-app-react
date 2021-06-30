@@ -18,13 +18,13 @@ describe('the ReconnectingNotification component', () => {
   });
 
   it('should not open Snackbar when room state is not "reconnecting"', () => {
-    rootStore.roomsStore.room.state = 'connected';
+    rootStore.roomsStore.currentRoom.state = 'connected';
     const wrapper = shallow(<ReconnectingNotification />);
     expect(wrapper.find({ open: false }).exists()).toBe(true);
   });
 
   it('should open Snackbar when room state is "reconnecting"', () => {
-    rootStore.roomsStore.room.state = 'reconnecting';
+    rootStore.roomsStore.currentRoom.state = 'reconnecting';
     const wrapper = shallow(<ReconnectingNotification />);
     expect(wrapper.find({ open: true }).exists()).toBe(true);
   });

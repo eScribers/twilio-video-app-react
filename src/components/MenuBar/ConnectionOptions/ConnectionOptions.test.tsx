@@ -101,7 +101,7 @@ describe('the ConnectionOptions component', () => {
 
   describe('when connected to a room', () => {
     it('should render correctly', () => {
-      rootStore.roomsStore.room.state = 'connected';
+      rootStore.roomsStore.currentRoom.state = 'connected';
       const wrapper = shallow(<ConnectionOptions />);
       expect(wrapper).toMatchSnapshot();
     });

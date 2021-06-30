@@ -21,7 +21,7 @@ describe('the useIsHostIn hook', () => {
 
   it('should return false when "participantConnected" is not the host', async () => {
     act(() => {
-      roomsStore.room.state = 'connected';
+      roomsStore.currentRoom.state = 'connected';
       participantsStore.addParticipant(new mockParticipant('newParticipant@Parent'));
     });
     expect(participantsStore.isHostIn).toEqual(false);
@@ -38,7 +38,7 @@ describe('the useIsHostIn hook', () => {
   it('should return false after host had left', async () => {
     const reporter = new mockParticipant('newParticipant@Reporter');
     act(() => {
-      roomsStore.room.state = 'connected';
+      roomsStore.currentRoom.state = 'connected';
       participantsStore.addParticipant(reporter);
       participantsStore.addParticipant(new mockParticipant('newParticipant@Parent'));
       participantsStore.removeParticipantSid(reporter.sid);
@@ -49,7 +49,7 @@ describe('the useIsHostIn hook', () => {
   it('should return true after host had left and there is another host in the room', async () => {
     const reporter = new mockParticipant('newParticipant@Reporter');
     act(() => {
-      roomsStore.room.state = 'connected';
+      roomsStore.currentRoom.state = 'connected';
       participantsStore.addParticipant(new mockParticipant('newParticipant@Hearing Officer'));
       participantsStore.addParticipant(reporter);
       participantsStore.addParticipant(new mockParticipant('newParticipant1@Reporter'));

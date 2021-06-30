@@ -45,7 +45,7 @@ const ConnectionOptions = observer(({ className, hidden }: { className?: string;
   const { roomsStore } = rootStore;
   const { settings } = roomsStore;
 
-  const isDisabled = roomsStore.roomState !== ROOM_STATE.DISCONNECTED;
+  const isDisabled = roomsStore.currentRoomState !== ROOM_STATE.DISCONNECTED;
   const { width } = useWindowSize();
 
   const onlyCollaboration = width && width < 768;

@@ -45,10 +45,10 @@ const Controls = observer(() => {
   const partyType = !participantsStore.localParticipant?.participant
     ? ''
     : ParticipantIdentity.Parse(participantsStore.localParticipant?.participant?.identity).partyType;
-  const isReconnecting = roomsStore.roomState === ROOM_STATE.RECONNECTING;
-  const isdisconnected = roomsStore.roomState === ROOM_STATE.DISCONNECTED;
+  const isReconnecting = roomsStore.currentRoomState === ROOM_STATE.RECONNECTING;
+  const isdisconnected = roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
-  const showControls = isUserActive || roomsStore.roomState === ROOM_STATE.DISCONNECTED;
+  const showControls = isUserActive || roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED;
   const canToggleMute = [PARTICIPANT_TYPES.HEARING_OFFICER].includes(partyType) || participantsStore.isReporterIn;
   const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !canToggleMute;
 
@@ -56,7 +56,7 @@ const Controls = observer(() => {
     <div className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={isReconnecting} />
-      {roomsStore.roomState !== ROOM_STATE.DISCONNECTED && (
+      {roomsStore.currentRoomState !== ROOM_STATE.DISCONNECTED && (
         <>
           <ToggleScreenShareButton disabled={isReconnecting} />
           <EndCallButton />

@@ -449,7 +449,7 @@ class participantsStore {
   }
 
   get isHostIn() {
-    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.currentRoom?.state !== 'connected') return true;
     let result = false;
     [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (
@@ -465,7 +465,7 @@ class participantsStore {
   }
 
   get isReporterIn() {
-    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.currentRoom?.state !== 'connected') return true;
     let result = false;
     [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {

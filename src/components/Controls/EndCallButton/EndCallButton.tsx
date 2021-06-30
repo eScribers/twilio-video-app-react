@@ -42,7 +42,7 @@ const EndCallButton = observer(() => {
 
   const handleClick = () => {
     if (!canEndConference) {
-      roomsStore.room.disconnect();
+      roomsStore.currentRoom.disconnect();
 
       return;
     }
@@ -70,7 +70,7 @@ const EndCallButton = observer(() => {
               variant="outlined"
               size="medium"
               id="leave-conference"
-              onClick={() => roomsStore.room.disconnect()}
+              onClick={() => roomsStore.currentRoom.disconnect()}
             >
               Leave conference
             </Button>

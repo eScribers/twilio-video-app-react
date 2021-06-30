@@ -159,7 +159,7 @@ const MenuBar = observer(() => {
     if (!participantInformation?.partyType) {
       return;
     }
-    if (isReporterIn === isReporterInState || roomsStore.roomState !== ROOM_STATE.CONNECTED) return;
+    if (isReporterIn === isReporterInState || roomsStore.currentRoomState !== ROOM_STATE.CONNECTED) return;
 
     if (![PARTICIPANT_TYPES.HEARING_OFFICER, PARTICIPANT_TYPES.REPORTER].includes(participantInformation.partyType)) {
       if (isReporterIn) {
@@ -180,7 +180,7 @@ const MenuBar = observer(() => {
     <AppBar className={classes.container} position="static">
       <Toolbar>
         <img src="/escribers-logo-transparent.png" height="64px" alt="eScribers" />
-        {roomsStore.roomState === ROOM_STATE.DISCONNECTED ? (
+        {roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? (
           <form className={classes.form} onSubmit={handleSubmit}>
             <FormControl className={classes.textField}>
               <InputLabel>Party Type</InputLabel>

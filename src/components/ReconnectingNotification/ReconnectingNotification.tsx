@@ -28,7 +28,7 @@ const ReconnectingNotification = observer(() => {
   return (
     <Snackbar
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      open={roomsStore.roomState === ROOM_STATE.RECONNECTING}
+      open={roomsStore.currentRoomState === ROOM_STATE.RECONNECTING}
     >
       <SnackbarContent
         className={classes.snackbar}

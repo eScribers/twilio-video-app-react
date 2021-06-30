@@ -45,7 +45,7 @@ const App = observer(() => {
       <MessageText />
       <MenuBar />
       <Main>
-        {roomsStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
+        {roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
         <Controls />
       </Main>
       <ReconnectingNotification />

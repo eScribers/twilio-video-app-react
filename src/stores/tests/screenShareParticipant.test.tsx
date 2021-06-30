@@ -9,7 +9,7 @@ function createRootStore() {
 
   participantsStore.localParticipant?.setParticipant(localParticipant);
 
-  roomsStore.room.state = 'connected';
+  roomsStore.currentRoom.state = 'connected';
   return rootStore;
 }
 
@@ -66,14 +66,14 @@ describe('the useScreenShareParticipant hook', () => {
 
     act(() => {
       participantsStore.addParticipant(participant);
-      roomsStore.room.emit('trackPublished');
+      roomsStore.currentRoom.emit('trackPublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(participant);
 
     act(() => {
       participant.tracks = new Map([]);
-      roomsStore.room.emit('trackUnpublished');
+      roomsStore.currentRoom.emit('trackUnpublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
@@ -88,7 +88,7 @@ describe('the useScreenShareParticipant hook', () => {
 
     act(() => {
       participantsStore.removeParticipantSid(participant.sid);
-      roomsStore.room.emit('participantDisconnected');
+      roomsStore.currentRoom.emit('participantDisconnected');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
@@ -100,8 +100,8 @@ describe('the useScreenShareParticipant hook', () => {
       unmount = await roomsStore.joinRoom();
     });
 
-    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(1);
+    expect(roomsStore.currentRoom.listenerCount('participantDisconnected')).toBe(1);
     unmount();
-    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(0);
+    expect(roomsStore.currentRoom.listenerCount('participantDisconnected')).toBe(0);
   });
 });
