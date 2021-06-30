@@ -49,25 +49,31 @@ describe('End Call button', () => {
     wrapper.find('#hang-up').simulate('click');
     wrapper.find('#end-conference').simulate('click');
     await expect(rootStore.roomsStore.endConference()).rejects.toThrow(
-      `Participant not connected, can't end conference`
+      `You are not connected to a Conference, can't end Conference`
     );
   });
 
-  it('should properly reject or accept end conference depending on role', async () => {
+  it('should properly accept end conference depending on role', async () => {
     // @ts-expect-error
     axios.mockResolvedValue('OK');
 
     if (rootStore.roomsStore.room) jest.spyOn(rootStore.roomsStore, 'endConference');
     const wrapper = shallow(<EndCallButton />);
 
-    let participant = new mockLocalParticipant();
+    let participant = new mockLocalParticipant('local@Reporter@1');
     rootStore.participantsStore.localParticipant.setParticipant(participant);
 
     wrapper.find('#end-conference').simulate('click');
     await expect(rootStore.roomsStore.endConference()).resolves.toBeTruthy();
+  });
 
-    participant.identity = 'test@Parent@2';
+  it('should properly reject end conference depending on role', async () => {
+    if (rootStore.roomsStore.room) jest.spyOn(rootStore.roomsStore, 'endConference');
+    const wrapper = shallow(<EndCallButton />);
+    let participant = new mockLocalParticipant('test@Parent@2');
     rootStore.participantsStore.localParticipant.setParticipant(participant);
+
+    wrapper.find('#end-conference').simulate('click');
 
     await expect(rootStore.roomsStore.endConference()).rejects.toThrow(`No permission to end conference`);
   });

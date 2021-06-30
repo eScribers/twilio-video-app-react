@@ -5,13 +5,13 @@ import { shallow } from 'enzyme';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 import rootStore from '../../stores';
 
-const localParticipant = new mockLocalParticipant();
+const localParticipant = new mockLocalParticipant('local@Reporter@1');
 
 describe('the MainParticipant component', () => {
   rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
 
   it('should set the videoPriority to high when the main participant is the selected participant', () => {
-    const localParticipant = new mockLocalParticipant();
+    const localParticipant = new mockLocalParticipant('local@Reporter@1');
     localParticipant.tracks = new Map();
     localParticipant.tracks.set(0, { trackName: 'screen' });
     rootStore.participantsStore.localParticipant.setParticipant(localParticipant);
@@ -29,7 +29,7 @@ describe('the MainParticipant component', () => {
   });
 
   describe('when the main participant is the localParticipant', () => {
-    const localParticipant = new mockLocalParticipant();
+    const localParticipant = new mockLocalParticipant('local@Reporter@1');
     localParticipant.tracks = new Map();
     localParticipant.tracks.set(0, { trackName: 'screen' });
     rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);

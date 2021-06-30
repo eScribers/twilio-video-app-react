@@ -154,7 +154,7 @@ class roomsStore {
 
   async endConference() {
     if (!this.rootStore.participantsStore.localParticipant.participant?.identity)
-      throw new Error("Participant not connected, can't end conference");
+      throw new Error("You are not connected to a Conference, can't end Conference");
     const role = ParticipantIdentity.Parse(this.rootStore.participantsStore.localParticipant.participant.identity)
       .partyType;
     const canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);

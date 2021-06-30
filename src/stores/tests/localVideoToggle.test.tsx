@@ -55,7 +55,7 @@ describe('the useLocalVideoToggle hook', () => {
     it('should call localParticipant.unpublishTrack when a localVideoTrack and localParticipant exists', () => {
       // @ts-expect-error
       const mockLocalTrack = getMockTrack('camera-123456') as LocalVideoTrack;
-      const localParticipant = new mockLocalParticipant();
+      const localParticipant = new mockLocalParticipant('local@Reporter@1');
       jest.spyOn(localParticipant, 'unpublishTrack');
       rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       rootStore.participantsStore.setVideoTrack(mockLocalTrack);
@@ -71,7 +71,7 @@ describe('the useLocalVideoToggle hook', () => {
     });
 
     it('should call mockLocalParticipant.publishTrack when a localVideoTrack does not exist and localParticipant does exist', async () => {
-      const localParticipant = new mockLocalParticipant();
+      const localParticipant = new mockLocalParticipant('local@Reporter@1');
       jest.spyOn(localParticipant, 'publishTrack');
       rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       // @ts-expect-error
@@ -85,7 +85,7 @@ describe('the useLocalVideoToggle hook', () => {
     });
 
     it('should not call mockLocalParticipant.publishTrack when isPublishing is true', async () => {
-      const localParticipant = new mockLocalParticipant();
+      const localParticipant = new mockLocalParticipant('local@Reporter@1');
       jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
       rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       // @ts-expect-error
@@ -101,7 +101,7 @@ describe('the useLocalVideoToggle hook', () => {
       const mockGetLocalVideoTrack = jest.fn(() => Promise.reject('mockError'));
       const mockOnError = jest.fn();
 
-      const localParticipant = new mockLocalParticipant();
+      const localParticipant = new mockLocalParticipant('local@Reporter@1');
 
       localParticipant.publishTrack = jest.fn(() => Promise.reject('mockError'));
       rootStore.participantsStore.getLocalVideoTrack = mockGetLocalVideoTrack;

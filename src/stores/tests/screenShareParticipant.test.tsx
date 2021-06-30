@@ -5,7 +5,7 @@ import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 function createRootStore() {
   const rootStore = new RootStore();
   const { roomsStore, participantsStore } = rootStore;
-  const localParticipant = new mockLocalParticipant();
+  const localParticipant = new mockLocalParticipant('local@Reporter@1');
 
   participantsStore.localParticipant?.setParticipant(localParticipant);
 
@@ -26,7 +26,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should return the localParticipant when they are sharing their screen', () => {
-    const participant = new mockLocalParticipant();
+    const participant = new mockLocalParticipant('local@Reporter@1');
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.localParticipant?.setParticipant(participant);
 

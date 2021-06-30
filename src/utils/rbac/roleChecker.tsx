@@ -37,7 +37,7 @@ export default class roleChecker {
     if (permission === ROLE_PERMISSIONS.END_CONFERENCE) {
       return role === PARTICIPANT_TYPES.HEARING_OFFICER || role === PARTICIPANT_TYPES.REPORTER;
     }
-    return true;
+    return false;
   }
 
   static getPossibleRole() {

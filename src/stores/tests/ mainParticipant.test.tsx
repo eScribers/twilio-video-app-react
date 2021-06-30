@@ -13,7 +13,7 @@ describe('the useMainParticipant hook', () => {
   });
 
   it('should return the dominant speaker if it exists', () => {
-    const localParticipant = new mockLocalParticipant();
+    const localParticipant = new mockLocalParticipant('local@Reporter@1');
     const participant = new mockParticipant();
     act(() => {
       participantsStore.setDominantSpeaker(participant.identity);
@@ -23,7 +23,7 @@ describe('the useMainParticipant hook', () => {
   });
 
   it('should return the first remote participant if it exists', () => {
-    const localParticipant = new mockLocalParticipant();
+    const localParticipant = new mockLocalParticipant('local@Reporter@1');
     const participant1 = new mockParticipant('participant1@participant');
     const participant2 = new mockParticipant('participant2@participant');
     act(() => {
@@ -43,7 +43,7 @@ describe('the useMainParticipant hook', () => {
   });
 
   it('should return the selected participant if it exists', () => {
-    const localParticipant = new mockLocalParticipant();
+    const localParticipant = new mockLocalParticipant('local@Reporter@1');
     const participant1 = new mockParticipant('participant1@participant');
     const participant2 = new mockParticipant('selected@participant');
     act(() => {
