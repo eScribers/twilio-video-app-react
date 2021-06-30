@@ -164,7 +164,7 @@ class RoomStore {
       const participantAuthToken = window.location.hash.substr(1);
       const url = `${this.rootStore.roomStore.config.endPoint}/end-conference`;
 
-      const response = await axios({
+      await axios({
         url: url,
         method: 'POST',
         headers: {

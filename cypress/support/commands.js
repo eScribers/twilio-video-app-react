@@ -59,7 +59,7 @@ Cypress.Commands.add('joinRoom', (partyType,partyName, caseNumber) => {
 Cypress.Commands.add('leaveRoom', () => {
   cy.wait(500);
   cy.get('body').click(); // Makes controls reappear
-  cy.get('#endCall').click();
+  cy.get('#hang-up').click();
   cy.task('removeAllParticipants');
   cy.get('#menu-room');
 });

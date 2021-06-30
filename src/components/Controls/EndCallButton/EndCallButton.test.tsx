@@ -18,16 +18,16 @@ describe('End Call button', () => {
   it('should disconnect from the room when clicked', () => {
     if (rootStore.roomStore.room) jest.spyOn(rootStore.roomStore.room, 'disconnect');
     const wrapper = shallow(<EndCallButton />);
-    wrapper.find('#endCall').simulate('click');
-    wrapper.find('#leave_conference').simulate('click');
+    wrapper.find('#hang-up').simulate('click');
+    wrapper.find('#leave-conference').simulate('click');
     expect(rootStore.roomStore.room.disconnect).toHaveBeenCalled();
   });
 
   it('should call end conference when clicked', () => {
     if (rootStore.roomStore.room) jest.spyOn(rootStore.roomStore, 'endConference');
     const wrapper = shallow(<EndCallButton />);
-    wrapper.find('#endCall').simulate('click');
-    wrapper.find('#end_conference').simulate('click');
+    wrapper.find('#hang-up').simulate('click');
+    wrapper.find('#end-conference').simulate('click');
     expect(rootStore.roomStore.endConference).toHaveBeenCalled();
   });
 
@@ -38,7 +38,7 @@ describe('End Call button', () => {
     if (rootStore.roomStore.room) jest.spyOn(rootStore.roomStore, 'endConference');
     if (rootStore.roomStore.room) jest.spyOn(rootStore.roomStore.room, 'disconnect');
     const wrapper = shallow(<EndCallButton />);
-    wrapper.find('#endCall').simulate('click');
+    wrapper.find('#hang-up').simulate('click');
 
     expect(rootStore.roomStore.endConference).not.toHaveBeenCalled();
     expect(rootStore.roomStore.room.disconnect).toHaveBeenCalled();
@@ -47,8 +47,8 @@ describe('End Call button', () => {
   it('should fail to end conference when clicked', async () => {
     if (rootStore.roomStore.room) jest.spyOn(rootStore.roomStore, 'endConference');
     const wrapper = shallow(<EndCallButton />);
-    wrapper.find('#endCall').simulate('click');
-    wrapper.find('#end_conference').simulate('click');
+    wrapper.find('#hang-up').simulate('click');
+    wrapper.find('#end-conference').simulate('click');
     await expect(rootStore.roomStore.endConference()).rejects.toThrow(
       `Participant not connected, can't end conference`
     );
@@ -64,7 +64,7 @@ describe('End Call button', () => {
     let participant = new mockLocalParticipant();
     rootStore.participantStore.setParticipant(participant);
 
-    wrapper.find('#end_conference').simulate('click');
+    wrapper.find('#end-conference').simulate('click');
     await expect(rootStore.roomStore.endConference()).resolves.toBeTruthy();
 
     participant.identity = 'test@Parent@2';

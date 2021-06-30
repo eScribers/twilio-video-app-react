@@ -52,7 +52,7 @@ const EndCallButton = observer(() => {
   return (
     <>
       <Tooltip
-        id="endCall"
+        id="hang-up"
         title={'End Call'}
         onClick={handleClick}
         placement="top"
@@ -69,7 +69,7 @@ const EndCallButton = observer(() => {
               className={classes.button}
               variant="outlined"
               size="medium"
-              id="leave_conference"
+              id="leave-conference"
               onClick={() => roomStore.room.disconnect()}
             >
               Leave conference
@@ -78,7 +78,7 @@ const EndCallButton = observer(() => {
               className={classes.button}
               variant="outlined"
               size="medium"
-              id="end_conference"
+              id="end-conference"
               onClick={() => roomStore.endConference()}
               color="secondary"
             >
