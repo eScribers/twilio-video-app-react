@@ -21,7 +21,7 @@ const ScrollContainer = styled('div')(({ theme }) => ({
   },
 }));
 
-const ParticipantStripCollaboration = observer(() => {
+const ParticipantStripCollaboration = () => {
   const { participantsStore } = rootStore;
   const { dominantSpeaker } = participantsStore;
   const { sortedParticipants, selectedParticipant } = participantsStore;
@@ -32,8 +32,8 @@ const ParticipantStripCollaboration = observer(() => {
     <Container>
       <ScrollContainer>
         <Participant
-          participant={participantsStore.localParticipant.participant}
-          isSelected={selectedParticipant === participantsStore.localParticipant.participant.identity}
+          participant={participantsStore.localParticipant?.participant}
+          isSelected={selectedParticipant === participantsStore.localParticipant?.participant.identity}
           onClick={() =>
             participantsStore.localParticipant?.participant &&
             participantsStore.setSelectedParticipant(participantsStore.localParticipant?.participant.identity)
@@ -52,6 +52,6 @@ const ParticipantStripCollaboration = observer(() => {
       </ScrollContainer>
     </Container>
   );
-});
+};
 
-export default ParticipantStripCollaboration;
+export default observer(ParticipantStripCollaboration);

@@ -3,6 +3,7 @@ import rootStore, { RootStore } from '../../../stores/makeStore';
 import { Select, TextField, FormControlLabel } from '@material-ui/core';
 import { shallow } from 'enzyme';
 import ConnectionOptions from './ConnectionOptions';
+import { ROOM_STATE } from '../../../utils/displayStrings';
 
 jest.mock('../../../stores', () => {
   return {
@@ -101,7 +102,7 @@ describe('the ConnectionOptions component', () => {
 
   describe('when connected to a room', () => {
     it('should render correctly', () => {
-      rootStore.roomsStore.room.state = 'connected';
+      rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
       const wrapper = shallow(<ConnectionOptions />);
       expect(wrapper).toMatchSnapshot();
     });

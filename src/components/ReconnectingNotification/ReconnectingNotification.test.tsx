@@ -2,6 +2,7 @@ import rootStore, { RootStore } from '../../stores/makeStore';
 import React from 'react';
 import ReconnectingNotification from './ReconnectingNotification';
 import { shallow } from 'enzyme';
+import { ROOM_STATE } from '../../utils/displayStrings';
 
 jest.mock('../../stores', () => {
   return {
@@ -18,13 +19,13 @@ describe('the ReconnectingNotification component', () => {
   });
 
   it('should not open Snackbar when room state is not "reconnecting"', () => {
-    rootStore.roomsStore.room.state = 'connected';
+    rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
     const wrapper = shallow(<ReconnectingNotification />);
     expect(wrapper.find({ open: false }).exists()).toBe(true);
   });
 
   it('should open Snackbar when room state is "reconnecting"', () => {
-    rootStore.roomsStore.room.state = 'reconnecting';
+    rootStore.roomsStore.currentRoom.state = ROOM_STATE.RECONNECTING;
     const wrapper = shallow(<ReconnectingNotification />);
     expect(wrapper.find({ open: true }).exists()).toBe(true);
   });

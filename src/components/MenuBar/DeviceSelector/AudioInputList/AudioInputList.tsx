@@ -8,7 +8,7 @@ import { TRACK_TYPE } from '../../../../utils/displayStrings';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../../../stores';
 
-const AudioInputList = observer(() => {
+const AudioInputList = () => {
   const { participantsStore } = rootStore;
   const { devices } = participantsStore;
 
@@ -52,6 +52,6 @@ const AudioInputList = observer(() => {
       </Grid>
     </div>
   );
-});
+};
 
-export default AudioInputList;
+export default observer(AudioInputList);

@@ -13,6 +13,7 @@ import {
   LocalVideoTrack,
   Participant,
 } from 'twilio-video';
+import { ROOM_STATE } from './displayStrings';
 
 class baseParticipant {
   audioTracks = new Map();
@@ -48,24 +49,24 @@ class baseParticipant {
 
 export class mockParticipant extends baseParticipant implements Participant {
   identity = 'remote@Reporter@2';
-  on(event: 'disconnected', listener: (participant: this) => void): this;
+  on(event: ROOM_STATE.DISCONNECTED, listener: (participant: this) => void): this;
   on(
     event: 'networkQualityLevelChanged',
     listener: (networkQualityLevel: NetworkQualityLevel, networkQualityStats: NetworkQualityStats) => void
   ): this;
-  on(event: 'reconnected', listener: (participant: this) => void): this;
-  on(event: 'reconnecting', listener: (participant: this) => void): this;
+  on(event: ROOM_STATE.RECONNECTED, listener: (participant: this) => void): this;
+  on(event: ROOM_STATE.RECONNECTING, listener: (participant: this) => void): this;
   on(event: 'trackDimensionsChanged', listener: (track: VideoTrack) => void): this;
   on(event: 'trackStarted', listener: (track: Track) => void): this;
   on(_event: string, _listener: (...args: any[]) => void) {
     return this;
   }
 
-  constructor(identity?: string, sid?: string) {
+  constructor(name?: string, role?: string, id?: number, sid?: string) {
     super();
-    if (identity) {
-      this.identity = identity;
-    }
+    if (name) this.identity = `${name}@${role}@${id}`;
+    console.log(this.identity);
+
     if (sid) {
       this.sid = sid;
     }
@@ -80,9 +81,9 @@ export class mockLocalParticipant extends baseParticipant implements LocalPartic
   videoTracks = new Map();
   signalingRegion = 'todo';
 
-  constructor(identity?: string) {
+  constructor(name?: string, role?: string, id?: number) {
     super();
-    if (identity) this.identity = identity;
+    if (name) this.identity = `${name}@${role}@${id}`;
   }
 
   publishTrack = async (_track: LocalTrack | MediaStreamTrack, _options?: LocalTrackPublishOptions) =>
@@ -92,7 +93,7 @@ export class mockLocalParticipant extends baseParticipant implements LocalPartic
   setParameters = (_encodingParameters?: EncodingParameters | null) => this;
   unpublishTrack = (_track: LocalTrack | MediaStreamTrack): LocalTrackPublication | null => null;
   unpublishTracks = (_tracks: Array<LocalTrack | MediaStreamTrack>): LocalTrackPublication[] => [];
-  on(event: 'disconnected', listener: (participant: this) => void): this;
+  on(event: ROOM_STATE.DISCONNECTED, listener: (participant: this) => void): this;
   on(event: 'trackDimensionsChanged', listener: (track: LocalVideoTrack) => void): this;
   on(event: 'trackDisabled', listener: (track: LocalTrack) => void): this;
   on(event: 'trackEnabled', listener: (track: LocalTrack) => void): this;

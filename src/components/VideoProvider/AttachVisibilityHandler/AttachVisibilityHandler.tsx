@@ -13,11 +13,11 @@ import rootStore from '../../../stores';
   to show that this user's video track has been turned off.
 */
 
-const AttachVisibilityHandler = observer(() => {
+const AttachVisibilityHandler = () => {
   const { participantsStore, roomsStore } = rootStore;
   const shouldRepublishVideoOnForeground = useRef(false);
 
-  const room = roomsStore.room;
+  const room = roomsStore.currentRoom;
   const isVideoEnabled = participantsStore.localVideoTrack;
 
   useEffect(() => {
@@ -43,6 +43,6 @@ const AttachVisibilityHandler = observer(() => {
   }, [isVideoEnabled, room, participantsStore]);
 
   return null;
-});
+};
 
-export default AttachVisibilityHandler;
+export default observer(AttachVisibilityHandler);

@@ -28,7 +28,7 @@ const Main = styled('main')({
 const query = new URLSearchParams(window.location.search);
 const returnUrl = query.get('returnUrl');
 
-const App = observer(() => {
+const App = () => {
   const { roomsStore } = rootStore;
 
   // Here we would like the height of the main container to be the height of the viewport.
@@ -46,14 +46,14 @@ const App = observer(() => {
     <Container
       style={{
         height,
-        gridTemplateColumns: roomsStore.roomState === ROOM_STATE.DISCONNECTED ? '1fr 0px' : '1fr 400px',
+        gridTemplateColumns: roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? '1fr 0px' : '1fr 400px',
       }}
     >
       <div>
         <MessageText />
         <MenuBar />
         <Main>
-          {roomsStore.roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
+          {roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
           <Controls />
         </Main>
         <ReconnectingNotification />
@@ -61,6 +61,6 @@ const App = observer(() => {
       <MessagingSection />
     </Container>
   );
-});
+};
 
-export default App;
+export default observer(App);

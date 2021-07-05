@@ -8,11 +8,15 @@ import { Settings, initialSettings } from '../state/settings/settingsReducer';
 import { IConfig, INotification } from '../types';
 import UAParser from 'ua-parser-js';
 import { Howl } from 'howler';
+import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
+import roleChecker from '../utils/rbac/roleChecker';
+import { ParticipantIdentity } from '../utils/participantIdentity';
+import axios from 'axios';
 
 class roomsStore {
   rootStore: any;
 
-  room: Room = new EventEmitter() as Room;
+  currentRoom: Room = new EventEmitter() as Room;
 
   isConnecting: boolean = false;
 
@@ -34,8 +38,8 @@ class roomsStore {
     this.loadConfig();
   }
 
-  setRoom(room: Room) {
-    this.room = room;
+  setCurrentRoom(room: Room) {
+    this.currentRoom = room;
   }
 
   setIsConnecting(isConnecting: boolean) {
@@ -73,7 +77,7 @@ class roomsStore {
           this.setError(error);
         }
         this.rootStore.participantsStore.disconnectParticipant();
-        setTimeout(() => this.setRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
+        setTimeout(() => this.setCurrentRoom(new EventEmitter() as Room)); // Reset the room only after all other `disconnected` listeners have been called.
         window.removeEventListener('beforeunload', disconnect);
         if (isMobile) window.removeEventListener('pagehide', disconnect);
       };
@@ -118,27 +122,27 @@ class roomsStore {
       };
 
       const handleRoomReconnecting = () => {
-        this.room.state = 'reconnecting';
+        this.currentRoom.state = ROOM_STATE.RECONNECTING;
       };
       const handleRoomReconnected = () => {
-        this.room.state = 'connected';
+        this.currentRoom.state = ROOM_STATE.CONNECTED;
       };
 
-      this.setRoom(newRoom);
+      this.setCurrentRoom(newRoom);
 
-      this.room.on('participantConnected', participantConnected);
-      this.room.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
-      this.room.on('participantDisconnected', handleParticipantDisconnected);
-      this.room.on(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
-      this.room.on(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
-      this.room.on(ROOM_STATE.RECONNECTED, handleRoomReconnected);
+      this.currentRoom.on('participantConnected', participantConnected);
+      this.currentRoom.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
+      this.currentRoom.on('participantDisconnected', handleParticipantDisconnected);
+      this.currentRoom.on(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
+      this.currentRoom.on(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
+      this.currentRoom.on(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       return () => {
-        this.room.off('participantConnected', participantConnected);
-        this.room.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
-        this.room.off('participantDisconnected', handleParticipantDisconnected);
-        this.room.off(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
-        this.room.off(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
-        this.room.off(ROOM_STATE.RECONNECTED, handleRoomReconnected);
+        this.currentRoom.off('participantConnected', participantConnected);
+        this.currentRoom.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
+        this.currentRoom.off('participantDisconnected', handleParticipantDisconnected);
+        this.currentRoom.off(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
+        this.currentRoom.off(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
+        this.currentRoom.off(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       };
     } catch (err) {
       console.log(err.message);
@@ -146,6 +150,36 @@ class roomsStore {
       this.setIsConnecting(false);
     }
     return;
+  }
+
+  async endConference() {
+    if (!this.rootStore.participantsStore.localParticipant.participant?.identity)
+      throw new Error("You are not connected to a Conference, can't end Conference");
+    const role = ParticipantIdentity.Parse(this.rootStore.participantsStore.localParticipant.participant.identity).role;
+    const isAbleToEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
+
+    if (!isAbleToEndConference || !role) throw new Error('No permission to end conference');
+
+    try {
+      const participantAuthToken = window.location.hash.substr(1);
+      const url = `${this.config.endPoint}/end-conference`;
+
+      await axios({
+        url: url,
+        method: 'POST',
+        headers: {
+          Authorization: participantAuthToken ? `Bearer ${participantAuthToken}` : '',
+        },
+        data: {
+          roomSid: this.currentRoom.sid,
+        },
+      });
+    } catch (err) {
+      console.error('Got error while trying to end conference,', err.message);
+      return false;
+    }
+
+    return true;
   }
 
   setNotification(notification: INotification) {
@@ -168,8 +202,8 @@ class roomsStore {
     this.settings = settings;
   }
 
-  get roomState() {
-    return this.room?.state || ROOM_STATE.DISCONNECTED;
+  get currentRoomState() {
+    return this.currentRoom?.state || ROOM_STATE.DISCONNECTED;
   }
 
   get options() {

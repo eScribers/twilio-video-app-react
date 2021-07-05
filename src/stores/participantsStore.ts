@@ -10,7 +10,7 @@ import axios from 'axios';
 import jwtDecode, { JwtPayload } from 'jwt-decode';
 import { ParticipantInformation } from '../types/participantInformation';
 import moment, { Moment } from 'moment';
-import { NOTIFICATION_MESSAGE, TRACK_TYPE } from '../utils/displayStrings';
+import { NOTIFICATION_MESSAGE, ROOM_STATE, TRACK_TYPE } from '../utils/displayStrings';
 import { PARTICIPANT_TYPES } from '../utils/rbac/ParticipantTypes';
 import { TrackPublication } from 'twilio-video';
 import localParticipantStore from './localParticipantStore';
@@ -200,7 +200,11 @@ class participantsStore {
         return Promise.reject(err);
       }
 
-      this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
+      try {
+        this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
+      } catch (err) {
+        throw new Error(`Could not publish video track: ${err}`);
+      }
       // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
       // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
       setTimeout(() => {
@@ -256,14 +260,14 @@ class participantsStore {
 
   get muteableParticipants() {
     let muteableParticipants: Participant[] = this.participants.filter(participant => {
-      let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
+      let remoteParticipantrole = ParticipantIdentity.Parse(participant.identity).role;
       if (!this.localParticipant?.participantType) return false;
-      if (this.localParticipant?.participantType === remoteParticipantPartyType) return false;
+      if (this.localParticipant?.participantType === remoteParticipantrole) return false;
       if (
         roleChecker.doesRoleHavePermission(
           ROLE_PERMISSIONS.MUTE_PARTICIPANT,
           this.localParticipant?.participantType,
-          remoteParticipantPartyType
+          remoteParticipantrole
         )
       )
         return true;
@@ -275,15 +279,14 @@ class participantsStore {
   get isSipClientConnected() {
     return (
       this.participants.filter(
-        participant =>
-          ParticipantIdentity.Parse(participant.identity)['partyType'] === PARTICIPANT_TYPES.REPORTER_RECORDING
+        participant => ParticipantIdentity.Parse(participant.identity)['role'] === PARTICIPANT_TYPES.REPORTER_RECORDING
       ).length >= 1
     );
   }
 
   get isReporter() {
     return (
-      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '')['partyType'] ===
+      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '')['role'] ===
       PARTICIPANT_TYPES.REPORTER
     );
   }
@@ -375,7 +378,7 @@ class participantsStore {
         data: {
           caseReference: participantInformation.caseReference,
           partyName: participantInformation.displayName,
-          partyType: participantInformation.partyType,
+          role: participantInformation.role,
           userId: participantInformation.userId,
           videoConferenceRoomName: participantInformation.videoConferenceRoomName,
         },
@@ -387,7 +390,7 @@ class participantsStore {
 
       if (
         !res.roomExist &&
-        !roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.START_ROOM, participantInformation.partyType)
+        !roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.START_ROOM, participantInformation.role)
       )
         return NOTIFICATION_MESSAGE.ROOM_NOT_FOUND;
 
@@ -449,12 +452,12 @@ class participantsStore {
   }
 
   get isHostIn() {
-    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.currentRoom?.state !== ROOM_STATE.CONNECTED) return true;
     let result = false;
     [...this.participants, this.localParticipant?.participant].forEach(participant => {
       if (
-        (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) ||
-        (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
+        (participant && ParticipantIdentity.Parse(participant.identity).role === PARTICIPANT_TYPES.REPORTER) ||
+        (participant && ParticipantIdentity.Parse(participant.identity).role === PARTICIPANT_TYPES.HEARING_OFFICER)
       ) {
         result = true;
       }
@@ -465,10 +468,10 @@ class participantsStore {
   }
 
   get isReporterIn() {
-    if (this.rootStore.roomsStore.room?.state !== 'connected') return true;
+    if (this.rootStore.roomsStore.currentRoom?.state !== ROOM_STATE.CONNECTED) return true;
     let result = false;
     [...this.participants, this.localParticipant?.participant].forEach(participant => {
-      if (participant && ParticipantIdentity.Parse(participant.identity).partyType === PARTICIPANT_TYPES.REPORTER) {
+      if (participant && ParticipantIdentity.Parse(participant.identity).role === PARTICIPANT_TYPES.REPORTER) {
         result = true;
       }
     });
@@ -479,8 +482,7 @@ class participantsStore {
     let result = false;
     if (
       !this.localParticipant?.participant?.identity ||
-      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '').partyType !==
-        PARTICIPANT_TYPES.REPORTER
+      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '').role !== PARTICIPANT_TYPES.REPORTER
     ) {
       this.wasSilenced = result;
       return result;

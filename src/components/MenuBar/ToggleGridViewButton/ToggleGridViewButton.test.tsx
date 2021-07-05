@@ -2,7 +2,6 @@ import React from 'react';
 import rootStore, { RootStore } from '../../../stores/makeStore';
 import ToggleGridViewButton from './ToggleGridViewButton';
 import { shallow, mount } from 'enzyme';
-// import { initialSettings } from '../../../state/settings/settingsReducer';
 import IconButton from '@material-ui/core/IconButton';
 import { act } from 'react-dom/test-utils';
 
@@ -12,12 +11,6 @@ jest.mock('../../../stores', () => {
     default: rootStore,
   };
 });
-// import { useAppState } from '../../../hooks/useAppState/useAppState';
-
-// jest.mock('../../../hooks/useAppState/useAppState');
-// const mockUseAppState = useAppState as jest.Mock<any>;
-// const mockDispatchSetting = jest.fn();
-// mockUseAppState.mockImplementation(() => ({ settings: initialSettings, dispatchSetting: mockDispatchSetting }));
 describe('the ToggleGridViewButton', () => {
   beforeEach(() => {
     let newStore = new RootStore();

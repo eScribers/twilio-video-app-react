@@ -21,7 +21,7 @@ const Container = styled('div')(({ theme }) => ({
   },
 }));
 
-const Room = observer(() => {
+const Room = () => {
   const { roomsStore } = rootStore;
   const { settings } = roomsStore;
 
@@ -35,6 +35,6 @@ const Room = observer(() => {
       <MainParticipant />
     </Container>
   );
-});
+};
 
-export default Room;
+export default observer(Room);

@@ -32,19 +32,19 @@ interface VideoProviderProps {
 export const VideoProvider = observer(({ children }: VideoProviderProps) => {
   const { roomsStore } = rootStore;
 
-  const { room, isConnecting } = roomsStore;
+  const { currentRoom, isConnecting } = roomsStore;
 
   const onErrorCallback = (error: TwilioError) => {
     console.log(`ERROR: ${error.message}`, error);
     roomsStore.setError(error);
   };
-  useHandleTrackPublicationFailed(room, roomsStore.setError);
-  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, roomsStore.setError);
+  useHandleTrackPublicationFailed(currentRoom, roomsStore.setError);
+  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(currentRoom, roomsStore.setError);
 
   return (
     <VideoContext.Provider
       value={{
-        room,
+        room: currentRoom,
         isConnecting,
         onError: onErrorCallback,
         onDisconnect: () => {},

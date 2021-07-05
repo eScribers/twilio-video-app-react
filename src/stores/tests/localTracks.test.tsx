@@ -35,8 +35,8 @@ describe('the useLocalTracks hook', () => {
   });
 
   it('should create a local audio track when no video devices are present', async () => {
-    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant());
-    if (!rootStore.participantsStore.localParticipant.participant) throw new Error('No local participant detected');
+    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant('test', 'Reporter', 1));
+    if (!rootStore.participantsStore.localParticipant?.participant) throw new Error('No local participant detected');
     jest.spyOn(rootStore.participantsStore, 'getLocalAudioTrack');
     jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
     rootStore.participantsStore.setDevices([mockAudioInputDevice]);
@@ -52,8 +52,8 @@ describe('the useLocalTracks hook', () => {
     (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the store initialization
     const rootStore = new RootStore();
     (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the test itself
-    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant());
-    if (!rootStore.participantsStore.localParticipant.participant) throw new Error('No local participant detected');
+    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant('test', 'Reporter', 1));
+    if (!rootStore.participantsStore.localParticipant?.participant) throw new Error('No local participant detected');
     jest.spyOn(rootStore.participantsStore, 'setAudioTrack');
     jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
     rootStore.participantsStore.setDevices([mockVideoInputDevice]);
@@ -72,8 +72,8 @@ describe('the useLocalTracks hook', () => {
     expect(rootStore.participantsStore.localAudioTrack).toBe(undefined);
     (Video.createLocalAudioTrack as jest.Mock<any>).mockImplementationOnce(() => Promise.resolve()); // once for the test itself
 
-    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant());
-    if (!rootStore.participantsStore.localParticipant.participant) throw new Error('No local participant detected');
+    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant('test', 'Reporter', 1));
+    if (!rootStore.participantsStore.localParticipant?.participant) throw new Error('No local participant detected');
     jest.spyOn(rootStore.participantsStore, 'setAudioTrack');
     rootStore.participantsStore.setDevices([]);
     await act(async () => {

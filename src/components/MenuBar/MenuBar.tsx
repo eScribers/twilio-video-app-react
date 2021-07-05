@@ -6,7 +6,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Toolbar from '@material-ui/core/Toolbar';
 import { Offline, Online } from 'react-detect-offline';
 import { NOTIFICATION_MESSAGE, ERROR_MESSAGE, ROOM_STATE } from '../../utils/displayStrings';
-import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
+import { PARTICIPANT_TYPES as PARTICIPANT_ROLES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
@@ -79,13 +79,17 @@ const useStyles = makeStyles(theme =>
   })
 );
 
+const getRoles = () => {
+  return Object.values(PARTICIPANT_ROLES);
+};
+
 const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
   <div className={wrapperClass}>
     {time} - SC:{subConferenceId}
   </div>
 );
 
-const MenuBar = observer(() => {
+const MenuBar = () => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
   const {
@@ -154,12 +158,12 @@ const MenuBar = observer(() => {
   const isReporterIn = participantsStore.isReporterIn;
 
   useEffect(() => {
-    if (!participantInformation?.partyType) {
+    if (!participantInformation?.role) {
       return;
     }
-    if (isReporterIn === isReporterInState) return;
+    if (isReporterIn === isReporterInState || roomsStore.currentRoomState !== ROOM_STATE.CONNECTED) return;
 
-    if (![PARTICIPANT_TYPES.HEARING_OFFICER, PARTICIPANT_TYPES.REPORTER].includes(participantInformation.partyType)) {
+    if (![PARTICIPANT_ROLES.HEARING_OFFICER, PARTICIPANT_ROLES.REPORTER].includes(participantInformation.role)) {
       if (isReporterIn) {
         roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       } else {
@@ -168,7 +172,7 @@ const MenuBar = observer(() => {
       }
     }
 
-    if (participantInformation.partyType === PARTICIPANT_TYPES.HEARING_OFFICER) {
+    if (participantInformation.role === PARTICIPANT_ROLES.HEARING_OFFICER) {
       if (!isReporterIn) roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
     }
     setIsReporterInState(isReporterIn);
@@ -178,7 +182,7 @@ const MenuBar = observer(() => {
     <AppBar className={classes.container} position="static">
       <Toolbar>
         <img src="/escribers-logo-transparent.png" height="64px" alt="eScribers" />
-        {roomsStore.roomState === ROOM_STATE.DISCONNECTED ? (
+        {roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? (
           <>
             <Online>
               <Button
@@ -200,7 +204,7 @@ const MenuBar = observer(() => {
             <div className={classes.identification}>
               <div className={classes.nameRoleRow}>
                 {participantInformation ? participantInformation.displayName + ' - ' : ''}
-                {participantInformation ? participantInformation.partyType : ''}
+                {participantInformation ? participantInformation.role : ''}
               </div>
               <div>{participantInformation ? 'Case number: ' + participantInformation.caseReference : ''}</div>
             </div>
@@ -232,6 +236,6 @@ const MenuBar = observer(() => {
       />
     </AppBar>
   );
-});
+};
 
-export default MenuBar;
+export default observer(MenuBar);
