@@ -52,7 +52,7 @@ const AudioLevelIndicator = ({
   const isLocalParticipant = participant === localParticipant || !participant;
   const localParticipantType: string = !localParticipant
     ? ''
-    : ParticipantIdentity.Parse(localParticipant.identity).partyType;
+    : ParticipantIdentity.Parse(localParticipant.identity).role;
   const participantOptions = participant
     ? getParticipantOptions(participant, localParticipantType, !isTrackEnabled)
     : [];

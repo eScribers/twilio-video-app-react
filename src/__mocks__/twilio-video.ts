@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
-import { TRACK_TYPE } from '../utils/displayStrings';
+import { ROOM_STATE } from '../utils/displayStrings';
 
 class MockRoom extends EventEmitter {
-  state = 'connected';
+  state = ROOM_STATE.CONNECTED;
   disconnect = jest.fn();
   localParticipant = {
     publishTrack: jest.fn(),

@@ -46,7 +46,7 @@ Cypress.Commands.add('deleteExistingConference', (caseReference) => {
 
 });
 
-Cypress.Commands.add('joinRoom', (partyType,partyName, caseNumber) => {
+Cypress.Commands.add('joinRoom', (role,partyName, caseNumber) => {
   cy.visit('/');
   cy.get('[data-cy="select"]').click();
   cy.get('[data-cy="menu-item"]').eq(1).click();

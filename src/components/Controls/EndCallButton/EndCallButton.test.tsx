@@ -8,7 +8,7 @@ import { mockLocalParticipant } from '../../../utils/mocks';
 
 jest.mock('axios');
 
-describe('End Call button', () => {
+describe('Hang Up button', () => {
   beforeEach(() => {
     rootStore.roomsStore.currentRoom = mockRoom;
     rootStore.participantsStore.localParticipant.setParticipant(undefined);
@@ -31,7 +31,7 @@ describe('End Call button', () => {
   });
 
   it('should call leave conference when clicked as a non-moderator', () => {
-    let participant = new mockLocalParticipant('test@Parent@2');
+    let participant = new mockLocalParticipant('test', 'Parent', 2);
     rootStore.participantsStore.localParticipant?.setParticipant(participant);
 
     if (rootStore.roomsStore.currentRoom) jest.spyOn(rootStore.roomsStore, 'endConference');
@@ -60,7 +60,7 @@ describe('End Call button', () => {
     if (rootStore.roomsStore.currentRoom) jest.spyOn(rootStore.roomsStore, 'endConference');
     const wrapper = shallow(<EndCallButton />);
 
-    let participant = new mockLocalParticipant('local@Reporter@1');
+    let participant = new mockLocalParticipant('local', 'Reporter', 1);
     rootStore.participantsStore.localParticipant?.setParticipant(participant);
 
     wrapper.find('#end-conference').simulate('click');
@@ -70,7 +70,7 @@ describe('End Call button', () => {
   it('should properly reject end conference depending on role', async () => {
     if (rootStore.roomsStore.currentRoom) jest.spyOn(rootStore.roomsStore, 'endConference');
     const wrapper = shallow(<EndCallButton />);
-    let participant = new mockLocalParticipant('test@Parent@2');
+    let participant = new mockLocalParticipant('test', 'Parent', 2);
     rootStore.participantsStore.localParticipant?.setParticipant(participant);
 
     wrapper.find('#end-conference').simulate('click');

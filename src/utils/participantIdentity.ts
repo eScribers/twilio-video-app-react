@@ -1,6 +1,6 @@
 export class ParticipantIdentity {
   partyName: string = '';
-  partyType: string = '';
+  role: string = '';
   personId?: string = undefined;
   userId?: string = undefined;
   isRegisteredUser: boolean = false;
@@ -13,7 +13,7 @@ export class ParticipantIdentity {
 
     this.participantIdentityParts = participantIdentityAsString.split('@');
     this.partyName = this.participantIdentityParts[0];
-    this.partyType = this.participantIdentityParts[1];
+    this.role = this.participantIdentityParts[1];
 
     if (this.participantIdentityParts.length > 2) this.personId = this.participantIdentityParts[2];
 

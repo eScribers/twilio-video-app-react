@@ -42,14 +42,14 @@ const useStyles = makeStyles((theme: Theme) =>
 const Controls = () => {
   const classes = useStyles();
   const { roomsStore, participantsStore } = rootStore;
-  const partyType = !participantsStore.localParticipant?.participant
+  const role = !participantsStore.localParticipant?.participant
     ? ''
-    : ParticipantIdentity.Parse(participantsStore.localParticipant?.participant?.identity).partyType;
+    : ParticipantIdentity.Parse(participantsStore.localParticipant?.participant?.identity).role;
   const isReconnecting = roomsStore.currentRoomState === ROOM_STATE.RECONNECTING;
   const isdisconnected = roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
   const showControls = isUserActive || roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED;
-  const canToggleMute = [PARTICIPANT_TYPES.HEARING_OFFICER].includes(partyType) || participantsStore.isReporterIn;
+  const canToggleMute = [PARTICIPANT_TYPES.HEARING_OFFICER].includes(role) || participantsStore.isReporterIn;
   const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !canToggleMute;
 
   return (

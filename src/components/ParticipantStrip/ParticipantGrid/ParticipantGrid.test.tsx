@@ -40,13 +40,13 @@ describe('the ParticipantStrip component', () => {
   });
 
   it('should correctly render ParticipantInfo components', () => {
-    const localParticipant = new mockLocalParticipant('local@Reporter@1');
+    const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
     // @ts-expect-error
     rootStore.participantsStore.localParticipant?.setParticipant({ ...localParticipant, sid: '123' });
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
-    const participant1 = new mockParticipant('participant1', '1');
-    const participant2 = new mockParticipant('participant2', '2');
+    const participant1 = new mockParticipant('participant1', 'Reporter', 1, '1');
+    const participant2 = new mockParticipant('participant2', 'Reporter', 2, '2');
     rootStore.participantsStore.setParticipants([participant1, participant2]);
 
     const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);
@@ -54,13 +54,13 @@ describe('the ParticipantStrip component', () => {
   });
 
   it('should add the isSelected prop to the local participant when it is selected', () => {
-    const localParticipant = new mockLocalParticipant('local@Reporter@1');
+    const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
     // @ts-expect-error
     rootStore.participantsStore.localParticipant?.setParticipant({ ...localParticipant, sid: '123' });
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
-    const participant1 = new mockParticipant('participant1', '1');
-    const participant2 = new mockParticipant('participant2', '2');
+    const participant1 = new mockParticipant('participant1', 'Reporter', 1, '1');
+    const participant2 = new mockParticipant('participant2', 'Reporter', 2, '2');
     rootStore.participantsStore.setParticipants([participant1, participant2]);
 
     const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);
@@ -74,13 +74,13 @@ describe('the ParticipantStrip component', () => {
   });
 
   it('should add the isSelected prop to the first remote participant when it is selected', () => {
-    const localParticipant = new mockLocalParticipant('local@Reporter@1');
+    const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
     // @ts-expect-error
     rootStore.participantsStore.localParticipant?.setParticipant({ ...localParticipant, sid: '123' });
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
-    const participant1 = new mockParticipant('participant1', '1');
-    const participant2 = new mockParticipant('participant2', '2');
+    const participant1 = new mockParticipant('participant1', 'Reporter', 1, '1');
+    const participant2 = new mockParticipant('participant2', 'Reporter', 2, '2');
     rootStore.participantsStore.setParticipants([participant1, participant2]);
 
     const wrapper = shallow(<ParticipantGrid viewMode={'grid 3x3'} />);

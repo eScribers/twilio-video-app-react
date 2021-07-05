@@ -16,7 +16,7 @@ export default function useDataTrackListener() {
       if (
         roleChecker.doesRoleHavePermission(
           ROLE_PERMISSIONS.START_ROOM,
-          ParticipantIdentity.Parse(participant.identity).partyType
+          ParticipantIdentity.Parse(participant.identity).role
         )
       ) {
         participant.on('trackSubscribed', track => {
