@@ -79,18 +79,18 @@ export const getParticipantOptions = (
   isTrackMuted: boolean = false
 ) => {
   let options: string[] = [];
-  let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
-  if (localParticipantType === remoteParticipantPartyType) return options;
+  let remoteParticipantRole = ParticipantIdentity.Parse(participant.identity).role;
+  if (localParticipantType === remoteParticipantRole) return options;
 
   const canMute = roleChecker.doesRoleHavePermission(
     ROLE_PERMISSIONS.MUTE_PARTICIPANT,
     localParticipantType,
-    remoteParticipantPartyType
+    remoteParticipantRole
   );
   const canRemove = roleChecker.doesRoleHavePermission(
     ROLE_PERMISSIONS.REMOVE_PARTICIPANT,
     localParticipantType,
-    remoteParticipantPartyType
+    remoteParticipantRole
   );
 
   if (canMute && !isTrackMuted) options.push(MUTE);

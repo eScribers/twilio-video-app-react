@@ -158,7 +158,7 @@ const ParticipantInfo = observer(
   ({ onClick, isSelected, children, hideParticipant, isDominantSpeaker, participant }: ParticipantInfoProps) => {
     const publications = usePublications(participant);
 
-    const localParticipantType: string = !participant ? '' : ParticipantIdentity.Parse(participant.identity).partyType;
+    const localParticipantType: string = !participant ? '' : ParticipantIdentity.Parse(participant.identity).role;
 
     const audioPublication = publications.find(p => p.kind === TRACK_TYPE.AUDIO);
 

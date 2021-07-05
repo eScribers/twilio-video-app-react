@@ -23,7 +23,7 @@ class localParticipantStore {
 
   get participantType() {
     if (!this.participant?.identity) return '';
-    const participantType: string = ParticipantIdentity.Parse(this.participant?.identity || '').partyType;
+    const participantType: string = ParticipantIdentity.Parse(this.participant?.identity || '').role;
     return participantType;
   }
 }

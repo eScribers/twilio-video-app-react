@@ -4,6 +4,7 @@ import Video from 'twilio-video';
 import { act } from '@testing-library/react';
 import { sleep } from '../../utils';
 import * as utils from '../../utils';
+import { ROOM_STATE } from '../../utils/displayStrings';
 
 describe('the room store', () => {
   it('should return an empty room when no token is provided', () => {
@@ -40,7 +41,7 @@ describe('the room store', () => {
     await act(async () => {
       await roomsStore.joinRoom('token');
     });
-    expect(roomsStore.currentRoom.state).toEqual('connected');
+    expect(roomsStore.currentRoom.state).toEqual(ROOM_STATE.CONNECTED);
   });
 
   it('should add a listener for the "beforeUnload" event when connected to a room', async () => {
@@ -58,7 +59,7 @@ describe('the room store', () => {
     await act(async () => {
       await roomsStore.joinRoom('token');
     });
-    roomsStore.currentRoom.emit('disconnected');
+    roomsStore.currentRoom.emit(ROOM_STATE.DISCONNECTED);
     expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
   });
 
@@ -80,8 +81,8 @@ describe('the room store', () => {
       await roomsStore.joinRoom('token');
     });
 
-    expect(roomsStore.currentRoom.state).toBe('connected');
-    roomsStore.currentRoom.emit('disconnected');
+    expect(roomsStore.currentRoom.state).toBe(ROOM_STATE.CONNECTED);
+    roomsStore.currentRoom.emit(ROOM_STATE.DISCONNECTED);
     await sleep(50);
     expect(roomsStore.currentRoom.state).toBe(undefined);
   });
@@ -106,7 +107,7 @@ describe('the room store', () => {
         await roomsStore.joinRoom('token');
       });
       await sleep(50);
-      roomsStore.currentRoom.emit('disconnected');
+      roomsStore.currentRoom.emit(ROOM_STATE.DISCONNECTED);
       expect(window.removeEventListener).toHaveBeenCalledWith('pagehide', expect.any(Function));
     });
   });

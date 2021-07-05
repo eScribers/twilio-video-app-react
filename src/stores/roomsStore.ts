@@ -122,10 +122,10 @@ class roomsStore {
       };
 
       const handleRoomReconnecting = () => {
-        this.currentRoom.state = 'reconnecting';
+        this.currentRoom.state = ROOM_STATE.RECONNECTING;
       };
       const handleRoomReconnected = () => {
-        this.currentRoom.state = 'connected';
+        this.currentRoom.state = ROOM_STATE.CONNECTED;
       };
 
       this.setCurrentRoom(newRoom);
@@ -155,11 +155,10 @@ class roomsStore {
   async endConference() {
     if (!this.rootStore.participantsStore.localParticipant.participant?.identity)
       throw new Error("You are not connected to a Conference, can't end Conference");
-    const role = ParticipantIdentity.Parse(this.rootStore.participantsStore.localParticipant.participant.identity)
-      .partyType;
-    const canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
+    const role = ParticipantIdentity.Parse(this.rootStore.participantsStore.localParticipant.participant.identity).role;
+    const isAbleToEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
 
-    if (!canEndConference || !role) throw new Error('No permission to end conference');
+    if (!isAbleToEndConference || !role) throw new Error('No permission to end conference');
 
     try {
       const participantAuthToken = window.location.hash.substr(1);

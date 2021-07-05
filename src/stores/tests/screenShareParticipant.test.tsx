@@ -1,15 +1,16 @@
 import { act } from '@testing-library/react-hooks';
 import { RootStore } from '../makeStore';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
+import { ROOM_STATE } from '../../utils/displayStrings';
 
 function createRootStore() {
   const rootStore = new RootStore();
   const { roomsStore, participantsStore } = rootStore;
-  const localParticipant = new mockLocalParticipant('local@Reporter@1');
+  const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
 
   participantsStore.localParticipant?.setParticipant(localParticipant);
 
-  roomsStore.currentRoom.state = 'connected';
+  roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
   return rootStore;
 }
 
@@ -26,7 +27,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should return the localParticipant when they are sharing their screen', () => {
-    const participant = new mockLocalParticipant('local@Reporter@1');
+    const participant = new mockLocalParticipant('local', 'Reporter', 1);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.localParticipant?.setParticipant(participant);
 
@@ -34,7 +35,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should return a remoteParticipant when they are sharing their screen', () => {
-    const participant = new mockParticipant();
+    const participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.addParticipant(participant);
     expect(participantsStore.screenShareParticipant()).toEqual(participant);
@@ -59,7 +60,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should respond to "trackPublished" and "trackUnpublished" events emitted from the room', () => {
-    const participant = new mockParticipant();
+    const participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
@@ -80,7 +81,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should respond to "participantDisconnected" events emitted from the room', () => {
-    const participant = new mockParticipant();
+    const participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.addParticipant(participant);
 

@@ -33,15 +33,15 @@ const EndCallButton = () => {
   const { roomsStore, participantsStore } = rootStore;
   const classes = useStyles();
 
-  let canEndConference = false;
+  let isAbleToEndConference = false;
   if (participantsStore.localParticipant?.participant?.identity) {
-    const role = ParticipantIdentity.Parse(participantsStore.localParticipant.participant.identity).partyType;
+    const role = ParticipantIdentity.Parse(participantsStore.localParticipant.participant.identity).role;
 
-    canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
+    isAbleToEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
   }
 
   const handleClick = () => {
-    if (!canEndConference) {
+    if (!isAbleToEndConference) {
       roomsStore.currentRoom.disconnect();
 
       return;
@@ -53,7 +53,7 @@ const EndCallButton = () => {
     <>
       <Tooltip
         id="hang-up"
-        title={'End Call'}
+        title={'Hang Up'}
         onClick={handleClick}
         placement="top"
         PopperProps={{ disablePortal: true }}

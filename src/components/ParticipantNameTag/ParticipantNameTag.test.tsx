@@ -24,13 +24,15 @@ describe('The ParticipantNameTag component', () => {
   });
 
   it('should add "(You)" to the participants identity when they are the localParticipant', () => {
-    const mockParticipant = new mockLocalParticipant('local@Reporter@1');
+    const mockParticipant = new mockLocalParticipant('local', 'Reporter', 1);
     const wrapper = shallow(<ParticipantNameTag participant={mockParticipant}></ParticipantNameTag>);
     expect(wrapper.text()).toContain('Reporter - local (You)');
   });
 
   it('should not add "(You)" to the participants identity when they are the localParticipant', () => {
-    const wrapper = shallow(<ParticipantNameTag participant={new mockParticipant()}></ParticipantNameTag>);
+    const wrapper = shallow(
+      <ParticipantNameTag participant={new mockParticipant('remote', 'Reporter', 2)}></ParticipantNameTag>
+    );
     expect(wrapper.text()).not.toContain('(you)');
   });
 });

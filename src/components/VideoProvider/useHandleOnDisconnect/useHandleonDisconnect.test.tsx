@@ -1,6 +1,7 @@
 import { act, renderHook } from '@testing-library/react-hooks';
 import EventEmitter from 'events';
 import { Room } from 'twilio-video';
+import { ROOM_STATE } from '../../../utils/displayStrings';
 
 import useHandleOnDisconnect from './useHandleOnDisconnect';
 
@@ -11,7 +12,7 @@ describe('the useHandleonDisconnect hook', () => {
     const mockOnDisconnect = jest.fn();
     renderHook(() => useHandleOnDisconnect(mockRoom, mockOnDisconnect));
     act(() => {
-      mockRoom.emit('disconnected', 'disconnected');
+      mockRoom.emit(ROOM_STATE.DISCONNECTED, ROOM_STATE.DISCONNECTED);
     });
     expect(mockOnDisconnect).toHaveBeenCalled();
   });

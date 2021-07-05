@@ -43,7 +43,7 @@ describe('the ToggleScreenShareButton component', () => {
 
   it('should render correctly when another user is sharing their screen', () => {
     rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     rootStore.participantsStore.addParticipant(participant);
 

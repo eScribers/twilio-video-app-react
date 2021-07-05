@@ -32,12 +32,14 @@ describe('the MainParticipantInfo component', () => {
 
   it('should render the AvatarIcon component when no video tracks are published', () => {
     mockUsePublications.mockImplementationOnce(() => []);
-    const wrapper = shallow(<MainParticipantInfo participant={new mockParticipant()}>{null}</MainParticipantInfo>);
+    const wrapper = shallow(
+      <MainParticipantInfo participant={new mockParticipant('remote', 'Reporter', 2)}>{null}</MainParticipantInfo>
+    );
     expect(wrapper.find(AvatarIcon).exists()).toBe(true);
   });
 
   it('should not render the AvatarIcon component when video tracks are published', () => {
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
@@ -45,7 +47,7 @@ describe('the MainParticipantInfo component', () => {
   });
 
   it('should not render the AvatarIcon component when the user has disabled their video and is sharing their screen', () => {
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'screen-123456' });
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
@@ -54,7 +56,7 @@ describe('the MainParticipantInfo component', () => {
 
   it('should not render the reconnecting UI when the user is connected', () => {
     mockUseParticipantIsReconnecting.mockImplementationOnce(() => false);
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
@@ -63,7 +65,7 @@ describe('the MainParticipantInfo component', () => {
 
   it('should render the reconnecting UI when the user is reconnecting', () => {
     mockUseParticipantIsReconnecting.mockImplementationOnce(() => true);
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
@@ -71,7 +73,7 @@ describe('the MainParticipantInfo component', () => {
   });
 
   it('should use the switchOff status of the screen share track when it is available', () => {
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'screen' });
     participant.tracks.set(1, { trackName: 'camera-123456' });
@@ -81,7 +83,7 @@ describe('the MainParticipantInfo component', () => {
 
   it('should use the switchOff status of the camera track when the screen share track is not available', () => {
     // mockUsePublications.mockImplementationOnce(() => [{ trackName: 'camera-123456' }]);
-    let participant = new mockParticipant();
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
     shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
@@ -89,26 +91,27 @@ describe('the MainParticipantInfo component', () => {
   });
 
   it('should add "(You)" to the participants identity when they are the localParticipant', () => {
-    let participant = new mockLocalParticipant('@mockIdentity');
+    let participant = new mockLocalParticipant('mockIdentity', 'MockRole', 1);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
     rootStore.participantsStore.localParticipant?.setParticipant(participant);
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
-    expect(wrapper.text()).toContain('mockIdentity (You)');
+    expect(wrapper.text()).toContain('MockRole (You)');
   });
 
   it('should not add "(You)" to the participants identity when they are the localParticipant', () => {
-    let participant = new mockParticipant('@mockIdentity');
+    let participant = new mockParticipant('mockIdentity', 'Reporter', 2);
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
     expect(wrapper.text()).not.toContain('mockIdentity (You)');
   });
 
   it('should add "- Screen" to the participants identity when they are screen sharing', () => {
-    let participant = new mockParticipant('@mockIdentity');
+    let participant = new mockParticipant('mockIdentity', 'MockRole', 2);
+
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'screen' });
     participant.tracks.set(1, { trackName: 'camera-123456' });
     const wrapper = shallow(<MainParticipantInfo participant={participant}>{null}</MainParticipantInfo>);
-    expect(wrapper.text()).toContain('mockIdentity - Screen');
+    expect(wrapper.text()).toContain('MockRole - Screen');
   });
 });

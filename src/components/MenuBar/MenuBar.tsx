@@ -11,7 +11,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Offline, Online } from 'react-detect-offline';
 import { NOTIFICATION_MESSAGE, ERROR_MESSAGE, ROOM_STATE } from '../../utils/displayStrings';
-import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
+import { PARTICIPANT_TYPES as PARTICIPANT_ROLES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
@@ -76,8 +76,8 @@ const useStyles = makeStyles(theme =>
   })
 );
 
-const getPartyTypes = () => {
-  return Object.values(PARTICIPANT_TYPES);
+const getRoles = () => {
+  return Object.values(PARTICIPANT_ROLES);
 };
 
 const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
@@ -156,12 +156,12 @@ const MenuBar = () => {
   const isReporterIn = participantsStore.isReporterIn;
 
   useEffect(() => {
-    if (!participantInformation?.partyType) {
+    if (!participantInformation?.role) {
       return;
     }
     if (isReporterIn === isReporterInState || roomsStore.currentRoomState !== ROOM_STATE.CONNECTED) return;
 
-    if (![PARTICIPANT_TYPES.HEARING_OFFICER, PARTICIPANT_TYPES.REPORTER].includes(participantInformation.partyType)) {
+    if (![PARTICIPANT_ROLES.HEARING_OFFICER, PARTICIPANT_ROLES.REPORTER].includes(participantInformation.role)) {
       if (isReporterIn) {
         roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
       } else {
@@ -170,7 +170,7 @@ const MenuBar = () => {
       }
     }
 
-    if (participantInformation.partyType === PARTICIPANT_TYPES.HEARING_OFFICER) {
+    if (participantInformation.role === PARTICIPANT_ROLES.HEARING_OFFICER) {
       if (!isReporterIn) roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
     }
     setIsReporterInState(isReporterIn);
@@ -186,13 +186,13 @@ const MenuBar = () => {
               <InputLabel>Party Type</InputLabel>
               <Select
                 data-cy="select"
-                label="Party Type"
-                value={participantInformation ? participantInformation.partyType : ''}
+                label="Role"
+                value={participantInformation ? participantInformation.role : ''}
                 margin="dense"
-                placeholder="Party Type"
+                placeholder="Role"
                 disabled={true}
               >
-                {getPartyTypes().map(type => (
+                {getRoles().map(type => (
                   <MenuItem key={type} value={type} data-cy="menu-item">
                     {type}
                   </MenuItem>
