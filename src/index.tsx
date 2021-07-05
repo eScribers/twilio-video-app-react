@@ -33,7 +33,7 @@ const alertProviderOptions = {
 };
 
 const logger: LogglyTracker = new LogglyTracker();
-const VideoApp = observer(() => {
+const VideoApp = () => {
   const { setIsAutoRetryingToJoinRoom, setWaitingNotification, waitingNotification } = useAppState();
   const { roomsStore } = rootStore;
   const { notifications } = roomsStore;
@@ -74,10 +74,10 @@ const VideoApp = observer(() => {
   }
   return (
     <VideoProvider>
-      {notifications?.[0]?.type !== 'error' ? null : (
+      {!notifications.length || notifications[0]?.type !== 'error' ? null : (
         <ErrorDialog dismissError={() => roomsStore.dismissNotfication(notifications[0])} error={notifications[0]} />
       )}
-      {notifications?.[0]?.type !== 'notification' ? null : (
+      {!notifications.length || notifications[0]?.type !== 'notification' ? null : (
         <NotificationDialog
           dismissNotification={() => roomsStore.dismissNotfication(notifications[0])}
           notification={notifications[0]}
@@ -93,7 +93,9 @@ const VideoApp = observer(() => {
       <App />
     </VideoProvider>
   );
-});
+};
+
+const VideoAppObserved = observer(VideoApp);
 
 ReactDOM.render(
   <MuiThemeProvider theme={theme}>
@@ -104,7 +106,7 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/">
             <AlertProvider template={AlertTemplate} {...alertProviderOptions}>
-              <VideoApp />
+              <VideoAppObserved />
             </AlertProvider>
           </Route>
         </Switch>

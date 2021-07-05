@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const Controls = observer(() => {
+const Controls = () => {
   const classes = useStyles();
   const { roomsStore, participantsStore } = rootStore;
   const partyType = !participantsStore.localParticipant?.participant
@@ -64,6 +64,6 @@ const Controls = observer(() => {
       )}
     </div>
   );
-});
+};
 
-export default Controls;
+export default observer(Controls);

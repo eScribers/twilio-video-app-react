@@ -19,7 +19,7 @@ const useStyles = makeStyles({
   },
 });
 
-const VideoInputList = observer(() => {
+const VideoInputList = () => {
   const classes = useStyles();
   const { participantsStore } = rootStore;
 
@@ -77,6 +77,6 @@ const VideoInputList = observer(() => {
       )}
     </div>
   );
-});
+};
 
-export default VideoInputList;
+export default observer(VideoInputList);

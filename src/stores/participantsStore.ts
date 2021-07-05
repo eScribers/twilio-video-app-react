@@ -200,7 +200,11 @@ class participantsStore {
         return Promise.reject(err);
       }
 
-      this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
+      try {
+        this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
+      } catch (err) {
+        throw new Error(`Could not publish video track: ${err}`);
+      }
       // This timeout is here to prevent unpublishing a track that hasn't been published yet (causing a crash)
       // Test it by commenting the setTimeout and spamming the video on/off button - Gal 16.06.2021
       setTimeout(() => {

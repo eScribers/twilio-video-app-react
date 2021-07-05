@@ -26,7 +26,7 @@ const Main = styled('main')({
 const query = new URLSearchParams(window.location.search);
 const returnUrl = query.get('returnUrl');
 
-const App = observer(() => {
+const App = () => {
   const { roomsStore } = rootStore;
 
   // Here we would like the height of the main container to be the height of the viewport.
@@ -51,6 +51,6 @@ const App = observer(() => {
       <ReconnectingNotification />
     </Container>
   );
-});
+};
 
-export default App;
+export default observer(App);

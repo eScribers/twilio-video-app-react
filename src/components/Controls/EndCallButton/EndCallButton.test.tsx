@@ -32,7 +32,7 @@ describe('End Call button', () => {
 
   it('should call leave conference when clicked as a non-moderator', () => {
     let participant = new mockLocalParticipant('test@Parent@2');
-    rootStore.participantsStore.localParticipant.setParticipant(participant);
+    rootStore.participantsStore.localParticipant?.setParticipant(participant);
 
     if (rootStore.roomsStore.currentRoom) jest.spyOn(rootStore.roomsStore, 'endConference');
     if (rootStore.roomsStore.currentRoom) jest.spyOn(rootStore.roomsStore.currentRoom, 'disconnect');
@@ -61,7 +61,7 @@ describe('End Call button', () => {
     const wrapper = shallow(<EndCallButton />);
 
     let participant = new mockLocalParticipant('local@Reporter@1');
-    rootStore.participantsStore.localParticipant.setParticipant(participant);
+    rootStore.participantsStore.localParticipant?.setParticipant(participant);
 
     wrapper.find('#end-conference').simulate('click');
     await expect(rootStore.roomsStore.endConference()).resolves.toBeTruthy();
@@ -71,7 +71,7 @@ describe('End Call button', () => {
     if (rootStore.roomsStore.currentRoom) jest.spyOn(rootStore.roomsStore, 'endConference');
     const wrapper = shallow(<EndCallButton />);
     let participant = new mockLocalParticipant('test@Parent@2');
-    rootStore.participantsStore.localParticipant.setParticipant(participant);
+    rootStore.participantsStore.localParticipant?.setParticipant(participant);
 
     wrapper.find('#end-conference').simulate('click');
 

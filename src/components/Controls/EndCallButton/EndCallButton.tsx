@@ -28,13 +28,13 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-const EndCallButton = observer(() => {
+const EndCallButton = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const { roomsStore, participantsStore } = rootStore;
   const classes = useStyles();
 
   let canEndConference = false;
-  if (participantsStore.localParticipant.participant?.identity) {
+  if (participantsStore.localParticipant?.participant?.identity) {
     const role = ParticipantIdentity.Parse(participantsStore.localParticipant.participant.identity).partyType;
 
     canEndConference = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, role);
@@ -89,6 +89,6 @@ const EndCallButton = observer(() => {
       </Dialog>
     </>
   );
-});
+};
 
-export default EndCallButton;
+export default observer(EndCallButton);

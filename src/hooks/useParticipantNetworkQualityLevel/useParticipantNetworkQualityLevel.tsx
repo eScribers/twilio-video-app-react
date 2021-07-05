@@ -6,8 +6,6 @@ export default function useParticipantNetworkQualityLevel(participant: Participa
 
   useEffect(() => {
     const handleNewtorkQualityLevelChange = (newNetworkQualityLevel: number) => {
-      console.log('Handling networkQualityLevel change', newNetworkQualityLevel);
-
       setNetworkQualityLevel(newNetworkQualityLevel);
     };
     setNetworkQualityLevel(participant?.networkQualityLevel);

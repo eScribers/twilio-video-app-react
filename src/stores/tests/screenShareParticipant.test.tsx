@@ -30,7 +30,7 @@ describe('the useScreenShareParticipant hook', () => {
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.localParticipant?.setParticipant(participant);
 
-    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant.participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant?.participant);
   });
 
   it('should return a remoteParticipant when they are sharing their screen', () => {
@@ -44,15 +44,15 @@ describe('the useScreenShareParticipant hook', () => {
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
 
     act(() => {
-      participantsStore.localParticipant.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
-      participantsStore.localParticipant.participant.emit('trackPublished');
+      participantsStore.localParticipant?.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
+      participantsStore.localParticipant?.participant.emit('trackPublished');
     });
 
-    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant.participant);
+    expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant?.participant);
 
     act(() => {
-      participantsStore.localParticipant.participant.tracks = new Map([]);
-      participantsStore.localParticipant.participant.emit('trackUnpublished');
+      participantsStore.localParticipant?.participant.tracks = new Map([]);
+      participantsStore.localParticipant?.participant.emit('trackUnpublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);

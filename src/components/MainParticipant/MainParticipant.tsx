@@ -11,7 +11,7 @@ const MainParticipant = () => {
 
   let videoPriority = mainParticipant !== participantsStore.localParticipant?.participant?.identity ? 'high' : null;
 
-  if (mainParticipant === localParticipant.participant?.identity) {
+  if (mainParticipant === localParticipant?.participant?.identity) {
     videoPriority = 'high';
   }
 

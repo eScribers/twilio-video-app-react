@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   },
 });
 
-const ReconnectingNotification = observer(() => {
+const ReconnectingNotification = () => {
   const classes = useStyles();
   const { roomsStore } = rootStore;
 
@@ -41,6 +41,6 @@ const ReconnectingNotification = observer(() => {
       />
     </Snackbar>
   );
-});
+};
 
-export default ReconnectingNotification;
+export default observer(ReconnectingNotification);

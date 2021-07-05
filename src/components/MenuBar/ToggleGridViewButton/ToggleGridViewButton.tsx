@@ -7,7 +7,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../../stores';
 
-const ToggleGridViewButton = observer(() => {
+const ToggleGridViewButton = () => {
   const { roomsStore } = rootStore;
   const { settings } = roomsStore;
   const [forceCollaboration, setForceCollaboration] = useState(false);
@@ -40,6 +40,6 @@ const ToggleGridViewButton = observer(() => {
       </IconButton>
     </Tooltip>
   );
-});
+};
 
-export default ToggleGridViewButton;
+export default observer(ToggleGridViewButton);
