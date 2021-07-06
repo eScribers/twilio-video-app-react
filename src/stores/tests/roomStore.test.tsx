@@ -4,12 +4,13 @@ import Video from 'twilio-video';
 import { act } from '@testing-library/react';
 import { sleep } from '../../utils';
 import * as utils from '../../utils';
+import { ROOM_STATE } from '../../utils/displayStrings';
 
 describe('the room store', () => {
   it('should return an empty room when no token is provided', () => {
     const rootStore = new RootStore();
 
-    expect(rootStore.roomsStore.room).toEqual(new EventEmitter());
+    expect(rootStore.roomsStore.currentRoom).toEqual(new EventEmitter());
   });
 
   it('should create a room', async () => {
@@ -22,7 +23,7 @@ describe('the room store', () => {
     });
     expect(roomsStore.setIsConnecting).toHaveBeenCalledWith(true);
     expect(Video.connect).toHaveBeenCalledTimes(1);
-    expect(roomsStore.room.disconnect).not.toHaveBeenCalled();
+    expect(roomsStore.currentRoom.disconnect).not.toHaveBeenCalled();
     expect(roomsStore.isConnecting).toBe(false);
   });
 
@@ -40,7 +41,7 @@ describe('the room store', () => {
     await act(async () => {
       await roomsStore.joinRoom('token');
     });
-    expect(roomsStore.room.state).toEqual('connected');
+    expect(roomsStore.currentRoom.state).toEqual(ROOM_STATE.CONNECTED);
   });
 
   it('should add a listener for the "beforeUnload" event when connected to a room', async () => {
@@ -58,7 +59,7 @@ describe('the room store', () => {
     await act(async () => {
       await roomsStore.joinRoom('token');
     });
-    roomsStore.room.emit('disconnected');
+    roomsStore.currentRoom.emit(ROOM_STATE.DISCONNECTED);
     expect(window.removeEventListener).toHaveBeenCalledWith('beforeunload', expect.any(Function));
   });
 
@@ -80,10 +81,10 @@ describe('the room store', () => {
       await roomsStore.joinRoom('token');
     });
 
-    expect(roomsStore.room.state).toBe('connected');
-    roomsStore.room.emit('disconnected');
+    expect(roomsStore.currentRoom.state).toBe(ROOM_STATE.CONNECTED);
+    roomsStore.currentRoom.emit(ROOM_STATE.DISCONNECTED);
     await sleep(50);
-    expect(roomsStore.room.state).toBe(undefined);
+    expect(roomsStore.currentRoom.state).toBe(undefined);
   });
 
   describe('when isMobile is true', () => {
@@ -106,7 +107,7 @@ describe('the room store', () => {
         await roomsStore.joinRoom('token');
       });
       await sleep(50);
-      roomsStore.room.emit('disconnected');
+      roomsStore.currentRoom.emit(ROOM_STATE.DISCONNECTED);
       expect(window.removeEventListener).toHaveBeenCalledWith('pagehide', expect.any(Function));
     });
   });

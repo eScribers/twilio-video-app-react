@@ -116,7 +116,7 @@ const MainParticipantInfo = observer(({ participant, children }: MainParticipant
       <div className={classes.infoContainer}>
         <AudioLevelIndicator audioTrack={audioTrack} />
         <h4 className={classes.identity}>
-          {parsedIdentity.partyType} {parsedIdentity.isRegisteredUser ? '*' : null}
+          {parsedIdentity.role} {parsedIdentity.isRegisteredUser ? '*' : null}
           {isLocal && '(You)'}
           {screenSharePublication && '- Screen'}
         </h4>

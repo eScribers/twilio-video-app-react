@@ -1,15 +1,16 @@
 import { act } from '@testing-library/react-hooks';
 import { RootStore } from '../makeStore';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
+import { ROOM_STATE } from '../../utils/displayStrings';
 
 function createRootStore() {
   const rootStore = new RootStore();
   const { roomsStore, participantsStore } = rootStore;
-  const localParticipant = new mockLocalParticipant();
+  const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
 
   participantsStore.localParticipant?.setParticipant(localParticipant);
 
-  roomsStore.room.state = 'connected';
+  roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
   return rootStore;
 }
 
@@ -26,7 +27,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should return the localParticipant when they are sharing their screen', () => {
-    const participant = new mockLocalParticipant();
+    const participant = new mockLocalParticipant('local', 'Reporter', 1);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.localParticipant?.setParticipant(participant);
 
@@ -34,7 +35,7 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should return a remoteParticipant when they are sharing their screen', () => {
-    const participant = new mockParticipant();
+    const participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.addParticipant(participant);
     expect(participantsStore.screenShareParticipant()).toEqual(participant);
@@ -59,28 +60,28 @@ describe('the useScreenShareParticipant hook', () => {
   });
 
   it('should respond to "trackPublished" and "trackUnpublished" events emitted from the room', () => {
-    const participant = new mockParticipant();
+    const participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
 
     act(() => {
       participantsStore.addParticipant(participant);
-      roomsStore.room.emit('trackPublished');
+      roomsStore.currentRoom.emit('trackPublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(participant);
 
     act(() => {
       participant.tracks = new Map([]);
-      roomsStore.room.emit('trackUnpublished');
+      roomsStore.currentRoom.emit('trackUnpublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
   });
 
   it('should respond to "participantDisconnected" events emitted from the room', () => {
-    const participant = new mockParticipant();
+    const participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     participantsStore.addParticipant(participant);
 
@@ -88,7 +89,7 @@ describe('the useScreenShareParticipant hook', () => {
 
     act(() => {
       participantsStore.removeParticipantSid(participant.sid);
-      roomsStore.room.emit('participantDisconnected');
+      roomsStore.currentRoom.emit('participantDisconnected');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
@@ -100,8 +101,8 @@ describe('the useScreenShareParticipant hook', () => {
       unmount = await roomsStore.joinRoom();
     });
 
-    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(1);
+    expect(roomsStore.currentRoom.listenerCount('participantDisconnected')).toBe(1);
     unmount();
-    expect(roomsStore.room.listenerCount('participantDisconnected')).toBe(0);
+    expect(roomsStore.currentRoom.listenerCount('participantDisconnected')).toBe(0);
   });
 });

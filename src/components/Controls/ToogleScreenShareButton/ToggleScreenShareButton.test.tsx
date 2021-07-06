@@ -27,7 +27,7 @@ describe('the ToggleScreenShareButton component', () => {
   });
 
   it('should render correctly when screenSharing is allowed', () => {
-    rootStore.roomsStore.room.state = ROOM_STATE.CONNECTED;
+    rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     const wrapper = shallow(<ToggleScreenShareButton />);
     expect(wrapper.find(ScreenShare).exists()).toBe(true);
@@ -42,8 +42,8 @@ describe('the ToggleScreenShareButton component', () => {
   });
 
   it('should render correctly when another user is sharing their screen', () => {
-    rootStore.roomsStore.room.state = ROOM_STATE.CONNECTED;
-    let participant = new mockParticipant();
+    rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
+    let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map([[0, { trackName: 'screen' }]]);
     rootStore.participantsStore.addParticipant(participant);
 

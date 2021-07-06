@@ -67,6 +67,22 @@ describe('the doesRoleHavePermission function', () => {
     );
     expect(result).toBeFalsy();
   });
+
+  it('should allow hearing officers, reporters to end conference', () => {
+    let result = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, PARTICIPANT_TYPES.REPORTER);
+    expect(result).toBeTruthy();
+
+    result = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, PARTICIPANT_TYPES.HEARING_OFFICER);
+    expect(result).toBeTruthy();
+  });
+
+  it('should not allow parents/others to end conference', () => {
+    let result = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, PARTICIPANT_TYPES.PARENT);
+    expect(result).toBeFalsy();
+
+    result = roleChecker.doesRoleHavePermission(ROLE_PERMISSIONS.END_CONFERENCE, 'test');
+    expect(result).toBeFalsy();
+  });
 });
 
 describe('the isRoleRecognized function', () => {

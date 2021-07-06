@@ -17,7 +17,7 @@ const AttachVisibilityHandler = () => {
   const { participantsStore, roomsStore } = rootStore;
   const shouldRepublishVideoOnForeground = useRef(false);
 
-  const room = roomsStore.room;
+  const room = roomsStore.currentRoom;
   const isVideoEnabled = participantsStore.localVideoTrack;
 
   useEffect(() => {

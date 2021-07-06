@@ -30,7 +30,7 @@ const useStyles = makeStyles((theme: Theme) =>
 const ToggleScreenShareButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
   const { participantsStore, roomsStore } = rootStore;
-  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(roomsStore.room, console.log);
+  const [isScreenShared, toggleScreenShare] = useScreenShareToggle(roomsStore.currentRoom, console.log);
 
   const disableScreenShareButton =
     participantsStore.screenSharingInProgress &&

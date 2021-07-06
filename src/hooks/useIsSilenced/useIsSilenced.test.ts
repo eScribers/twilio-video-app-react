@@ -18,9 +18,9 @@ describe('the useIsSilenced hook', () => {
   });
 
   it('should return false when "participantConnected" is not the reporter', async () => {
-    let recordingParticipant = new mockParticipant(`newParticipant@${PARTICIPANT_TYPES.REPORTER_RECORDING}`);
+    let recordingParticipant = new mockParticipant('newParticipant', PARTICIPANT_TYPES.REPORTER_RECORDING, 2, 2);
     act(() => {
-      participantsStore.localParticipant?.setParticipant(new mockLocalParticipant());
+      participantsStore.localParticipant?.setParticipant(new mockLocalParticipant('test', 'Reporter', 1));
       participantsStore.addParticipant(recordingParticipant);
     });
     expect(participantsStore.isSilenced).toBe(true);

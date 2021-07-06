@@ -46,7 +46,7 @@ Cypress.Commands.add('deleteExistingConference', (caseReference) => {
 
 });
 
-Cypress.Commands.add('joinRoom', (partyType,partyName, caseNumber) => {
+Cypress.Commands.add('joinRoom', (role,partyName, caseNumber) => {
   cy.visit('/');
   cy.get('[data-cy="select"]').click();
   cy.get('[data-cy="menu-item"]').eq(1).click();
@@ -59,7 +59,7 @@ Cypress.Commands.add('joinRoom', (partyType,partyName, caseNumber) => {
 Cypress.Commands.add('leaveRoom', () => {
   cy.wait(500);
   cy.get('body').click(); // Makes controls reappear
-  cy.get('#endCall').click();
+  cy.get('#hang-up').click();
   cy.task('removeAllParticipants');
   cy.get('#menu-room');
 });
