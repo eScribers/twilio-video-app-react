@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'center',
       width: '100%',
       overflow: 'auto',
+      paddingTop: '50px',
     },
     inputWrapper: {
       display: 'flex',

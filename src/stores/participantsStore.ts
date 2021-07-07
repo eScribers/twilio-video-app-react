@@ -379,7 +379,7 @@ class participantsStore {
           caseReference: participantInformation.caseReference,
           partyName: participantInformation.displayName,
           role: participantInformation.role,
-          userId: participantInformation.userId,
+          personId: participantInformation.personId,
           videoConferenceRoomName: participantInformation.videoConferenceRoomName,
         },
       });
@@ -416,12 +416,16 @@ class participantsStore {
     if (this.joinTime && moment().isSameOrAfter(this.joinTime.add(3, 'hours').add(50, 'minutes'))) {
       return window.location.reload();
     }
-
-    const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
-    const loginPageUrl = `http://tabula-${config.environmentName}.${config.domainName}/tabula/welcome/thankyou`;
-
-    if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
-    else window.location.replace(loginPageUrl);
+    try {
+      const decodedRedirectTabulaUrl = atob(returnUrl ? returnUrl : '');
+      const loginPageUrl = `http://tabula-${config.environmentName}.${config.domainName}/tabula/welcome/thankyou`;
+      if (isRegistered) window.location.replace(decodedRedirectTabulaUrl);
+      else window.location.replace(loginPageUrl);
+    } catch (err) {
+      this.rootStore.roomsStore.setError({
+        message: 'Failed to redirect on disconnect because the returnUrl parameter is broken',
+      });
+    }
   }
 
   setScreenSharingInProgress(state: boolean) {

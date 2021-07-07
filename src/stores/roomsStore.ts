@@ -24,6 +24,8 @@ class roomsStore {
 
   notifications: INotification[] = [];
 
+  currentToken: string = '';
+
   config: IConfig = {
     loading: false,
     loaded: false,
@@ -44,6 +46,10 @@ class roomsStore {
 
   setIsConnecting(isConnecting: boolean) {
     this.isConnecting = isConnecting;
+  }
+
+  setCurrentToken(token: string) {
+    this.currentToken = token;
   }
 
   async joinRoom(token: string) {
@@ -122,13 +128,16 @@ class roomsStore {
       };
 
       const handleRoomReconnecting = () => {
-        this.currentRoom.state = ROOM_STATE.RECONNECTING;
+        this.setCurrentRoom(newRoom);
+        console.log('Room is reconnecting');
       };
       const handleRoomReconnected = () => {
-        this.currentRoom.state = ROOM_STATE.CONNECTED;
+        console.log('Room is reconnected');
       };
 
       this.setCurrentRoom(newRoom);
+      this.setCurrentToken(token);
+      this.rootStore.eventStore.connectSync(token);
 
       this.currentRoom.on('participantConnected', participantConnected);
       this.currentRoom.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
@@ -146,7 +155,7 @@ class roomsStore {
       };
     } catch (err) {
       console.log(err.message);
-      this.setError(err.message);
+      this.setError({ message: err.message } as TwilioError);
       this.setIsConnecting(false);
     }
     return;

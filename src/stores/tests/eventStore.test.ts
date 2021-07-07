@@ -14,9 +14,10 @@ describe('Testing eventStore', () => {
 
   it(`Should send a message when there's a participant connected`, () => {
     const { eventStore, participantsStore } = rootStore;
+    jest.spyOn(eventStore, 'post');
     participantsStore.localParticipant.setParticipant(new mockLocalParticipant());
-    eventStore.sendMessage('Test');
-    expect(eventStore.events[0].data.text).toBe('Test');
+    eventStore.sendMessage('Message');
+    expect(eventStore.post).toBeCalledWith('send-message', { message: 'Message' });
   });
 
   it(`Should not send a message when the message is empty`, () => {
@@ -28,8 +29,9 @@ describe('Testing eventStore', () => {
 
   it(`Should restart the events when asking to restart`, () => {
     const { eventStore, participantsStore } = rootStore;
+    jest.spyOn(eventStore, 'post');
     participantsStore.localParticipant.setParticipant(new mockLocalParticipant());
-    eventStore.sendMessage('Message');
+    eventStore.setEvents([{ message: 'Message' }]);
     expect(eventStore.events.length).toBe(1);
     eventStore.setEvents([]);
     expect(eventStore.events.length).toBe(0);

@@ -64,7 +64,7 @@ export class mockParticipant extends baseParticipant implements Participant {
 
   constructor(name?: string, role?: string, id?: number, sid?: string) {
     super();
-    if (name) this.identity = `${name}@${role}@${id}`;
+    if (name) this.identity = [name, role, id].filter(x => x).join('@');
     console.log(this.identity);
 
     if (sid) {
@@ -83,7 +83,7 @@ export class mockLocalParticipant extends baseParticipant implements LocalPartic
 
   constructor(name?: string, role?: string, id?: number) {
     super();
-    if (name) this.identity = `${name}@${role}@${id}`;
+    if (name) this.identity = [name, role, id].filter(x => x).join('@');
   }
 
   publishTrack = async (_track: LocalTrack | MediaStreamTrack, _options?: LocalTrackPublishOptions) =>

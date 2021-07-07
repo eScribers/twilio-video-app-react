@@ -91,7 +91,7 @@ describe('the MainParticipantInfo component', () => {
   });
 
   it('should add "(You)" to the participants identity when they are the localParticipant', () => {
-    let participant = new mockLocalParticipant('mockIdentity', 'MockRole', 1);
+    let participant = new mockLocalParticipant('mockIdentity', 'MockRole');
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });
     rootStore.participantsStore.localParticipant?.setParticipant(participant);
@@ -106,7 +106,7 @@ describe('the MainParticipantInfo component', () => {
   });
 
   it('should add "- Screen" to the participants identity when they are screen sharing', () => {
-    let participant = new mockParticipant('mockIdentity', 'MockRole', 2);
+    let participant = new mockParticipant('mockIdentity', 'MockRole');
 
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'screen' });

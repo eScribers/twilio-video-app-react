@@ -2,7 +2,6 @@ export class ParticipantIdentity {
   partyName: string = '';
   role: string = '';
   personId?: string = undefined;
-  userId?: string = undefined;
   isRegisteredUser: boolean = false;
 
   participantIdentityParts: string[] = [];
@@ -15,10 +14,8 @@ export class ParticipantIdentity {
     this.partyName = this.participantIdentityParts[0];
     this.role = this.participantIdentityParts[1];
 
-    if (this.participantIdentityParts.length > 2) this.personId = this.participantIdentityParts[2];
-
-    if (this.participantIdentityParts.length > 3) {
-      this.userId = this.participantIdentityParts[3];
+    if (this.participantIdentityParts.length > 2) {
+      this.personId = this.participantIdentityParts[2];
       this.isRegisteredUser = true;
     }
   }

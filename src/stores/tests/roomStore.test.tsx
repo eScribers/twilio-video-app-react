@@ -71,7 +71,7 @@ describe('the room store', () => {
     await act(async () => {
       await roomsStore.joinRoom('token');
     });
-    expect(roomsStore.setError).toHaveBeenLastCalledWith('mockError');
+    expect(roomsStore.setError).toHaveBeenLastCalledWith({ message: 'mockError' });
     expect(roomsStore.isConnecting).toBe(false);
   });
 
