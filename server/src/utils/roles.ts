@@ -1,8 +1,4 @@
-
-const ROLE_PERMISSIONS = {
-  START_ROOM: 'Start room',
-  JOIN_ROOM: 'Join room'
-};
+import { ROLE_PERMISSIONS } from "../rbac/role_permissions";
 
 const DOE_PARTICIPANT_TYPES = {
   REPORTER: 'Reporter',
@@ -35,8 +31,11 @@ const RoleChecker = {
     if (permission === ROLE_PERMISSIONS.START_ROOM) {
       return role === DOE_PARTICIPANT_TYPES.HEARING_OFFICER || role === DOE_PARTICIPANT_TYPES.REPORTER;
     }
+    if (permission === ROLE_PERMISSIONS.END_CONFERENCE) {
+      return role === DOE_PARTICIPANT_TYPES.HEARING_OFFICER || role === DOE_PARTICIPANT_TYPES.REPORTER;
+    }
     else {
-      return true;
+      return false;
     }
   },
   getPossibleRole: () => ({

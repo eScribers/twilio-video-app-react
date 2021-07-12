@@ -1,39 +1,35 @@
 import * as jwt from 'jsonwebtoken';
 import { RoomInstance } from 'twilio/lib/rest/video/v1/room';
 import { twilioClient } from '../../utils/twilio_client';
-import { decodeToken, getParticipantInfo } from "../../utils/auth";
+import { getParticipantInfo } from "../../utils/auth";
 import RoleChecker from "../../utils/roles";
 import { GetIdentityString } from "../../utils/participant";
-import { ROOM_STATUS_CALLBACK, JWT_SECRET } from '../../../config.json';
+import { JWT_SECRET } from '../../../config.json';
 import { ROLE_PERMISSIONS } from '../../rbac/role_permissions';
 import { TwilioToken } from "../../utils/twilio_client";
+import RoomManagement, { getSyncListId, rooms } from '../../utils/rooms_sync';
+import { tunnel } from '../../localtunnel';
 
 const token = async (req:any, res:any) => {
   let { headers, body } = req;
 
   // TODO remove mock
   headers.Authorization = 'a a';
-  const type = Math.floor(Math.random()*3);
-  let participantType = 'Hearing Officer';
-  if(type === 1) participantType = 'Reporter';
-  if(type === 2) participantType = 'Parent';
   body = JSON.stringify({
-    partyType: participantType,
-    partyName: 'Gal' + Math.floor(Math.random()*100), // In order to not have conflicting names
+    role: req.body.role,
+    partyName: req.body.partyName + Math.floor(Math.random()*100), // In order to not have conflicting names
     caseReference: "14",
     videoConferenceRoomName: "14",
     personId: "591",
     userId: "591"
-  })
+    })  
 
   if (!headers.Authorization) 
     return res.sendStatus(401);
 
-  // const participantToken = (headers.Authorization as string).split(' ')[1];
-  // const decodedParticipantToken = decodeToken(participantToken);
   let user = getParticipantInfo(body);
 
-  if (!RoleChecker.isRoleRecognized(user.partyType)) {
+  if (!RoleChecker.isRoleRecognized(user.role)) {
     throw new Error("Role is unrecognized")
   }
 
@@ -50,12 +46,12 @@ const token = async (req:any, res:any) => {
     console.log("room:", room);
   } catch (e) {
     if (e.status == 404) {
-      if (RoleChecker.doesRoleHavePermission(user.partyType, ROLE_PERMISSIONS.START_ROOM)) {
+      if (RoleChecker.doesRoleHavePermission(user.role, ROLE_PERMISSIONS.START_ROOM)) {
         room = await twilioClient.video.rooms.create({
           recordParticipantsOnConnect: true,
           type: 'group',
           uniqueName: user.videoConferenceRoomName,
-          statusCallback: ROOM_STATUS_CALLBACK,
+          statusCallback: (await tunnel).url + '/dev/room-callback',
         });
         console.log("Created new room!", room?.sid);
         
@@ -90,15 +86,16 @@ const token = async (req:any, res:any) => {
     }
   } catch (e) { }
 
-  const twilioToken = TwilioToken(
+  const twilioToken = await TwilioToken(
     participantIdentity,
     user.videoConferenceRoomName
   );
 
   const token = jwt.sign({
-    partyType: user.partyType,
+    role: user.role,
     partyName: user.partyName,
     caseReference: user.caseReference,
+    syncListSid: getSyncListId(user.caseReference.toString()),
     videoConferenceRoomName: user.videoConferenceRoomName,
     roomSid: room?.sid,
     personId: user.personId,
@@ -106,6 +103,13 @@ const token = async (req:any, res:any) => {
   },
     JWT_SECRET || ''
   );
+
+  if(!user.caseReference) throw new Error('No case reference was provided');
+  
+  const roomIdentifier = user.caseReference.toString();
+  rooms[roomIdentifier] = rooms[roomIdentifier] || new RoomManagement(roomIdentifier);
+
+
   return res.send({
     roomExist: true,
     result: token,
