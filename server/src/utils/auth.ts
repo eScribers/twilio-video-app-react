@@ -40,10 +40,18 @@ export const getParticipantInfo = (data:string) => {
   }
 }
 
+interface ILogger {
+  warn: (longDescription: string) => void;
+  error: (longDescription: string) => void;
+  log: (longDescription: string) => void;
+  info: (longDescription: string) => void;
+}
+
 declare global {
   namespace Express {
     interface Request {
       user: object
+      logger: ILogger
     }
   }
 }

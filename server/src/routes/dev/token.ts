@@ -99,6 +99,7 @@ const token = async (req:any, res:any) => {
     videoConferenceRoomName: user.videoConferenceRoomName,
     roomSid: room?.sid,
     personId: user.personId,
+    userId: user.userId,
     twilioToken,
   },
     JWT_SECRET || ''

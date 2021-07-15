@@ -1,6 +1,6 @@
 import { getSyncListId } from "../../utils/rooms_sync";
 
-const authoriseParticipant = (_req: any, res: any) => {
+const authoriseParticipant = (_req: Express.Request, res: any) => {
 
   const type = Math.floor(Math.random()*3);
   let participantRole = 'Hearing Officer';
@@ -14,7 +14,8 @@ const authoriseParticipant = (_req: any, res: any) => {
         "videoConferenceRoomName": "14",
         "syncListSid": getSyncListId('14'),
         "role": participantRole,
-        "personId": 59
+        "personId": 59,
+        "userId": 59
       }
     })
 };

@@ -5,8 +5,8 @@ const sendMessage = (req: any, res: any) => {
   const { message } = req.body;
   if(!message.length) throw new Error('No message recieved');
 
-  const {partyName, role, personId } = req.user;
-  const identity = [partyName, role, personId].filter(x => x).join('@');
+  const {partyName, role, personId, userId } = req.user;
+  const identity = [partyName, role, personId, userId].filter(x => x).join('@');
 
   rooms[req.user.caseReference].list?.push({
       type: 'Message',
