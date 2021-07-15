@@ -284,13 +284,6 @@ class participantsStore {
     );
   }
 
-  get isReporter() {
-    return (
-      ParticipantIdentity.Parse(this.localParticipant?.participant?.identity || '')['role'] ===
-      PARTICIPANT_TYPES.REPORTER
-    );
-  }
-
   muteAllNoneModerators() {
     return this.muteableParticipants.map(participant => {
       return this.muteOtherParticipant(participant);
