@@ -45,14 +45,16 @@ describe('the useScreenShareParticipant hook', () => {
     expect(participantsStore.screenShareParticipant()).toEqual(undefined);
 
     act(() => {
-      participantsStore.localParticipant?.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
+      if (!participantsStore.localParticipant) return;
+      participantsStore.localParticipant.participant.tracks = new Map([[0, { trackName: 'screen' }]]);
       participantsStore.localParticipant?.participant.emit('trackPublished');
     });
 
     expect(participantsStore.screenShareParticipant()).toEqual(participantsStore.localParticipant?.participant);
 
     act(() => {
-      participantsStore.localParticipant?.participant.tracks = new Map([]);
+      if (!participantsStore.localParticipant) return;
+      participantsStore.localParticipant.participant.tracks = new Map([]);
       participantsStore.localParticipant?.participant.emit('trackUnpublished');
     });
 

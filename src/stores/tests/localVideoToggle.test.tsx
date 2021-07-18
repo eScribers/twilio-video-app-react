@@ -1,13 +1,13 @@
 import { act } from '@testing-library/react-hooks';
-import { LocalAudioTrack, LocalVideoTrack } from 'twilio-video';
 import rootStore, { RootStore } from '../makeStore';
+import { LocalAudioTrack, LocalVideoTrack } from 'twilio-video';
 import { mockLocalParticipant } from '../../utils/mocks';
-jest.mock('../../stores', () => {
-  return {
-    __esModule: true, // this property makes it work
-    default: rootStore,
-  };
-});
+// jest.mock('../../stores', () => {
+//   return {
+//     __esModule: true, // this property makes it work
+//     default: rootStore,
+//   };
+// });
 
 function getMockTrack(name: string, deviceId?: string) {
   return {
@@ -25,6 +25,12 @@ function getMockTrack(name: string, deviceId?: string) {
 
 describe('the useLocalVideoToggle hook', () => {
   beforeEach(() => {
+    jest.mock('../../stores', () => {
+      return {
+        __esModule: true, // this property makes it work
+        default: rootStore,
+      };
+    });
     let newStore = new RootStore();
     rootStore.participantsStore = newStore.participantsStore;
   });
@@ -41,10 +47,10 @@ describe('the useLocalVideoToggle hook', () => {
   });
 
   describe('toggleVideoEnabled function', () => {
-    beforeEach(() => {
-      let newStore = new RootStore();
-      rootStore.participantsStore = newStore.participantsStore;
-    });
+    // beforeEach(() => {
+    //   let newStore = new RootStore();
+    //   rootStore.participantsStore = newStore.participantsStore;
+    // });
     it('should remove track when toggling an active video track', () => {
       // @ts-expect-error
       rootStore.participantsStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);
@@ -98,17 +104,24 @@ describe('the useLocalVideoToggle hook', () => {
     });
 
     it('should call onError when publishTrack throws an error', async () => {
-      const mockGetLocalVideoTrack = jest.fn(() => Promise.reject('mockError'));
+      const mockGetLocalVideoTrack = jest.fn(() => {
+        console.log('@@test');
+        return Promise.reject('mockError');
+      });
       const mockOnError = jest.fn();
 
-      const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
+      const localParticipant = new mockLocalParticipant('local', 'Reporter', 1, 1);
 
       localParticipant.publishTrack = jest.fn(() => Promise.reject('mockError'));
+
+      rootStore.participantsStore.localParticipant.setParticipant(localParticipant);
+      rootStore.participantsStore.localVideoTrack = undefined;
+      rootStore.participantsStore.publishingVideoTrackInProgress = false;
       rootStore.participantsStore.getLocalVideoTrack = mockGetLocalVideoTrack;
-      rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
+
       await act(async () => {
         try {
-          await rootStore.participantsStore.toggleVideoEnabled();
+          const test = await rootStore.participantsStore.toggleVideoEnabled();
         } catch (err) {
           mockOnError(err);
         }

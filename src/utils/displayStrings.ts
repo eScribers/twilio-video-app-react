@@ -27,6 +27,12 @@ export enum ROOM_STATE {
   CONNECTED = 'connected',
 }
 
+export enum ROOM_EVENTS {
+  PARTICIPANTCONNECTED = 'participantConnected',
+  DOMINANTSPEAKERCHANGED = 'dominantSpeakerChanged',
+  PARTICIPANTDISCONNECTED = 'participantDisconnected',
+}
+
 export type IRoomState = ROOM_STATE;
 
 export const TRACK_TYPE = {

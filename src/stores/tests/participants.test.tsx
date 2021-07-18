@@ -6,8 +6,8 @@ import { mockParticipant } from '../../utils/mocks';
 describe('the useParticipants hook', () => {
   let roomsStore: any;
   let participantsStore: any;
-  const participant1 = new mockParticipant('participant1', 'Reporter', 1, '1');
-  const participant2 = new mockParticipant('participant2', 'Reporter', 2, '2');
+  const participant1 = new mockParticipant('participant1', 'Reporter', 1, 1);
+  const participant2 = new mockParticipant('participant2', 'Reporter', 2, 2);
   beforeEach(() => {
     const rootStore = new RootStore();
     roomsStore = rootStore.roomsStore;
@@ -23,7 +23,7 @@ describe('the useParticipants hook', () => {
   });
 
   it('should return respond to "participantConnected" events', async () => {
-    const participant3 = new mockParticipant('participant3', 'Reporter', 3, '3');
+    const participant3 = new mockParticipant('participant3', 'Reporter', 3, 3);
 
     act(() => {
       participantsStore.addParticipant(participant3);
@@ -41,7 +41,7 @@ describe('the useParticipants hook', () => {
   });
 
   it('should reorder participants when the dominant speaker changes', () => {
-    const participant3 = new mockParticipant('participant3', 'Reporter', 3, '3');
+    const participant3 = new mockParticipant('participant3', 'Reporter', 3, 3);
     act(() => {
       participantsStore.addParticipant(participant3);
     });

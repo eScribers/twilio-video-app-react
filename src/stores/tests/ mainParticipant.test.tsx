@@ -24,8 +24,8 @@ describe('the useMainParticipant hook', () => {
 
   it('should return the first remote participant if it exists', () => {
     const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
-    const participant1 = new mockParticipant('participant1', 'Reporter', 1, '1');
-    const participant2 = new mockParticipant('participant2', 'Reporter', 2, '2');
+    const participant1 = new mockParticipant('participant1', 'Reporter', 1, 1);
+    const participant2 = new mockParticipant('participant2', 'Reporter', 2, 2);
     act(() => {
       participantsStore.addParticipant(participant1);
       participantsStore.addParticipant(participant2);
@@ -44,8 +44,8 @@ describe('the useMainParticipant hook', () => {
 
   it('should return the selected participant if it exists', () => {
     const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
-    const participant1 = new mockParticipant('participant1', 'Reporter', 1, '1');
-    const participant2 = new mockParticipant('participant2', 'Reporter', 2, '2');
+    const participant1 = new mockParticipant('participant1', 'Reporter', 1, 1);
+    const participant2 = new mockParticipant('participant2', 'Reporter', 2, 2);
     act(() => {
       participantsStore.addParticipant(participant1);
       participantsStore.addParticipant(participant2);

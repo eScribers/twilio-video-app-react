@@ -21,7 +21,7 @@ class baseParticipant {
   identity = 'testing@Reporter@1';
   networkQualityLevel = null;
   networkQualityStats = null;
-  sid = 'sid' + Math.floor(Math.random() * 100000);
+  sid = Math.floor(Math.random() * 100000);
   state = 'todo';
   tracks = new Map();
   videoTracks = new Map();
@@ -62,7 +62,7 @@ export class mockParticipant extends baseParticipant implements Participant {
     return this;
   }
 
-  constructor(name?: string, role?: string, id?: number, sid?: string) {
+  constructor(name?: string, role?: string, id?: number, sid?: number) {
     super();
     if (name) this.identity = `${name}@${role}@${id}`;
     console.log(this.identity);
@@ -81,9 +81,9 @@ export class mockLocalParticipant extends baseParticipant implements LocalPartic
   videoTracks = new Map();
   signalingRegion = 'todo';
 
-  constructor(name?: string, role?: string, id?: number) {
+  constructor(name?: string, role?: string, id?: number, userId?: number) {
     super();
-    if (name) this.identity = `${name}@${role}@${id}`;
+    if (name) this.identity = [name, role, id, userId].filter(x => x).join('@');
   }
 
   publishTrack = async (_track: LocalTrack | MediaStreamTrack, _options?: LocalTrackPublishOptions) =>

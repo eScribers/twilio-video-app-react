@@ -15,7 +15,7 @@
     "@primer/octicons-react": "^9.6.0",
     "@types/d3-timer": "^1.0.10",
     "@types/fscreen": "^1.0.1",
-    "@types/jest": "^24.9.1",
+    "@types/jest": "^26.0.24",
     "@types/lodash.throttle": "^4.1.6",
     "@types/node": "^12.19.9",
     "@types/react": "^16.14.2",
@@ -72,7 +72,7 @@
     "ua-parser-js": "^0.7.24"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^9.5.0",
     "@testing-library/react-hooks": "^3.7.0",
     "@types/enzyme": "^3.10.8",
@@ -88,7 +88,7 @@
     "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-react-hooks": "^4.2.0",
     "isomorphic-fetch": "^2.2.1",
-    "jest-junit": "^9.0.0",
+    "jest-junit": "^12.2.0",
     "mocha": "^6.2.2",
     "mocha-junit-reporter": "^1.23.3",
     "pixelmatch": "^5.1.0",
@@ -96,7 +96,7 @@
     "puppeteer": "^2.1.1",
     "react-test-renderer": "^16.14.0",
     "start-server-and-test": "^1.11.6",
-    "ts-jest": "^24.3.0"
+    "ts-jest": "^27.0.3"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx,json,css,scss,md}": [
@@ -109,7 +109,7 @@
     "dev": "react-scripts start",
     "server": "node server.js",
     "build": "node ./scripts/build.js",
-    "test": "jest",
+    "test": "jest --env=jsdom",
     "pull": "git submodule update --remote --recursive",
     "eject": "react-scripts eject",
     "lint": "eslint src/**/*.{ts,tsx}",

@@ -98,7 +98,7 @@ class participantsStore {
     }
   }
 
-  removeParticipantSid(participantSid: string) {
+  removeParticipantSid(participantSid: number) {
     this.setParticipants([...this.participants.filter(p => p.sid !== participantSid)]);
   }
 
@@ -139,6 +139,9 @@ class participantsStore {
   }
 
   async getLocalVideoTrack() {
+    // @ts-expect-error
+    console.log('we in here', this.test);
+
     const selectedVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
 
     const hasSelectedVideoDevice = this.devices.videoInputDevices.some(
@@ -182,6 +185,8 @@ class participantsStore {
     this.publishingVideoTrackInProgress = state;
   }
   async toggleVideoEnabled() {
+    console.log('calling');
+
     if (this.publishingVideoTrackInProgress) return;
     this.setPublishingVideoTrackInProgress(true);
     if (this.localVideoTrack) {
@@ -433,13 +438,13 @@ class participantsStore {
         })
     );
     if (isSomebodySharingScreen) {
-      setImmediate(() => {
+      setTimeout(() => {
         this.setScreenSharingInProgress(true);
-      });
+      }, 0);
     } else {
-      setImmediate(() => {
+      setTimeout(() => {
         this.setScreenSharingInProgress(false);
-      });
+      }, 0);
     }
     return isSomebodySharingScreen;
   }

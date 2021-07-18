@@ -1,5 +1,5 @@
 import { makeAutoObservable } from 'mobx';
-import { ROOM_STATE } from '../utils/displayStrings';
+import { ROOM_EVENTS, ROOM_STATE } from '../utils/displayStrings';
 import EventEmitter from 'events';
 import Video, { Room, ConnectOptions, TwilioError, RemoteParticipant } from 'twilio-video';
 import { isMobile, removeUndefineds } from '../utils';
@@ -130,16 +130,16 @@ class roomsStore {
 
       this.setCurrentRoom(newRoom);
 
-      this.currentRoom.on('participantConnected', participantConnected);
-      this.currentRoom.on('dominantSpeakerChanged', handleDominantSpeakerChanged);
-      this.currentRoom.on('participantDisconnected', handleParticipantDisconnected);
+      this.currentRoom.on(ROOM_EVENTS.PARTICIPANTCONNECTED, participantConnected);
+      this.currentRoom.on(ROOM_EVENTS.DOMINANTSPEAKERCHANGED, handleDominantSpeakerChanged);
+      this.currentRoom.on(ROOM_EVENTS.PARTICIPANTDISCONNECTED, handleParticipantDisconnected);
       this.currentRoom.on(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
       this.currentRoom.on(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
       this.currentRoom.on(ROOM_STATE.RECONNECTED, handleRoomReconnected);
       return () => {
-        this.currentRoom.off('participantConnected', participantConnected);
-        this.currentRoom.off('dominantSpeakerChanged', handleDominantSpeakerChanged);
-        this.currentRoom.off('participantDisconnected', handleParticipantDisconnected);
+        this.currentRoom.off(ROOM_EVENTS.PARTICIPANTCONNECTED, participantConnected);
+        this.currentRoom.off(ROOM_EVENTS.DOMINANTSPEAKERCHANGED, handleDominantSpeakerChanged);
+        this.currentRoom.off(ROOM_EVENTS.PARTICIPANTDISCONNECTED, handleParticipantDisconnected);
         this.currentRoom.off(ROOM_STATE.DISCONNECTED, handleOnDisconnect);
         this.currentRoom.off(ROOM_STATE.RECONNECTING, handleRoomReconnecting);
         this.currentRoom.off(ROOM_STATE.RECONNECTED, handleRoomReconnected);
