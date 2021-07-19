@@ -48,9 +48,9 @@ describe('Hang Up button', () => {
     const wrapper = shallow(<EndCallButton />);
     wrapper.find('#hang-up').simulate('click');
     wrapper.find('#end-conference').simulate('click');
-    await expect(() => {
-      rootStore.roomsStore.endConference();
-    }).rejects.toThrowError(`You are not connected to a Conference, can't end Conference`);
+    await expect(rootStore.roomsStore.endConference()).rejects.toThrowError(
+      `You are not connected to a Conference, can't end Conference`
+    );
   });
 
   it('should properly accept end conference depending on role', async () => {
@@ -75,6 +75,6 @@ describe('Hang Up button', () => {
 
     wrapper.find('#end-conference').simulate('click');
 
-    await expect(await rootStore.roomsStore.endConference()).toBe(`No permission to end conference`);
+    await expect(rootStore.roomsStore.endConference()).rejects.toThrow(`No permission to end conference`);
   });
 });

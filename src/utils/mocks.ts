@@ -65,8 +65,6 @@ export class mockParticipant extends baseParticipant implements Participant {
   constructor(name?: string, role?: string, id?: number, sid?: number) {
     super();
     if (name) this.identity = `${name}@${role}@${id}`;
-    console.log(this.identity);
-
     if (sid) {
       this.sid = sid;
     }

@@ -41,6 +41,7 @@ describe('the useLocalVideoToggle hook', () => {
   });
 
   it('should return false when a localVideoTrack does not exist', () => {
+    rootStore.participantsStore.localVideoTrack = undefined;
     // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(getMockTrack('microphone') as LocalAudioTrack);
     expect(rootStore.participantsStore.localVideoTrack).toEqual(undefined);
@@ -54,6 +55,7 @@ describe('the useLocalVideoToggle hook', () => {
     it('should remove track when toggling an active video track', () => {
       // @ts-expect-error
       rootStore.participantsStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);
+      rootStore.participantsStore.setPublishingVideoTrackInProgress(false);
       rootStore.participantsStore.toggleVideoEnabled();
       expect(rootStore.participantsStore.localVideoTrack).toEqual(undefined);
     });
@@ -65,6 +67,7 @@ describe('the useLocalVideoToggle hook', () => {
       jest.spyOn(localParticipant, 'unpublishTrack');
       rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
       rootStore.participantsStore.setVideoTrack(mockLocalTrack);
+      rootStore.participantsStore.setPublishingVideoTrackInProgress(false);
       rootStore.participantsStore.toggleVideoEnabled();
 
       expect(localParticipant.unpublishTrack).toHaveBeenCalledWith(mockLocalTrack);
@@ -72,6 +75,8 @@ describe('the useLocalVideoToggle hook', () => {
 
     it('should call getLocalVideoTrack when a localVideoTrack does not exist', async () => {
       jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
+      rootStore.participantsStore.setPublishingVideoTrackInProgress(false);
+      rootStore.participantsStore.localVideoTrack = undefined;
       rootStore.participantsStore.toggleVideoEnabled();
       expect(rootStore.participantsStore.getLocalVideoTrack).toHaveBeenCalled();
     });
@@ -84,6 +89,8 @@ describe('the useLocalVideoToggle hook', () => {
       const mockTrack = getMockTrack('mockTrack') as LocalVideoTrack;
       rootStore.participantsStore.getLocalVideoTrack = async () => mockTrack;
       await act(async () => {
+        rootStore.participantsStore.localVideoTrack = undefined;
+        rootStore.participantsStore.setPublishingVideoTrackInProgress(false);
         await rootStore.participantsStore.toggleVideoEnabled();
       });
 
@@ -94,6 +101,7 @@ describe('the useLocalVideoToggle hook', () => {
       const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
       jest.spyOn(rootStore.participantsStore, 'getLocalVideoTrack');
       rootStore.participantsStore.localParticipant?.setParticipant(localParticipant);
+      rootStore.participantsStore.publishingVideoTrackInProgress = false;
       // @ts-expect-error
       const mockTrack = getMockTrack('mockTrack') as LocalVideoTrack;
       await act(async () => {

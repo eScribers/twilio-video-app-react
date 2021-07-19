@@ -139,9 +139,6 @@ class participantsStore {
   }
 
   async getLocalVideoTrack() {
-    // @ts-expect-error
-    console.log('we in here', this.test);
-
     const selectedVideoDeviceId = window.localStorage.getItem(SELECTED_VIDEO_INPUT_KEY);
 
     const hasSelectedVideoDevice = this.devices.videoInputDevices.some(
@@ -185,8 +182,6 @@ class participantsStore {
     this.publishingVideoTrackInProgress = state;
   }
   async toggleVideoEnabled() {
-    console.log('calling');
-
     if (this.publishingVideoTrackInProgress) return;
     this.setPublishingVideoTrackInProgress(true);
     if (this.localVideoTrack) {
@@ -204,7 +199,6 @@ class participantsStore {
         this.rootStore.roomsStore.setError(err.message);
         return Promise.reject(err);
       }
-
       try {
         this.localParticipant?.participant?.publishTrack(track, { priority: 'low' });
       } catch (err) {
