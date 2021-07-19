@@ -1,10 +1,7 @@
 import '@testing-library/jest-dom/extend-expect';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 
-const mockUseAppState = useAppState as jest.Mock<any>;
 const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
-jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
 jest.mock('react-alert');
 
@@ -24,7 +21,6 @@ Object.defineProperty(window.history, 'replaceState', { value: mockReplaceState 
 
 describe('the MenuBar component', () => {
   beforeEach(jest.clearAllMocks);
-  mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
 
   it('mock test to make this test suite pass', () => {
     let tester1 = true;

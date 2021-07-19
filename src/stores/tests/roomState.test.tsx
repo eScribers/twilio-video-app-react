@@ -6,6 +6,7 @@ describe('the useRoomState hook', () => {
   let rootStore = new RootStore();
   let unmountRoom: (() => void) | undefined = () => {};
   beforeEach(() => {
+    jest.clearAllMocks();
     unmountRoom && unmountRoom();
     jest.mock('../../stores', () => {
       return {

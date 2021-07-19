@@ -1,12 +1,11 @@
 import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
-import { useAppState } from '../../../../hooks/useAppState/useAppState';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../../../stores';
 
 const AudioOutputList = () => {
-  const { participantsStore } = rootStore;
-  const { activeSinkId, setActiveSinkId } = useAppState();
+  const { participantsStore, roomsStore } = rootStore;
+  const { activeSinkId, setActiveSinkId } = roomsStore;
   const activeOutputLabel = participantsStore.devices.audioOutputDevices.find(
     device => device.deviceId === activeSinkId
   )?.label;

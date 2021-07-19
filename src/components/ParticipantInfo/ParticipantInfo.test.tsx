@@ -8,25 +8,18 @@ import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecti
 import usePublications from '../../hooks/usePublications/usePublications';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import { IVideoContext } from '../../components/VideoProvider';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 
-jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useParticipantNetworkQualityLevel/useParticipantNetworkQualityLevel', () => () => 4);
 jest.mock('../../hooks/usePublications/usePublications');
 jest.mock('../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff');
 jest.mock('../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting');
-jest.mock('../../hooks/useVideoContext/useVideoContext');
 
 const mockUsePublications = usePublications as jest.Mock<any>;
 const mockUseIsTrackSwitchedOff = useIsTrackSwitchedOff as jest.Mock<any>;
 const mockUseParticipantIsReconnecting = useParticipantIsReconnecting as jest.Mock<boolean>;
-const mockUseAppState = useAppState as jest.Mock<any>;
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
 
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
-
 describe('the ParticipantInfo component', () => {
-  mockedUseVideoContext.mockImplementation(() => ({ isConnecting: false, room: {}, localTracks: [] } as any));
   it('should render the AvatarIcon component when no video tracks are published', () => {
     mockUsePublications.mockImplementation(() => []);
     const wrapper = shallow(

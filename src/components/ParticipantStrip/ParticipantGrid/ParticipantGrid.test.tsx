@@ -3,13 +3,8 @@ import React from 'react';
 import ParticipantGrid from './ParticipantGrid';
 import { shallow } from 'enzyme';
 import { mockLocalParticipant, mockParticipant } from '../../../utils/mocks';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
 import { act } from '@testing-library/react';
 import Participant from '../../Participant/Participant';
-
-jest.mock('../../../hooks/useAppState/useAppState');
-
-const mockUseAppState = useAppState as jest.Mock<any>;
 
 jest.mock('../../../stores', () => {
   return {
@@ -29,8 +24,6 @@ const mockLocalTrack = {
   off: jest.fn(),
   enable: jest.fn(),
 };
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
-// const mockLocalParticipant = {};
 
 describe('the ParticipantStrip component', () => {
   beforeEach(() => {

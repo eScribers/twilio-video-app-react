@@ -3,21 +3,15 @@ import { shallow } from 'enzyme';
 import AudioLevelIndicator from './AudioLevelIndicator';
 import MicOff from '@material-ui/icons/MicOff';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 import rootStore from '../../stores';
 import { MockTrack } from '../../__mocks__/twilio-video';
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../hooks/useAppState/useAppState');
 
 // @ts-ignore
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
-const mockUseAppState = useAppState as jest.Mock<any>;
-
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the AudioLevelIndicator component', () => {
   beforeEach(() => {
-    // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(new MockTrack('audioInput'));
   });
   describe('when the audioTrack is not enabled', () => {

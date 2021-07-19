@@ -1,14 +1,10 @@
 import React from 'react';
 import AboutDialog from './AboutDialog';
 import { render } from '@testing-library/react';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
 
 jest.mock('twilio-video', () => ({ version: '1.2', isSupported: true }));
 jest.mock('../../../../package.json', () => ({ version: '1.3' }));
-jest.mock('../../../hooks/useAppState/useAppState');
 
-const mockUseAppState = useAppState as jest.Mock<any>;
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 describe('the AboutDialog component', () => {
   it('should display Video.isSupported', () => {
     const { getByText } = render(<AboutDialog open={true} onClose={() => {}} />);

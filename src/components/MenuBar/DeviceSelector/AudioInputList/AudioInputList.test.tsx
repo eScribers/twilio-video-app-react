@@ -89,7 +89,6 @@ describe('the AudioInputList component', () => {
       { ...mockDevice, kind: 'audioinput' },
       { ...mockDevice, kind: 'audioinput' },
     ]);
-    // @ts-expect-error
     rootStore.participantsStore.setAudioTrack(mockLocalTrack);
     const wrapper = shallow(<AudioInputList />);
     wrapper.find(Select).simulate('change', { target: { value: 'mockDeviceID' } });

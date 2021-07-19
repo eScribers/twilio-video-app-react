@@ -37,6 +37,8 @@ class roomsStore {
 
   notifications: INotification[] = [];
 
+  activeSinkId: string = 'default';
+
   config: IConfig = {
     loading: false,
     loaded: false,
@@ -53,6 +55,10 @@ class roomsStore {
 
   setCurrentRoom(room: Room) {
     this.currentRoom = room;
+  }
+
+  setActiveSinkId(sinkId: string) {
+    this.activeSinkId = sinkId;
   }
 
   setIsConnecting(isConnecting: boolean) {

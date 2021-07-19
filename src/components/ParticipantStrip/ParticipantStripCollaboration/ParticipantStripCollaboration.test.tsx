@@ -2,15 +2,9 @@ import rootStore, { RootStore } from '../../../stores/makeStore';
 import React from 'react';
 import ParticipantStripCollaboration from './ParticipantStripCollaboration';
 import { shallow } from 'enzyme';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
 import { mockLocalParticipant, mockParticipant } from '../../../utils/mocks';
 import { act } from '@testing-library/react';
 import Participant from '../../Participant/Participant';
-
-const mockUseAppState = useAppState as jest.Mock<any>;
-
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
-jest.mock('../../../hooks/useAppState/useAppState');
 
 const mockLocalTrack = {
   kind: 'audioinput',

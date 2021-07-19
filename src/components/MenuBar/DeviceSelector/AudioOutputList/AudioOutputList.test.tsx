@@ -3,19 +3,12 @@ import rootStore, { RootStore } from '../../../../stores/makeStore';
 import AudioOutputList from './AudioOutputList';
 import { Select, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
-import { useAppState } from '../../../../hooks/useAppState/useAppState';
-
-jest.mock('../../../../hooks/useAppState/useAppState');
 jest.mock('../../../../stores', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,
   };
 });
-
-const mockUseAppState = useAppState as jest.Mock<any>;
-
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '123' }));
 
 const mockDevice: MediaDeviceInfo = {
   deviceId: '123',
@@ -29,6 +22,7 @@ describe('the AudioOutputList component', () => {
   beforeEach(() => {
     let newStore = new RootStore();
     rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore.setActiveSinkId('123');
   });
   it('should display the name of the active output device if only one is available', () => {
     rootStore.participantsStore.setDevices([mockDevice]);

@@ -5,24 +5,12 @@ export const StateContext = createContext<StateContextType>(null!);
 export default function AppStateProvider(props: React.PropsWithChildren<{}>) {
   const [isAutoRetryingToJoinRoom, setIsAutoRetryingToJoinRoom] = useState(true);
   const [waitingNotification, setWaitingNotification] = useState(null);
-  const [activeSinkId, setActiveSinkId] = useState('default');
-  const [selectedAudioInput, setSelectedAudioInput] = useState({ deviceId: '' });
-  const [selectedVideoInput, setSelectedVideoInput] = useState({ deviceId: '' });
-  const [selectedSpeakerOutput, setSelectedSpeakerOutput] = useState({ deviceId: '' });
 
   let contextValue = {
     isAutoRetryingToJoinRoom,
     setIsAutoRetryingToJoinRoom,
     waitingNotification,
     setWaitingNotification,
-    selectedAudioInput,
-    setSelectedAudioInput,
-    selectedVideoInput,
-    setSelectedVideoInput,
-    selectedSpeakerOutput,
-    setSelectedSpeakerOutput,
-    activeSinkId,
-    setActiveSinkId,
   };
 
   return (

@@ -2,10 +2,8 @@ import React from 'react';
 import ParticipantTracks from './ParticipantTracks';
 import { shallow } from 'enzyme';
 import usePublications from '../../hooks/usePublications/usePublications';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 import Publication from '../Publication/Publication';
 
-jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/usePublications/usePublications', () =>
   jest.fn(() => [
     { trackSid: 0, kind: 'video', trackName: '' },
@@ -14,8 +12,6 @@ jest.mock('../../hooks/usePublications/usePublications', () =>
 );
 
 const mockUsePublications = usePublications as jest.Mock<any>;
-const mockUseAppState = useAppState as jest.Mock<any>;
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the ParticipantTracks component', () => {
   it('should render an array of publications', () => {

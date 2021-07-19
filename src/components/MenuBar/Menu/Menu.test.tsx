@@ -2,14 +2,11 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import Menu from './Menu';
 import MoreIcon from '@material-ui/icons/MoreVert';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
 import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
 import { MenuItem } from '@material-ui/core';
 
-jest.mock('../../../hooks/useAppState/useAppState');
 jest.mock('../../../hooks/useVideoContext/useVideoContext');
 
-const mockUseAppState = useAppState as jest.Mock<any>;
 const mockUseVideoContext = useVideoContext as jest.Mock<any>;
 
 describe('the Menu component', () => {
@@ -19,13 +16,11 @@ describe('the Menu component', () => {
 
   describe('when there is not user', () => {
     it('should render the "More" icon', () => {
-      mockUseAppState.mockImplementation(() => ({ user: null, signOut: jest.fn() }));
       const wrapper = shallow(<Menu />);
       expect(wrapper.exists(MoreIcon)).toBe(true);
     });
 
     it('should not display the user name in the menu', () => {
-      mockUseAppState.mockImplementation(() => ({ user: { displayName: undefined }, signOut: jest.fn() }));
       const wrapper = shallow(<Menu />);
       expect(
         wrapper
@@ -36,7 +31,6 @@ describe('the Menu component', () => {
     });
 
     it('should not include the logout button in the menu', () => {
-      mockUseAppState.mockImplementation(() => ({ user: null }));
       const wrapper = shallow(<Menu />);
       expect(wrapper.contains('Logout')).toBe(false);
     });
