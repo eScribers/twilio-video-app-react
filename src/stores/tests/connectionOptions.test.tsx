@@ -1,5 +1,5 @@
-import { Settings } from '../../state/settings/settingsReducer';
 import rootStore, { RootStore } from '../../stores/makeStore';
+import { Settings } from '../../types/settings';
 
 jest.mock('../../stores', () => {
   return {
@@ -87,5 +87,52 @@ describe('the useConnectionOptions function', () => {
 
     rootStore.roomsStore.setSettings(settings);
     expect(rootStore.roomsStore.options).toEqual(result);
+  });
+
+  it('should set a setting from the name/value pair provided', () => {
+    rootStore.roomsStore.setSetting('renderDimensionHigh', 'test');
+    const result = rootStore.roomsStore.settings;
+    expect(result).toEqual({
+      bandwidthProfileMode: 'collaboration',
+      dominantSpeakerPriority: 'standard',
+      maxAudioBitrate: '16000',
+      maxTracks: '20',
+      renderDimensionHigh: 'test',
+      renderDimensionLow: 'low',
+      renderDimensionStandard: '960p',
+      viewMode: 'default_grid',
+      trackSwitchOffMode: undefined,
+    });
+  });
+
+  it('should set undefined when the value is "default"', () => {
+    rootStore.roomsStore.setSetting('bandwidthProfileMode', 'default');
+    const result = rootStore.roomsStore.settings;
+    console.log(result.bandwidthProfileMode);
+
+    expect(result).toEqual({
+      bandwidthProfileMode: undefined,
+      dominantSpeakerPriority: 'standard',
+      maxAudioBitrate: '16000',
+      maxTracks: '20',
+      renderDimensionHigh: 'wide1080p',
+      renderDimensionLow: 'low',
+      renderDimensionStandard: '960p',
+      viewMode: 'default_grid',
+      trackSwitchOffMode: undefined,
+    });
+  });
+
+  it('should set the maxTracks property to 10 when not using a mobile browser', () => {
+    jest.resetModules();
+    const { initialSettings } = require('../roomsStore');
+    expect(initialSettings.maxTracks).toBe('20');
+  });
+
+  it('should set the maxTracks property to 5 when using a mobile browser', () => {
+    Object.defineProperty(navigator, 'userAgent', { value: 'Mobile' });
+    jest.resetModules();
+    const { initialSettings } = jest.requireActual('../roomsStore');
+    expect(initialSettings.maxTracks).toBe('8');
   });
 });

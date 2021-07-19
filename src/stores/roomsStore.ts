@@ -3,8 +3,6 @@ import { ROOM_EVENTS, ROOM_STATE } from '../utils/displayStrings';
 import EventEmitter from 'events';
 import Video, { Room, ConnectOptions, TwilioError, RemoteParticipant } from 'twilio-video';
 import { isMobile, removeUndefineds } from '../utils';
-import { getResolution } from '../state/settings/renderDimensions';
-import { Settings, initialSettings } from '../state/settings/settingsReducer';
 import { IConfig, INotification } from '../types';
 import UAParser from 'ua-parser-js';
 import { Howl } from 'howler';
@@ -12,6 +10,21 @@ import { ROLE_PERMISSIONS } from '../utils/rbac/rolePermissions';
 import roleChecker from '../utils/rbac/roleChecker';
 import { ParticipantIdentity } from '../utils/participantIdentity';
 import axios from 'axios';
+import { Settings, VIEW_MODE } from '../types/settings';
+import { getResolution } from '../utils/renderDimensions';
+
+export const initialSettings: Settings = {
+  trackSwitchOffMode: undefined,
+  dominantSpeakerPriority: 'standard',
+  viewMode: VIEW_MODE.default,
+  bandwidthProfileMode: 'collaboration',
+  // https://www.twilio.com/docs/video/tutorials/using-bandwidth-profile-api#understanding-maxtracks
+  maxTracks: isMobile ? '8' : '20',
+  maxAudioBitrate: '16000',
+  renderDimensionLow: 'low',
+  renderDimensionStandard: '960p',
+  renderDimensionHigh: 'wide1080p',
+};
 
 class roomsStore {
   rootStore: any;
@@ -194,7 +207,8 @@ class roomsStore {
     this.notifications = this.notifications.slice(1);
   }
 
-  setSetting(key: keyof Settings, value: string) {
+  setSetting(key: keyof Settings, value?: string) {
+    if (key === 'bandwidthProfileMode' && value === 'default') value = undefined;
     this.settings = { ...this.settings, [key]: value };
   }
 

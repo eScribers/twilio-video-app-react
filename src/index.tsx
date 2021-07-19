@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
@@ -15,8 +15,6 @@ import ErrorDialog from './components/ErrorDialog/ErrorDialog';
 import NotificationDialog from './components/NotificationDialog/NotificationDialog';
 import theme from './theme';
 import App from './App';
-import { detectBrowser } from './utils/index';
-import { LogglyTracker } from 'react-native-loggly-jslogger';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
 import { useAppState } from './hooks/useAppState/useAppState';
 import { observer } from 'mobx-react-lite';
@@ -32,24 +30,23 @@ const alertProviderOptions = {
   transition: transitions.SCALE,
 };
 
-const logger: LogglyTracker = new LogglyTracker();
 const VideoApp = () => {
   const { setIsAutoRetryingToJoinRoom, setWaitingNotification, waitingNotification } = useAppState();
   const { roomsStore } = rootStore;
   const { notifications } = roomsStore;
 
-  useEffect(() => {
-    logger.push({
-      logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
-      sendConsoleErrors: true,
-      tag: process.env.REACT_APP_LOGGLY_TAG,
-    });
-    logger.push({
-      vendor: navigator.vendor,
-      browserType: detectBrowser(),
-      userAgent: navigator.userAgent,
-    });
-  }, []);
+  // useEffect(() => {
+  //   logger.push({
+  //     logglyKey: process.env.REACT_APP_LOGGLY_CUSTOMER_TOKEN,
+  //     sendConsoleErrors: true,
+  //     tag: process.env.REACT_APP_LOGGLY_TAG,
+  //   });
+  //   logger.push({
+  //     vendor: navigator.vendor,
+  //     browserType: detectBrowser(),
+  //     userAgent: navigator.userAgent,
+  //   });
+  // }, []);
 
   if (!Video.isSupported) {
     // Please follow the following git issue and remove the following code if chrome on iOS is supported

@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import AudioTrack from './AudioTrack';
 import { useAppState } from '../../hooks/useAppState/useAppState';
+import { act } from 'react-dom/test-utils';
 
 const audioEl = document.createElement('audio');
 audioEl.setSinkId = jest.fn();
@@ -26,7 +27,9 @@ describe('the AudioTrack component', () => {
 
   it('should remove the audio element from the DOM when the component unmounts', () => {
     const { unmount } = render(<AudioTrack track={mockTrack} />);
-    unmount();
+    act(() => {
+      unmount();
+    });
     expect(mockTrack.detach).toHaveBeenCalled();
     expect(document.querySelector('audio')).toBe(null);
   });

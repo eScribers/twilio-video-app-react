@@ -3,9 +3,9 @@ import { LocalTrackPublication, Participant, Track, TrackPublication } from 'twi
 import Publication from '../Publication/Publication';
 import usePublications from '../../hooks/usePublications/usePublications';
 import { TRACK_TYPE } from '../../utils/displayStrings';
-import { VIEW_MODE, Settings } from '../../state/settings/settingsReducer';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../stores';
+import { Settings, VIEW_MODE } from '../../types/settings';
 
 interface ParticipantTracksProps {
   participant: Participant;

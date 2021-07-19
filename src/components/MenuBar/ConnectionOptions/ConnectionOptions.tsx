@@ -12,12 +12,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { inputLabels, Settings } from '../../../state/settings/settingsReducer';
-import { RenderDimensions } from '../../../state/settings/renderDimensions';
 import useWindowSize from '../../../hooks/useWindowSize/useWindowSize';
 import rootStore from '../../../stores';
 import { observer } from 'mobx-react-lite';
 import { ROOM_STATE } from '../../../utils/displayStrings';
+import { Settings, SettingsKeys } from '../../../types/settings';
+import { RenderDimensions } from '../../../utils/renderDimensions';
+import { initialSettings } from '../../../stores/roomsStore';
 
 const useStyles = makeStyles({
   formControl: {
@@ -39,6 +40,14 @@ const RenderDimensionItems = RenderDimensions.map(({ label, value }) => (
     {label}
   </MenuItem>
 ));
+
+const inputLabels = (() => {
+  const target: any = {};
+  for (const setting in initialSettings) {
+    target[setting] = setting as SettingsKeys;
+  }
+  return target as { [key in SettingsKeys]: string };
+})();
 
 const ConnectionOptions = observer(({ className, hidden }: { className?: string; hidden?: boolean }) => {
   const classes = useStyles();
