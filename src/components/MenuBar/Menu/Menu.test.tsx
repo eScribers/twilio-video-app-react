@@ -41,34 +41,4 @@ describe('the Menu component', () => {
       expect(wrapper.contains('Logout')).toBe(false);
     });
   });
-
-  // describe('when there is a user', () => {
-  //   it('should include the logout button in the menu', () => {
-  //     mockUseAppState.mockImplementation(() => ({ user: { displayName: 'Test User' }, signOut: jest.fn() }));
-  //     const wrapper = shallow(<Menu />);
-  //     expect(wrapper.contains('Logout')).toBe(true);
-  //   });
-
-  //   it('should display the user name in the menu', () => {
-  //     mockUseAppState.mockImplementation(() => ({ user: { displayName: 'Test User' }, signOut: jest.fn() }));
-  //     const wrapper = shallow(<Menu />);
-  //     expect(wrapper.contains('Test User')).toBe(true);
-  //   });
-
-  //   it('should disconnect from the room and stop all tracks on signout', () => {
-  //     const mockSignOut = jest.fn(() => Promise.resolve());
-  //     mockUseAppState.mockImplementation(() => ({
-  //       user: { displayName: 'Test User' },
-  //       signOut: mockSignOut,
-  //     }));
-  //     const wrapper = shallow(<Menu />);
-  //     wrapper
-  //       .find(MenuItem)
-  //       .last()
-  //       .simulate('click');
-  //     expect(mockDisconnect).toHaveBeenCalled();
-  //     expect(mockTrack.stop).toHaveBeenCalled();
-  //     expect(mockSignOut).toHaveBeenCalled();
-  //   });
-  // });
 });
