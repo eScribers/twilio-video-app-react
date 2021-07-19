@@ -16,13 +16,12 @@ import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevel
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 import Menu from './Menu/Menu';
-import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
 import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
-import moment from 'moment';
 import rootStore from '../../stores';
 import { observer } from 'mobx-react-lite';
+import FloatingDebugInfo from './FloatingDebugInfo/FloatingDebugInfo';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -65,35 +64,13 @@ const useStyles = makeStyles(theme =>
     dialIn: {
       margin: 0,
     },
-    floatingDebugInfo: {
-      position: 'absolute',
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.2)',
-      color: 'rgba(255,255,255,0.4)',
-      fontSize: '10px',
-    },
   })
-);
-
-const getRoles = () => {
-  return Object.values(PARTICIPANT_ROLES);
-};
-
-const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
-  <div className={wrapperClass}>
-    {time} - SC:{subConferenceId}
-  </div>
 );
 
 const MenuBar = () => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
-  const {
-    isAutoRetryingToJoinRoom,
-    setWaitingNotification,
-    // logger,
-  } = useAppState();
+  const { isAutoRetryingToJoinRoom, setWaitingNotification } = useAppState();
   const { roomsStore, participantsStore } = rootStore;
   const { isConnecting, config } = roomsStore;
   const { isFetchingUserToken, participantInformation } = participantsStore;
@@ -102,7 +79,6 @@ const MenuBar = () => {
   const RETRY_INTERVAL = 15000;
 
   const [isReporterInState, setIsReporterInState] = useState(participantsStore.isReporterIn);
-  useDataTrackListener();
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
@@ -141,12 +117,11 @@ const MenuBar = () => {
     }
   }
 
-  const configLoaded = config.loaded;
   useEffect(() => {
-    if (configLoaded) {
+    if (config.loaded) {
       participantsStore.authoriseParticipant();
     }
-  }, [participantsStore, configLoaded]);
+  }, [participantsStore, config]);
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
@@ -192,7 +167,7 @@ const MenuBar = () => {
                 placeholder="Role"
                 disabled={true}
               >
-                {getRoles().map(type => (
+                {Object.values(PARTICIPANT_ROLES).map(type => (
                   <MenuItem key={type} value={type} data-cy="menu-item">
                     {type}
                   </MenuItem>
@@ -209,7 +184,6 @@ const MenuBar = () => {
               margin="dense"
               disabled={true}
             />
-
             <TextField
               autoComplete="off"
               id="case-number"
@@ -248,19 +222,12 @@ const MenuBar = () => {
             <span>+1 929 297 8424</span>
           </div>
           <ToggleGridViewButton />
-          {/* {!mobileAndTabletCheck() && (
-            <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
-          )} */}
           <LocalAudioLevelIndicator />
           <ToggleFullscreenButton />
           <Menu />
         </div>
       </Toolbar>
-      <FloatingDebugInfo
-        wrapperClass={classes.floatingDebugInfo}
-        time={moment().format()}
-        subConferenceId={participantInformation?.videoConferenceRoomName}
-      />
+      <FloatingDebugInfo />
     </AppBar>
   );
 };

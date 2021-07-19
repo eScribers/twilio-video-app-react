@@ -90,7 +90,7 @@ export interface INotification {
 
 export interface IMuteRemoteParticipantMessage {
   action: string;
-  participantSid: string;
+  participantSid: number;
 }
 
 export interface IConfig {

@@ -74,7 +74,6 @@ describe('the ConnectionOptions component', () => {
           .find(Select)
           .find({ name: 'dominantSpeakerPriority' })
           .simulate('change', { target: { value: 'testValue', name: 'dominantSpeakerPriority' } });
-        // expect(mockDispatchSetting).toHaveBeenCalledWith({ value: 'testValue', name: 'dominantSpeakerPriority' });
         expect(rootStore.roomsStore.setSetting).toHaveBeenCalledWith('dominantSpeakerPriority', 'testValue');
       });
 

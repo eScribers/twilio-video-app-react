@@ -53,7 +53,6 @@ describe('the AttachVisibilityHandler component', () => {
     });
 
     it('should correctly toggle video when it is already disabled', () => {
-      // mockUseLocalVideoToggle.mockImplementation(() => [false, mockToggleVideoEnabled]);
       render(<AttachVisibilityHandler />);
 
       // @ts-ignore

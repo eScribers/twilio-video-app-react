@@ -82,7 +82,6 @@ describe('the MainParticipantInfo component', () => {
   });
 
   it('should use the switchOff status of the camera track when the screen share track is not available', () => {
-    // mockUsePublications.mockImplementationOnce(() => [{ trackName: 'camera-123456' }]);
     let participant = new mockParticipant('remote', 'Reporter', 2);
     participant.tracks = new Map();
     participant.tracks.set(0, { trackName: 'camera-123456' });

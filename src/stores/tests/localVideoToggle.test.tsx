@@ -2,12 +2,6 @@ import { act } from '@testing-library/react-hooks';
 import rootStore, { RootStore } from '../makeStore';
 import { LocalAudioTrack, LocalVideoTrack } from 'twilio-video';
 import { mockLocalParticipant } from '../../utils/mocks';
-// jest.mock('../../stores', () => {
-//   return {
-//     __esModule: true, // this property makes it work
-//     default: rootStore,
-//   };
-// });
 
 function getMockTrack(name: string, deviceId?: string) {
   return {
@@ -48,10 +42,6 @@ describe('the useLocalVideoToggle hook', () => {
   });
 
   describe('toggleVideoEnabled function', () => {
-    // beforeEach(() => {
-    //   let newStore = new RootStore();
-    //   rootStore.participantsStore = newStore.participantsStore;
-    // });
     it('should remove track when toggling an active video track', () => {
       // @ts-expect-error
       rootStore.participantsStore.setVideoTrack(getMockTrack('camera-123456') as LocalVideoTrack);

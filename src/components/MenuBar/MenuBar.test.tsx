@@ -1,13 +1,11 @@
 import '@testing-library/jest-dom/extend-expect';
 import { useAppState } from '../../hooks/useAppState/useAppState';
 
-//const mockedUseVideoContext = useVideoContext as jest.Mock<typeof VideoContext>;
 const mockUseAppState = useAppState as jest.Mock<any>;
 const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
 
 jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-// jest.mock('../../hooks/useRoomState/useRoomState');
 jest.mock('react-alert');
 
 global.alert = jest.fn();
