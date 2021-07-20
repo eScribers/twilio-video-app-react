@@ -87,6 +87,8 @@ const MainParticipantInfo = observer(({ participant, children }: MainParticipant
   const isLocal = participantsStore.localParticipant?.participant?.identity === participant?.identity;
 
   const publications = Array.from(participant.tracks.values()) as TrackPublication[];
+  console.log(participant, participant.tracks);
+
   const videoPublication = publications.find(p => p.trackName.includes(TRACK_TYPE.CAMERA)) as
     | LocalTrackPublication
     | RemoteTrackPublication;

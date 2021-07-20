@@ -36,6 +36,7 @@ describe('the ToggleScreenShareButton component', () => {
 
   it('should render correctly when the user is sharing their screen', () => {
     mockUseScreenShareToggle.mockImplementation(() => [true, () => {}]);
+    rootStore.participantsStore.localParticipant.isSharingScreen = true;
     const wrapper = shallow(<ToggleScreenShareButton />);
     expect(wrapper.find(StopScreenShare).exists()).toBe(true);
     expect(wrapper.prop('title')).toBe(STOP_SCREEN_SHARE_TEXT);
@@ -58,7 +59,8 @@ describe('the ToggleScreenShareButton component', () => {
 
   it('should call the correct toggle function when clicked', () => {
     const mockFn = jest.fn();
-    mockUseScreenShareToggle.mockImplementation(() => [false, mockFn]);
+    jest.spyOn(rootStore.participantsStore.localParticipant, 'toggleScreenShare');
+    rootStore.participantsStore.localParticipant.toggleScreenShare = mockFn;
     const wrapper = shallow(<ToggleScreenShareButton />);
     wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
     expect(mockFn).toHaveBeenCalled();

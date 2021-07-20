@@ -2,7 +2,7 @@
 
 exports[`the ParticipantTracks component should render an array of publications 1`] = `
 <Fragment>
-  <Memo(wrappedComponent)
+  <Publication
     key="video"
     participant="mockParticipant"
     publication={
@@ -13,7 +13,7 @@ exports[`the ParticipantTracks component should render an array of publications 
       }
     }
   />
-  <Memo(wrappedComponent)
+  <Publication
     key="audio"
     participant="mockParticipant"
     publication={

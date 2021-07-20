@@ -2,7 +2,6 @@ import React, { createContext, ReactNode } from 'react';
 import { ErrorCallback } from '../../types';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
-import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
 import { ConnectOptions, Room, TwilioError } from 'twilio-video';
 import { observer } from 'mobx-react-lite';
 import rootStore from '../../stores';
@@ -30,7 +29,9 @@ interface VideoProviderProps {
 }
 
 export const VideoProvider = observer(({ children }: VideoProviderProps) => {
-  const { roomsStore } = rootStore;
+  const { roomsStore, participantsStore } = rootStore;
+  const { localParticipant } = participantsStore;
+  const { isSharingScreen, toggleScreenShare } = localParticipant;
 
   const { currentRoom, isConnecting } = roomsStore;
 
@@ -39,7 +40,6 @@ export const VideoProvider = observer(({ children }: VideoProviderProps) => {
     roomsStore.setError(error);
   };
   useHandleTrackPublicationFailed(currentRoom, roomsStore.setError);
-  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(currentRoom, roomsStore.setError);
 
   return (
     <VideoContext.Provider
