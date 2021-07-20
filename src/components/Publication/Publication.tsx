@@ -21,7 +21,7 @@ interface PublicationProps {
   videoPriority?: Track.Priority | null;
 }
 
-const Publication = observer(({ publication, isLocalParticipant, videoOnly, videoPriority }: PublicationProps) => {
+const Publication = ({ publication, isLocalParticipant, videoOnly, videoPriority }: PublicationProps) => {
   const track = useTrack(publication);
 
   if (!track) return null;
@@ -40,6 +40,6 @@ const Publication = observer(({ publication, isLocalParticipant, videoOnly, vide
     default:
       return null;
   }
-});
+};
 
-export default Publication;
+export default observer(Publication);
