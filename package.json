@@ -52,7 +52,7 @@
     "react-dom": "^16.14.0",
     "react-loggly": "^1.0.3",
     "react-loggly-jslogger": "^4.2.2",
-    "react-native": "^0.63.4",
+    "react-native": "^0.64.1",
     "react-native-loggly-jslogger": "^2.2.3",
     "react-popup": "^0.10.0",
     "react-router-dom": "^5.1.2",
