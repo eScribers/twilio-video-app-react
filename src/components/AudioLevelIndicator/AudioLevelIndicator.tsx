@@ -31,23 +31,23 @@ export function initializeAnalyser(stream: MediaStream) {
 
 const AudioLevelIndicator = ({
   size,
-  audioTrack,
+  propAudioTrack,
   participant,
   background = 'white',
 }: {
   size?: number;
-  audioTrack?: AudioTrack;
+  propAudioTrack?: AudioTrack;
   background?: string;
   participant?: Participant;
 }) => {
   const { participantsStore } = rootStore;
-  const track = audioTrack || participantsStore.localAudioTrack;
+  const audioTrack = propAudioTrack || participantsStore.localAudioTrack;
   const SIZE = size || 24;
   const y = 14;
   const SVGRectRef = useRef<SVGRectElement>(null);
   const [analyser, setAnalyser] = useState<AnalyserNode>();
-  const isTrackEnabled = useIsTrackEnabled(track as LocalAudioTrack | RemoteAudioTrack);
-  const mediaStreamTrack = useMediaStreamTrack(track);
+  const isTrackEnabled = useIsTrackEnabled(audioTrack as LocalAudioTrack | RemoteAudioTrack);
+  const mediaStreamTrack = useMediaStreamTrack(audioTrack);
   const localParticipant = rootStore.participantsStore.localParticipant?.participant;
   const isLocalParticipant = participant === localParticipant || !participant;
   const localParticipantType: string = !localParticipant
@@ -58,7 +58,7 @@ const AudioLevelIndicator = ({
     : [];
 
   useEffect(() => {
-    if (track && mediaStreamTrack && isTrackEnabled) {
+    if (audioTrack && mediaStreamTrack && isTrackEnabled) {
       // Here we create a new MediaStream from a clone of the mediaStreamTrack.
       // A clone is created to allow multiple instances of this component for a single
       // AudioTrack on iOS Safari.
@@ -69,7 +69,7 @@ const AudioLevelIndicator = ({
       // all tracks when they are not in use. Browsers like Firefox don't let you create a new stream
       // from a new audio device while the active audio device still has active tracks.
       const stopAllMediaStreamTracks = () => newMediaStream.getTracks().forEach(track => track.stop());
-      track.on(PLAYER_STATE.stopped, stopAllMediaStreamTracks);
+      audioTrack.on(PLAYER_STATE.stopped, stopAllMediaStreamTracks);
 
       const reinitializeAnalyser = () => {
         stopAllMediaStreamTracks();
@@ -87,10 +87,10 @@ const AudioLevelIndicator = ({
       return () => {
         stopAllMediaStreamTracks();
         window.removeEventListener('focus', reinitializeAnalyser);
-        track.off(PLAYER_STATE.stopped, stopAllMediaStreamTracks);
+        audioTrack.off(PLAYER_STATE.stopped, stopAllMediaStreamTracks);
       };
     }
-  }, [isTrackEnabled, mediaStreamTrack, track]);
+  }, [isTrackEnabled, mediaStreamTrack, audioTrack]);
 
   useEffect(() => {
     const SVGClipElement = SVGRectRef.current;

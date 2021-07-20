@@ -116,7 +116,7 @@ const MainParticipantInfo = observer(({ participant, children }: MainParticipant
       className={clsx(classes.container, { [classes.isVideoSwitchedOff]: isVideoSwitchedOff })}
     >
       <div className={classes.infoContainer}>
-        <AudioLevelIndicator audioTrack={audioTrack} />
+        <AudioLevelIndicator propAudioTrack={audioTrack} />
         <h4 className={classes.identity}>
           {parsedIdentity.role} {parsedIdentity.isRegisteredUser ? '*' : null}
           {isLocal && '(You)'}

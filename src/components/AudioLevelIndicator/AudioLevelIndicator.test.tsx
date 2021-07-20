@@ -22,7 +22,7 @@ describe('the AudioLevelIndicator component', () => {
       track.isEnabled = false;
 
       // @ts-expect-error
-      const wrapper = shallow(<AudioLevelIndicator audioTrack={track} background="#123456" />);
+      const wrapper = shallow(<AudioLevelIndicator propAudioTrack={track} background="#123456" />);
 
       expect(wrapper.exists('[data-test-audio-mute-icon]')).toBe(true);
     });

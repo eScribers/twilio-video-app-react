@@ -215,7 +215,7 @@ const ParticipantInfo = observer(
               </span>
             )}
             <span className={classes.identity}>
-              <AudioLevelIndicator audioTrack={audioTrack} participant={participant} />
+              <AudioLevelIndicator propAudioTrack={audioTrack} participant={participant} />
               <ParticipantNameTag participant={participant} />
             </span>
           </div>

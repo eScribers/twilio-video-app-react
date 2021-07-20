@@ -48,7 +48,7 @@ const AudioInputList = () => {
             <Typography>{localAudioTrack?.mediaStreamTrack.label || 'No Local Audio'}</Typography>
           )}
         </div>
-        <AudioLevelIndicator audioTrack={localAudioTrack} background="white" />
+        <AudioLevelIndicator propAudioTrack={localAudioTrack} background="white" />
       </Grid>
     </div>
   );

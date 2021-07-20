@@ -8,7 +8,7 @@ const LocalAudioLevelIndicator = () => {
   const { participantsStore } = rootStore;
   const audioTrack = participantsStore.localTracks.find(track => track?.kind === TRACK_TYPE.AUDIO) as LocalAudioTrack;
 
-  return <AudioLevelIndicator size={24} audioTrack={audioTrack} />;
+  return <AudioLevelIndicator size={24} propAudioTrack={audioTrack} />;
 };
 
 export default observer(LocalAudioLevelIndicator);
