@@ -38,6 +38,8 @@ class roomsStore {
   notifications: INotification[] = [];
 
   activeSinkId: string = 'default';
+  isAutoRetryingToJoinRoom: boolean = false;
+  waitingNotification: string = '';
 
   config: IConfig = {
     loading: false,
@@ -51,6 +53,13 @@ class roomsStore {
     this.rootStore = rootStore;
     makeAutoObservable(this);
     this.loadConfig();
+  }
+
+  setIsAutoRetryingToJoinRoom(value: boolean) {
+    this.isAutoRetryingToJoinRoom = value;
+  }
+  setWaitingNotification(value: string) {
+    this.waitingNotification = value;
   }
 
   setCurrentRoom(room: Room) {

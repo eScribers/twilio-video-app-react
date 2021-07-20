@@ -9,29 +9,24 @@ import { MuiThemeProvider } from '@material-ui/core/styles';
 import { ERROR_MESSAGE } from './utils/displayStrings';
 import { transitions, positions, Provider as AlertProvider } from 'react-alert';
 import AlertTemplate from 'react-alert-template-basic';
-import AppStateProvider from './state/AppStateProvider';
 import { VideoProvider } from './components/VideoProvider/';
 import ErrorDialog from './components/ErrorDialog/ErrorDialog';
 import NotificationDialog from './components/NotificationDialog/NotificationDialog';
 import theme from './theme';
 import App from './App';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
-import { useAppState } from './hooks/useAppState/useAppState';
 import { observer } from 'mobx-react-lite';
 import rootStore from './stores';
 import { INotification } from './types';
 
 const alertProviderOptions = {
-  // you can also just use 'bottom center'
   position: positions.BOTTOM_CENTER,
   timeout: 10000,
   offset: '30px',
-  // you can also just use 'scale'
   transition: transitions.SCALE,
 };
 
 const VideoApp = () => {
-  const { setIsAutoRetryingToJoinRoom, setWaitingNotification, waitingNotification } = useAppState();
   const { roomsStore } = rootStore;
   const { notifications } = roomsStore;
 
@@ -80,13 +75,7 @@ const VideoApp = () => {
           notification={notifications[0]}
         />
       )}
-      <WaitingForRoomDialog
-        cancelWait={() => {
-          setIsAutoRetryingToJoinRoom(false);
-          setWaitingNotification(null);
-        }}
-        waitingNotification={waitingNotification}
-      />
+      <WaitingForRoomDialog />
       <App />
     </VideoProvider>
   );
@@ -99,15 +88,13 @@ ReactDOM.render(
     <CssBaseline />
 
     <Router>
-      <AppStateProvider>
-        <Switch>
-          <Route exact path="/">
-            <AlertProvider template={AlertTemplate} {...alertProviderOptions}>
-              <VideoAppObserved />
-            </AlertProvider>
-          </Route>
-        </Switch>
-      </AppStateProvider>
+      <Switch>
+        <Route exact path="/">
+          <AlertProvider template={AlertTemplate} {...alertProviderOptions}>
+            <VideoAppObserved />
+          </AlertProvider>
+        </Route>
+      </Switch>
     </Router>
   </MuiThemeProvider>,
   document.getElementById('root')

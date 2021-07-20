@@ -16,7 +16,6 @@ import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevel
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 import Menu from './Menu/Menu';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
 import rootStore from '../../stores';
@@ -70,9 +69,8 @@ const useStyles = makeStyles(theme =>
 const MenuBar = () => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
-  const { isAutoRetryingToJoinRoom, setWaitingNotification } = useAppState();
   const { roomsStore, participantsStore } = rootStore;
-  const { isConnecting, config } = roomsStore;
+  const { isConnecting, config, isAutoRetryingToJoinRoom } = roomsStore;
   const { isFetchingUserToken, participantInformation } = participantsStore;
 
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
@@ -101,7 +99,7 @@ const MenuBar = () => {
     if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
       setSubmitButtonValue(RETRY_ROOM_MESSAGE);
       if (isAutoRetryingToJoinRoom) {
-        setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
+        roomsStore.setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
         var timeoutObj: NodeJS.Timeout = setTimeout(() => {
           joinRoom(participantInformation);
         }, RETRY_INTERVAL);
@@ -110,7 +108,7 @@ const MenuBar = () => {
         roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
       }
     } else {
-      setWaitingNotification(null);
+      roomsStore.setWaitingNotification(null);
       await roomsStore.joinRoom(response);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
