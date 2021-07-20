@@ -20,8 +20,8 @@ const sortParticipants = (unsorted: Participant[], priorities: string[] = defaul
   priorities.map(type => {
     bank = bank.filter(participant => {
       if (!participant.identity) return true;
-      const { partyType } = ParticipantIdentity.Parse(participant.identity);
-      if (partyType === type) {
+      const { role } = ParticipantIdentity.Parse(participant.identity);
+      if (role === type) {
         sorted.push(participant);
         return false;
       }

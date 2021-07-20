@@ -1,13 +1,8 @@
 import '@testing-library/jest-dom/extend-expect';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 
-//const mockedUseVideoContext = useVideoContext as jest.Mock<typeof VideoContext>;
-const mockUseAppState = useAppState as jest.Mock<any>;
-const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
+const mockgetParticipantConferenceToken = jest.fn(() => Promise.resolve('mockToken'));
 
-jest.mock('../../hooks/useAppState/useAppState');
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../hooks/useRoomState/useRoomState');
 jest.mock('react-alert');
 
 global.alert = jest.fn();
@@ -26,7 +21,6 @@ Object.defineProperty(window.history, 'replaceState', { value: mockReplaceState 
 
 describe('the MenuBar component', () => {
   beforeEach(jest.clearAllMocks);
-  mockUseAppState.mockImplementation(() => ({ getToken: mockGetToken }));
 
   it('mock test to make this test suite pass', () => {
     let tester1 = true;
@@ -113,6 +107,10 @@ describe('the MenuBar component', () => {
   //   expect(getByText('Join Room')).toBeDisabled();
   // });
 
+  // TEST if nothing happens when isAcquiringLocalTracks and trying to call acquire again
+
+  // TEST if theres an error shown when we have an error creating tracks
+
   // it('should update the URL to include the room name on submit', () => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(
@@ -139,7 +137,7 @@ describe('the MenuBar component', () => {
   //   expect(window.history.replaceState).not.toHaveBeenCalled();
   // });
 
-  // it('should call getToken() and connect() on submit', done => {
+  // it('should call getParticipantConferenceToken() and connect() on submit', done => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(
   //     () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any)
@@ -149,7 +147,7 @@ describe('the MenuBar component', () => {
   //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'PartyName' } });
   //   fireEvent.change(getByLabelText('Party Type'), { target: { value: 'PartyType' } });
   //   fireEvent.click(getByText('Join Room').parentElement!);
-  //   expect(mockGetToken).toHaveBeenCalledWith('CaseNumber', 'PartyName','PartyType');
+  //   expect(mockgetParticipantConferenceToken).toHaveBeenCalledWith('CaseNumber', 'PartyName','PartyType');
   //   setImmediate(() => {
   //     expect(mockConnect).toHaveBeenCalledWith('mockToken');
   //     done();

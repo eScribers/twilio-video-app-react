@@ -46,7 +46,7 @@ module.exports = (on, config) => {
     removeParticipant: async name => {
       const page = participants[name];
       await page.click('body');
-      await page.click('[title="End Call"]');
+      await page.click('[title="Hang Up"]');
       await page.close();
       delete participants[name];
       return Promise.resolve(null);

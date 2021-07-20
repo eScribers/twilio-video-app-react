@@ -1,19 +1,24 @@
 import { useEffect } from 'react';
 import { Base64 } from 'js-base64';
-import { useAppState } from '../../hooks/useAppState/useAppState';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores/rootStore';
 
-const MessageText = ({ defaultMessage = '' }) => {
-  const { setNotification } = useAppState();
+interface IMessageText {
+  defaultMessage?: string;
+}
+
+const MessageText = observer(({ defaultMessage = '' }: IMessageText) => {
+  const { roomsStore } = rootStore;
 
   const query = new URLSearchParams(window.location.search);
   // defaultMessage is used in the jest testing only
   const messageText = query.get('messageText') || defaultMessage;
 
   useEffect(() => {
-    if (messageText.length >= 1) setNotification({ message: Base64.decode(messageText) });
-  }, [messageText, setNotification]);
+    if (messageText.length >= 1) roomsStore.setNotification({ message: Base64.decode(messageText) });
+  }, [messageText, roomsStore]);
 
   return null;
-};
+});
 
 export default MessageText;

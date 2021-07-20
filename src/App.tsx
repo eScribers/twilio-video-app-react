@@ -9,8 +9,10 @@ import Room from './components/Room/Room';
 import { ROOM_STATE } from './utils/displayStrings';
 
 import useHeight from './hooks/useHeight/useHeight';
-import useRoomState from './hooks/useRoomState/useRoomState';
 import MessageText from './components/MessageText/MessageText';
+import MessagingSection from './components/MessagingSection/MessagingSection';
+import rootStore from './stores/rootStore';
+import { observer } from 'mobx-react-lite';
 
 const Container = styled('div')({
   display: 'grid',
@@ -21,8 +23,11 @@ const Main = styled('main')({
   overflowX: 'hidden',
 });
 
-export default function App() {
-  const roomState = useRoomState();
+const query = new URLSearchParams(window.location.search);
+const returnUrl = query.get('returnUrl');
+
+const App = () => {
+  const { roomsStore } = rootStore;
 
   // Here we would like the height of the main container to be the height of the viewport.
   // On some mobile browsers, 'height: 100vh' sets the height equal to that of the screen,
@@ -31,15 +36,21 @@ export default function App() {
   // will look good on mobile browsers even after the location bar opens or closes.
   const height = useHeight();
 
+  if (!returnUrl) {
+    return <MessagingSection />;
+  }
+
   return (
     <Container style={{ height }}>
       <MessageText />
       <MenuBar />
       <Main>
-        {roomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
+        {roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? <LocalVideoPreview identity="You" /> : <Room />}
         <Controls />
       </Main>
       <ReconnectingNotification />
     </Container>
   );
-}
+};
+
+export default observer(App);

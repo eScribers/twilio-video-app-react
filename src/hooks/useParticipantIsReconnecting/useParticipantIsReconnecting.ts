@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { Participant } from 'twilio-video';
 import { ROOM_STATE } from '../../utils/displayStrings';
 
-export default function useParticipantIsReconnecting(participant: Participant) {
+export default function useParticipantIsReconnecting(participant?: Participant) {
   const [isReconnecting, setIsReconnecting] = useState(false);
 
   useEffect(() => {
+    if (!participant) return;
+
     const handleReconnecting = () => setIsReconnecting(true);
     const handleReconnected = () => setIsReconnecting(false);
 

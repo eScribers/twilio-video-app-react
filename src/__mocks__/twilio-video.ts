@@ -1,8 +1,8 @@
 import { EventEmitter } from 'events';
-import { TRACK_TYPE } from '../utils/displayStrings';
+import { ROOM_STATE } from '../utils/displayStrings';
 
 class MockRoom extends EventEmitter {
-  state = 'connected';
+  state = ROOM_STATE.CONNECTED;
   disconnect = jest.fn();
   localParticipant = {
     publishTrack: jest.fn(),
@@ -12,9 +12,14 @@ class MockRoom extends EventEmitter {
 
 const mockRoom = new MockRoom();
 
-class MockTrack extends EventEmitter {
+export class MockTrack extends EventEmitter {
   kind = '';
+  name = 'mock';
   stop = jest.fn();
+  enable = jest.fn();
+  disable = jest.fn();
+  disconnect = jest.fn();
+  isEnabled = true;
 
   constructor(kind: string) {
     super();
@@ -30,8 +35,9 @@ const mockPreflightTest = new MockPreflightTest();
 
 const twilioVideo = {
   connect: jest.fn(() => Promise.resolve(mockRoom)),
-  createLocalTracks: jest.fn(() => Promise.resolve([new MockTrack(TRACK_TYPE.VIDEO), new MockTrack(TRACK_TYPE.AUDIO)])),
-  createLocalVideoTrack: jest.fn(() => Promise.resolve(new MockTrack(TRACK_TYPE.VIDEO))),
+  createLocalTracks: jest.fn(() => Promise.resolve([])),
+  createLocalVideoTrack: jest.fn(() => Promise.resolve(new MockTrack('videoInput'))),
+  createLocalAudioTrack: jest.fn(() => Promise.resolve(new MockTrack('audioInput'))),
   testPreflight: jest.fn(() => mockPreflightTest),
 };
 

@@ -1,60 +1,47 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import VideocamOff from '@material-ui/icons/VideocamOff';
+import Videocam from '@material-ui/icons/Videocam';
 
 import ToggleVideoButton from './ToggleVideoButton';
-jest.mock('../../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../../hooks/useLocalVideoToggle/useLocalVideoToggle');
-
-const mockUseLocalVideoToggle = useLocalVideoToggle as jest.Mock<any>;
-const mockUseVideoContext = useVideoContext as jest.Mock<any>;
+import rootStore from '../../../stores/rootStore';
+import { sleep } from '../../../utils';
+import { LocalVideoTrack } from 'twilio-video';
 
 describe('the ToggleVideoButton component', () => {
-  it('mock test to make this test suite pass', () => {
-    let tester1 = true;
-    expect((tester1 = true));
+  it('should render correctly when video is enabled', () => {
+    rootStore.participantsStore.localVideoTrack = {} as LocalVideoTrack;
+    const wrapper = shallow(<ToggleVideoButton />);
+    expect(wrapper.find(Videocam).exists()).toBe(true);
+    expect(wrapper.find(VideocamOff).exists()).toBe(false);
+    expect(wrapper.prop('title')).toBe('Video off');
   });
 
-  // it('should render correctly when video is enabled', () => {
-  //   mockUseLocalVideoToggle.mockImplementation(() => [true, () => {}]);
-  //   mockUseVideoContext.mockImplementation(() => ({ room: {} }));
-  //   const wrapper = shallow(<ToggleVideoButton />);
-  //   expect(wrapper.find('VideocamIcon').exists()).toBe(true);
-  //   expect(wrapper.find('VideocamOffIcon').exists()).toBe(false);
-  //   expect(wrapper.prop('title')).toBe('Mute Video');
-  // });
-
-  // it('should render correctly when video is disabled', () => {
-  //   mockUseLocalVideoToggle.mockImplementation(() => [false, () => {}]);
-  //   mockUseVideoContext.mockImplementation(() => ({ room: {} }));
-  //   const wrapper = shallow(<ToggleVideoButton />);
-  //   expect(wrapper.find('VideocamIcon').exists()).toBe(false);
-  //   expect(wrapper.find('VideocamOffIcon').exists()).toBe(true);
-  //   expect(wrapper.prop('title')).toBe('Unmute Video');
-  // });
+  it('should render correctly when video is disabled', () => {
+    rootStore.participantsStore.localVideoTrack = undefined;
+    const wrapper = shallow(<ToggleVideoButton />);
+    expect(wrapper.find(Videocam).exists()).toBe(false);
+    expect(wrapper.find(VideocamOff).exists()).toBe(true);
+    expect(wrapper.prop('title')).toBe('Video on');
+  });
 
   it('should call the correct toggle function when clicked', () => {
-    const mockFn = jest.fn();
-    mockUseLocalVideoToggle.mockImplementation(() => [false, mockFn]);
-    mockUseVideoContext.mockImplementation(() => ({ room: {} }));
+    jest.spyOn(rootStore.participantsStore, 'toggleVideoEnabled');
     const wrapper = shallow(<ToggleVideoButton />);
     wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
-    expect(mockFn).toHaveBeenCalled();
+    expect(rootStore.participantsStore.toggleVideoEnabled).toHaveBeenCalled();
   });
 
-  // it('should throttle the toggle function to 200ms', () => {
-  //   const mockFn = jest.fn();
-  //   mockUseLocalVideoToggle.mockImplementation(() => [false, mockFn]);
-  //   mockUseVideoContext.mockImplementation(() => ({ room: {} }));
-  //   const wrapper = shallow(<ToggleVideoButton />);
-  //   const button = wrapper.find('WithStyles(ForwardRef(Fab))');
-  //   Date.now = () => 100000;
-  //   button.simulate('click'); // Should register
-  //   Date.now = () => 100100;
-  //   button.simulate('click'); // Should be ignored
-  //   Date.now = () => 100300;
-  //   button.simulate('click'); // Should register
-  //   expect(mockFn).toHaveBeenCalledTimes(2);
-  // });
+  it('should throttle the toggle function to 200ms', async () => {
+    jest.spyOn(rootStore.participantsStore, 'setPublishingVideoTrackInProgress');
+
+    const wrapper = shallow(<ToggleVideoButton />);
+    const button = wrapper.find('WithStyles(ForwardRef(Fab))');
+    button.simulate('click'); // Should register
+    await sleep(100);
+    button.simulate('click'); // Should be ignored
+    await sleep(200);
+    button.simulate('click'); // Should register
+    expect(rootStore.participantsStore.setPublishingVideoTrackInProgress).toHaveBeenCalledTimes(2);
+  });
 });

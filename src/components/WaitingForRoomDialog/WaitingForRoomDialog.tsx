@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -7,11 +7,8 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-
-interface WaitingForRoomDialogProps {
-  cancelWait: Function;
-  waitingNotification: string | null;
-}
+import rootStore from '../../stores/rootStore';
+import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles(theme =>
   createStyles({
@@ -21,12 +18,18 @@ const useStyles = makeStyles(theme =>
   })
 );
 
-function WaitingForRoomDialog({ cancelWait, waitingNotification }: PropsWithChildren<WaitingForRoomDialogProps>) {
+const WaitingForRoomDialog = () => {
   const classes = useStyles();
-  const message = waitingNotification;
+  const { roomsStore } = rootStore;
+  const message = roomsStore.waitingNotification || '';
+
+  const cancelWait = () => {
+    roomsStore.setIsAutoRetryingToJoinRoom(false);
+    roomsStore.setWaitingNotification(null);
+  };
 
   return (
-    <Dialog open={waitingNotification !== null} onClose={() => cancelWait()} fullWidth={true} maxWidth="xs">
+    <Dialog open={message.length} onClose={() => cancelWait()} fullWidth={true} maxWidth="xs">
       <DialogTitle>Conference Not Started</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
@@ -39,6 +42,6 @@ function WaitingForRoomDialog({ cancelWait, waitingNotification }: PropsWithChil
       </DialogActions>
     </Dialog>
   );
-}
+};
 
-export default WaitingForRoomDialog;
+export default observer(WaitingForRoomDialog);

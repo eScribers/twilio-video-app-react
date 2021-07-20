@@ -1,37 +1,6 @@
-import { TwilioError } from 'twilio-video';
-import { INotification, RoomType } from '../types';
-import { Settings, SettingsAction } from '../state/settings/settingsReducer';
-import { ParticipantInformation } from '../types/participantInformation';
 export default interface StateContextType {
-  error: TwilioError | null;
-  setError(error: TwilioError | null): void;
-  notification: string | null;
-  setNotification: React.Dispatch<React.SetStateAction<INotification | null>>;
   isAutoRetryingToJoinRoom: boolean;
-  disconnectParticipant(isRegistered?: boolean): void;
   setIsAutoRetryingToJoinRoom(isAutoRetrying: boolean): void;
   waitingNotification: string;
   setWaitingNotification(waitingNotification: string | null): void;
-  isFetching: boolean;
-  setSelectedAudioInput: string;
-  selectedVideoInput: string;
-  setSelectedVideoInput: string;
-  selectedSpeakerOutput: string;
-  setSelectedSpeakerOutput: string;
-  gridView: boolean;
-  setGridView: any;
-  authoriseParticipant(): Promise<any>;
-  participantInfo: ParticipantInformation;
-  getToken(participantInformation: ParticipantInformation): Promise<string>;
-  removeParticipant: any;
-  activeSinkId?: string | undefined;
-  setActiveSinkId(sinkId: string): void;
-  settings: Settings;
-  dispatchSetting: React.Dispatch<SettingsAction>;
-  Provider: any;
-  Consumer: any;
-  isConfigLoaded?: boolean;
-  isSilenced: boolean;
-  setIsSilenced: React.Dispatch<React.SetStateAction<boolean>>;
-  roomType: RoomType;
 }

@@ -1,11 +1,8 @@
 import React from 'react';
+import { observer } from 'mobx-react-lite';
 import { styled } from '@material-ui/core/styles';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
-import useSelectedParticipant from '../../VideoProvider/useSelectedParticipant/useSelectedParticipant';
 import Participant from '../../Participant/Participant';
-import useIsSilenced from '../../../hooks/useIsSilenced/useIsSilenced';
-import useSortedParticipants from '../../../hooks/useSortedParticipants/useSortedParticipants';
-import useDominantSpeaker from '../../../hooks/useDominantSpeaker/useDominantSpeaker';
+import rootStore from '../../../stores/rootStore';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',
@@ -23,36 +20,38 @@ const ScrollContainer = styled('div')(({ theme }) => ({
     display: 'flex',
   },
 }));
-export default function ParticipantStripCollaboration() {
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
-  const participants = useSortedParticipants();
-  const dominantSpeaker = useDominantSpeaker();
-  const [selectedParticipant, setSelectedParticipant] = useSelectedParticipant();
-  const [isSilenced] = useIsSilenced();
 
-  const dominantIdentity = dominantSpeaker?.identity;
+const ParticipantStripCollaboration = () => {
+  const { participantsStore } = rootStore;
+  const { dominantSpeaker } = participantsStore;
+  const { sortedParticipants, selectedParticipant } = participantsStore;
+
+  if (!participantsStore.localParticipant?.participant) return null;
 
   return (
     <Container>
       <ScrollContainer>
         <Participant
-          participant={localParticipant}
-          isSelected={selectedParticipant === localParticipant}
-          onClick={() => setSelectedParticipant(localParticipant)}
+          participant={participantsStore.localParticipant?.participant}
+          isSelected={selectedParticipant === participantsStore.localParticipant?.participant.identity}
+          onClick={() =>
+            participantsStore.localParticipant?.participant &&
+            participantsStore.setSelectedParticipant(participantsStore.localParticipant?.participant.identity)
+          }
         />
-        {participants.map(participant => (
+        {sortedParticipants.map(participant => (
           <Participant
             key={participant.sid}
-            isDominantSpeaker={participant.identity === dominantIdentity}
+            isDominantSpeaker={participant.identity === dominantSpeaker}
             participant={participant}
-            isSelected={selectedParticipant === participant}
-            userIsSilenced={!!isSilenced}
-            onClick={() => setSelectedParticipant(participant)}
+            isSelected={selectedParticipant === participant.identity}
+            userIsSilenced={!!participantsStore.isSilenced}
+            onClick={() => participantsStore.setSelectedParticipant(participant.identity)}
           />
         ))}
       </ScrollContainer>
     </Container>
   );
-}
+};
+
+export default observer(ParticipantStripCollaboration);

@@ -5,7 +5,8 @@ import InfoIcon from '@material-ui/icons/Info';
 import Snackbar from '@material-ui/core/Snackbar';
 import { SnackbarContent } from '@material-ui/core';
 import { ROOM_STATE } from '../../utils/displayStrings';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
+import rootStore from '../../stores/rootStore';
+import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles({
   snackbar: {
@@ -20,12 +21,15 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ReconnectingNotification() {
+const ReconnectingNotification = () => {
   const classes = useStyles();
-  const roomState = useRoomState();
+  const { roomsStore } = rootStore;
 
   return (
-    <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} open={roomState === ROOM_STATE.RECONNECTING}>
+    <Snackbar
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+      open={roomsStore.currentRoomState === ROOM_STATE.RECONNECTING}
+    >
       <SnackbarContent
         className={classes.snackbar}
         message={
@@ -37,4 +41,6 @@ export default function ReconnectingNotification() {
       />
     </Snackbar>
   );
-}
+};
+
+export default observer(ReconnectingNotification);

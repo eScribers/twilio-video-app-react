@@ -1,21 +1,10 @@
 import React, { createContext, ReactNode } from 'react';
-import { Callback, ErrorCallback } from '../../types';
-import { SelectedParticipantProvider } from './useSelectedParticipant/useSelectedParticipant';
-import useHandleRoomDisconnectionErrors from './useHandleRoomDisconnectionErrors/useHandleRoomDisconnectionErrors';
+import { ErrorCallback } from '../../types';
 import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityHandler';
-import useHandleOnDisconnect from './useHandleOnDisconnect/useHandleOnDisconnect';
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
-import useLocalTracks from './useLocalTracks/useLocalTracks';
-import useRoom from './useRoom/useRoom';
-import useScreenShareToggle from '../../hooks/useScreenShareToggle/useScreenShareToggle';
-import {
-  CreateLocalTrackOptions,
-  ConnectOptions,
-  LocalAudioTrack,
-  LocalVideoTrack,
-  Room,
-  TwilioError,
-} from 'twilio-video';
+import { ConnectOptions, Room, TwilioError } from 'twilio-video';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores/rootStore';
 /*
  *  The hooks used by the VideoProvider component are different than the hooks found in the 'hooks/' directory. The hooks
  *  in the 'hooks/' directory can be used anywhere in a video application, and they can be used any number of times.
@@ -25,77 +14,45 @@ import {
 
 export interface IVideoContext {
   room: Room;
-  localTracks: (LocalAudioTrack | LocalVideoTrack)[];
   isConnecting: boolean;
-  connect: (token: string) => Promise<void>;
   onError: ErrorCallback;
   onDisconnect: (isRegistered?: boolean) => void;
-  getLocalVideoTrack: (newOptions?: CreateLocalTrackOptions) => Promise<LocalVideoTrack>;
-  isAcquiringLocalTracks: boolean;
-  removeLocalAudioTrack: () => void;
-  removeLocalVideoTrack: () => void;
   isSharingScreen: boolean;
   toggleScreenShare: () => void;
-  getAudioAndVideoTracks: () => Promise<void>;
 }
 
 export const VideoContext = createContext<IVideoContext>(null!);
 
 interface VideoProviderProps {
   options?: ConnectOptions;
-  onError: ErrorCallback;
-  onDisconnect?: Callback;
   children: ReactNode;
-  onNotification: Callback;
 }
 
-export function VideoProvider({
-  options,
-  children,
-  onError = () => {},
-  onNotification = () => {},
-  onDisconnect = () => {},
-}: VideoProviderProps) {
+export const VideoProvider = observer(({ children }: VideoProviderProps) => {
+  const { roomsStore, participantsStore } = rootStore;
+  const { localParticipant } = participantsStore;
+  const { isSharingScreen, toggleScreenShare } = localParticipant;
+
+  const { currentRoom, isConnecting } = roomsStore;
+
   const onErrorCallback = (error: TwilioError) => {
     console.log(`ERROR: ${error.message}`, error);
-    onError(error);
+    roomsStore.setError(error);
   };
-
-  const {
-    localTracks,
-    getLocalVideoTrack,
-    isAcquiringLocalTracks,
-    removeLocalAudioTrack,
-    removeLocalVideoTrack,
-    getAudioAndVideoTracks,
-  } = useLocalTracks();
-  const { room, isConnecting, connect } = useRoom(localTracks, onErrorCallback, options);
-
-  // Register onError and onDisconnect callback functions.
-  useHandleRoomDisconnectionErrors(room, onError);
-  useHandleTrackPublicationFailed(room, onError);
-  useHandleOnDisconnect(room, onDisconnect);
-  const [isSharingScreen, toggleScreenShare] = useScreenShareToggle(room, onError);
+  useHandleTrackPublicationFailed(currentRoom, roomsStore.setError);
 
   return (
     <VideoContext.Provider
       value={{
-        room,
-        localTracks,
+        room: currentRoom,
         isConnecting,
         onError: onErrorCallback,
-        onDisconnect,
-        getLocalVideoTrack,
-        connect,
-        isAcquiringLocalTracks,
-        removeLocalAudioTrack,
-        removeLocalVideoTrack,
+        onDisconnect: () => {},
         isSharingScreen,
         toggleScreenShare,
-        getAudioAndVideoTracks,
       }}
     >
-      <SelectedParticipantProvider room={room}>{children}</SelectedParticipantProvider>
+      {children}
       {/* 
         The AttachVisibilityHandler component is using the useLocalVideoToggle hook
         which must be used within the VideoContext Provider.
@@ -103,4 +60,4 @@ export function VideoProvider({
       <AttachVisibilityHandler />
     </VideoContext.Provider>
   );
-}
+});

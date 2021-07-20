@@ -1,14 +1,16 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import rootStore from '../../stores/rootStore';
 import ToggleScreenShareButton from './ToogleScreenShareButton/ToggleScreenShareButton';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
 import ToggleVideoButton from './ToggleVideoButton/ToggleVideoButton';
 import { ROOM_STATE } from '../../utils/displayStrings';
 import useIsUserActive from './useIsUserActive/useIsUserActive';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
-import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
+import { observer } from 'mobx-react-lite';
+import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
+import { ParticipantIdentity } from '../../utils/participantIdentity';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -37,21 +39,24 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function Controls(props: { disabled?: boolean }) {
+const Controls = () => {
   const classes = useStyles();
-  const roomState = useRoomState();
-  const isReconnecting = roomState === ROOM_STATE.RECONNECTING;
-  const isdisconnected = roomState === ROOM_STATE.DISCONNECTED;
+  const { roomsStore, participantsStore } = rootStore;
+  const role = !participantsStore.localParticipant?.participant
+    ? ''
+    : ParticipantIdentity.Parse(participantsStore.localParticipant?.participant?.identity).role;
+  const isReconnecting = roomsStore.currentRoomState === ROOM_STATE.RECONNECTING;
+  const isdisconnected = roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED;
   const isUserActive = useIsUserActive();
-  const { isHostIn } = useIsHostIn();
-  const showControls = isUserActive || roomState === ROOM_STATE.DISCONNECTED;
-  const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !isHostIn;
+  const showControls = isUserActive || roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED;
+  const canToggleMute = [PARTICIPANT_TYPES.HEARING_OFFICER].includes(role) || participantsStore.isReporterIn;
+  const disableButtons = isReconnecting ? isReconnecting : isdisconnected ? false : !canToggleMute;
 
   return (
     <div className={clsx(classes.container, { showControls })}>
       <ToggleAudioButton disabled={disableButtons} />
       <ToggleVideoButton disabled={isReconnecting} />
-      {roomState !== ROOM_STATE.DISCONNECTED && (
+      {roomsStore.currentRoomState !== ROOM_STATE.DISCONNECTED && (
         <>
           <ToggleScreenShareButton disabled={isReconnecting} />
           <EndCallButton />
@@ -59,4 +64,6 @@ export default function Controls(props: { disabled?: boolean }) {
       )}
     </div>
   );
-}
+};
+
+export default observer(Controls);

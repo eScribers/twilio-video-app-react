@@ -2,58 +2,49 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import AudioLevelIndicator from './AudioLevelIndicator';
 import MicOff from '@material-ui/icons/MicOff';
-import useIsTrackEnabled from '../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { useAppState } from '../../hooks/useAppState/useAppState';
-
-jest.mock('../../hooks/useIsTrackEnabled/useIsTrackEnabled');
+import rootStore from '../../stores/rootStore';
+import { MockTrack } from '../../__mocks__/twilio-video';
 jest.mock('../../hooks/useVideoContext/useVideoContext');
-jest.mock('../../hooks/useAppState/useAppState');
 
 // @ts-ignore
 const mockedUseVideoContext = useVideoContext as jest.Mock<IVideoContext>;
-const mockUseIsTrackEnabled = useIsTrackEnabled as jest.Mock<boolean>;
-const mockUseAppState = useAppState as jest.Mock<any>;
-
-mockUseAppState.mockImplementation(() => ({ activeSinkId: '' }));
 
 describe('the AudioLevelIndicator component', () => {
+  beforeEach(() => {
+    rootStore.participantsStore.setAudioTrack(new MockTrack('audioInput'));
+  });
   describe('when the audioTrack is not enabled', () => {
-    mockUseIsTrackEnabled.mockImplementation(() => false);
     mockedUseVideoContext.mockImplementation(() => ({ isConnecting: false, room: {}, localTracks: [] } as any));
-    const wrapper = shallow(<AudioLevelIndicator background="#123456" />);
 
-    it('should render a mute icon', () => {
+    it('should render a mute icon', async () => {
+      const track = new MockTrack('audioInput');
+      track.isEnabled = false;
+
+      // @ts-expect-error
+      const wrapper = shallow(<AudioLevelIndicator propAudioTrack={track} background="#123456" />);
+
       expect(wrapper.exists('[data-test-audio-mute-icon]')).toBe(true);
     });
 
     it('should change the background of the mute icon when background prop is used', () => {
-      expect(
-        wrapper
-          .find('[data-test-audio-mute-icon]')
-          .find({ fill: '#123456' })
-          .exists()
-      ).toBeTruthy();
+      const wrapper = shallow(<AudioLevelIndicator background="#123456" />);
+      expect(wrapper.find({ fill: '#123456' }).exists()).toBeTruthy();
     });
   });
 
   describe('when the audioTrack is enabled', () => {
-    mockUseIsTrackEnabled.mockImplementation(() => true);
     mockedUseVideoContext.mockImplementation(() => ({ isConnecting: false, room: {}, localTracks: [] } as any));
-    const wrapper = shallow(<AudioLevelIndicator background="#123456" />);
 
     it('should render the audio level icon', () => {
+      const wrapper = shallow(<AudioLevelIndicator background="#123456" />);
       expect(wrapper.exists(MicOff)).toBe(false);
       expect(wrapper.exists('[data-test-audio-indicator]')).toBe(true);
     });
 
     it('should change the background of the audio level icon when background prop is used', () => {
-      expect(
-        wrapper
-          .find('[data-test-audio-indicator]')
-          .find({ fill: '#123456' })
-          .exists()
-      ).toBeTruthy();
+      const wrapper = shallow(<AudioLevelIndicator background="#123456" />);
+      expect(wrapper.find({ fill: '#123456' }).exists()).toBeTruthy();
     });
   });
 });

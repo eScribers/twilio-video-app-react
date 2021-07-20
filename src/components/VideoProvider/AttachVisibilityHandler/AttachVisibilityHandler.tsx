@@ -1,7 +1,7 @@
 import { isMobile } from '../../../utils';
 import { useEffect, useRef } from 'react';
-import useLocalVideoToggle from '../../../hooks/useLocalVideoToggle/useLocalVideoToggle';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../stores/rootStore';
 
 /* 
   This component adds a visibilitychange handler to the document when
@@ -13,10 +13,12 @@ import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
   to show that this user's video track has been turned off.
 */
 
-export default function AttachVisibilityHandler() {
-  const { room } = useVideoContext();
-  const [isVideoEnabled, toggleVideoEnabled] = useLocalVideoToggle();
+const AttachVisibilityHandler = () => {
+  const { participantsStore, roomsStore } = rootStore;
   const shouldRepublishVideoOnForeground = useRef(false);
+
+  const room = roomsStore.currentRoom;
+  const isVideoEnabled = participantsStore.localVideoTrack;
 
   useEffect(() => {
     if (isMobile) {
@@ -24,12 +26,12 @@ export default function AttachVisibilityHandler() {
         // We don't need to unpublish the local video track if it has already been unpublished
         if (document.visibilityState === 'hidden' && isVideoEnabled) {
           shouldRepublishVideoOnForeground.current = true;
-          toggleVideoEnabled();
+          participantsStore.toggleVideoEnabled();
 
           // Don't publish the local video track if it wasn't published before the app was backgrounded
         } else if (shouldRepublishVideoOnForeground.current) {
           shouldRepublishVideoOnForeground.current = false;
-          toggleVideoEnabled();
+          participantsStore.toggleVideoEnabled();
         }
       };
 
@@ -38,7 +40,9 @@ export default function AttachVisibilityHandler() {
         document.removeEventListener('visibilitychange', handleVisibilityChange);
       };
     }
-  }, [isVideoEnabled, room, toggleVideoEnabled]);
+  }, [isVideoEnabled, room, participantsStore]);
 
   return null;
-}
+};
+
+export default observer(AttachVisibilityHandler);

@@ -1,31 +1,38 @@
 import React from 'react';
 import { shallow } from 'enzyme';
+import rootStore from '../../stores/rootStore';
 import { ParticipantNameTag } from './ParticipantNameTag';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import { IVideoContext } from 'components/VideoProvider';
+import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 
-jest.mock('../../hooks/useVideoContext/useVideoContext');
+const mockGetUserMedia = jest.fn(async () => {
+  return new Promise<void>(resolve => {
+    resolve();
+  });
+});
 
-const mockUseVideoContext = useVideoContext as jest.Mock<any>;
+Object.defineProperty(global.navigator, 'devicechange', {
+  value: {
+    getUserMedia: mockGetUserMedia,
+  },
+});
 
 describe('The ParticipantNameTag component', () => {
   beforeEach(jest.clearAllMocks);
 
   beforeEach(() => {
-    mockUseVideoContext.mockImplementation(() => ({ room: { localParticipant: {} } }));
+    rootStore.participantsStore.localParticipant?.setParticipant(new mockLocalParticipant());
   });
 
   it('should add "(You)" to the participants identity when they are the localParticipant', () => {
-    const mockParticipant = { identity: '@mockIdentity' } as any;
-    mockUseVideoContext.mockImplementationOnce(() => ({ room: { localParticipant: mockParticipant } }));
+    const mockParticipant = new mockLocalParticipant('local', 'Reporter', 1);
     const wrapper = shallow(<ParticipantNameTag participant={mockParticipant}></ParticipantNameTag>);
-    expect(wrapper.text()).toContain('mockIdentity (You)');
+    expect(wrapper.text()).toContain('Reporter - local (You)');
   });
 
   it('should not add "(You)" to the participants identity when they are the localParticipant', () => {
     const wrapper = shallow(
-      <ParticipantNameTag participant={{ identity: '@mockIdentity' } as any}></ParticipantNameTag>
+      <ParticipantNameTag participant={new mockParticipant('remote', 'Reporter', 2)}></ParticipantNameTag>
     );
-    expect(wrapper.text()).not.toContain('mockIdentity (You)');
+    expect(wrapper.text()).not.toContain('(you)');
   });
 });

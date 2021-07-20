@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AvatarIcon from '../../icons/AvatarIcon';
 import { makeStyles, Theme, Typography } from '@material-ui/core';
 import { LocalVideoTrack } from 'twilio-video';
 import VideoTrack from '../VideoTrack/VideoTrack';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
 import LocalAudioLevelIndicator from '../MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
+import rootStore from '../../stores/rootStore';
+import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
@@ -55,17 +56,12 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }));
 
-export default function LocalVideoPreview({ identity }: { identity: string }) {
+const LocalVideoPreview = observer(({ identity }: { identity: string }) => {
   const classes = useStyles();
-  const { localTracks, getAudioAndVideoTracks } = useVideoContext();
-  const videoTrack = localTracks.find(track => track.name.includes('camera')) as LocalVideoTrack;
 
-  useEffect(() => {
-    getAudioAndVideoTracks().catch(error => {
-      console.log('Error acquiring local media:');
-      console.dir(error);
-    });
-  }, [getAudioAndVideoTracks]);
+  const videoTrack = rootStore.participantsStore.localTracks.find(track =>
+    track?.name.includes('camera')
+  ) as LocalVideoTrack;
 
   return (
     <div className={classes.container}>
@@ -89,4 +85,6 @@ export default function LocalVideoPreview({ identity }: { identity: string }) {
       </div>
     </div>
   );
-}
+});
+
+export default LocalVideoPreview;

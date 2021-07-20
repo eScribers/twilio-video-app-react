@@ -4,10 +4,11 @@ import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { Participant } from 'twilio-video';
-import useParticipant from '../../../hooks/useParticipant/useParticipant';
 import roleChecker from '../../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
 import { ParticipantIdentity } from '../../../utils/participantIdentity';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../stores/rootStore';
 interface ParticipantDropDownProps {
   localParticipantType: string;
   participant: Participant;
@@ -17,14 +18,10 @@ interface ParticipantDropDownProps {
 const [REMOVE, MUTE] = ['Remove', 'Mute'];
 const ITEM_HEIGHT = 48;
 
-export default function ParticipantDropDown({
-  localParticipantType,
-  participant,
-  isAudioEnabled,
-}: ParticipantDropDownProps) {
-  const options = getParticipantOptions(participant, localParticipantType, !isAudioEnabled);
+const ParticipantDropDown = observer(({ participant, isAudioEnabled }: ParticipantDropDownProps) => {
+  const { participantsStore } = rootStore;
+  const options = getParticipantOptions(participant, participantsStore.localParticipantType, !isAudioEnabled);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const participantCommands = useParticipant();
 
   const handleClick = event => {
     event.stopPropagation();
@@ -35,9 +32,9 @@ export default function ParticipantDropDown({
     event.stopPropagation();
     setAnchorEl(null);
 
-    if (option === MUTE) participantCommands.muteParticipant(participant);
+    if (option === MUTE) participantsStore.muteOtherParticipant(participant);
 
-    if (option === REMOVE) participantCommands.removeParticipant(participant);
+    if (option === REMOVE) participantsStore.removeOtherParticipant(participant);
   };
 
   return (
@@ -74,26 +71,26 @@ export default function ParticipantDropDown({
       </Menu>
     </div>
   );
-}
-
+});
+export default ParticipantDropDown;
 export const getParticipantOptions = (
   participant: Participant,
   localParticipantType: string,
   isTrackMuted: boolean = false
 ) => {
   let options: string[] = [];
-  let remoteParticipantPartyType = ParticipantIdentity.Parse(participant.identity).partyType;
-  if (localParticipantType === remoteParticipantPartyType) return options;
+  let remoteParticipantRole = ParticipantIdentity.Parse(participant.identity).role;
+  if (localParticipantType === remoteParticipantRole) return options;
 
   const canMute = roleChecker.doesRoleHavePermission(
     ROLE_PERMISSIONS.MUTE_PARTICIPANT,
     localParticipantType,
-    remoteParticipantPartyType
+    remoteParticipantRole
   );
   const canRemove = roleChecker.doesRoleHavePermission(
     ROLE_PERMISSIONS.REMOVE_PARTICIPANT,
     localParticipantType,
-    remoteParticipantPartyType
+    remoteParticipantRole
   );
 
   if (canMute && !isTrackMuted) options.push(MUTE);

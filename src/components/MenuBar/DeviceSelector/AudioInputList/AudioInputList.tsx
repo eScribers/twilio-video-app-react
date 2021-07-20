@@ -4,15 +4,17 @@ import { LocalAudioTrack } from 'twilio-video';
 import { FormControl, MenuItem, Typography, Select, Grid } from '@material-ui/core';
 import { SELECTED_AUDIO_INPUT_KEY } from '../../../../constants';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
-import useVideoContext from '../../../../hooks/useVideoContext/useVideoContext';
-import useDevices from '../../../../hooks/useDevices/useDevices';
 import { TRACK_TYPE } from '../../../../utils/displayStrings';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../../stores/rootStore';
 
-export default function AudioInputList() {
-  const { audioInputDevices } = useDevices();
-  const { localTracks } = useVideoContext();
+const AudioInputList = () => {
+  const { participantsStore } = rootStore;
+  const { devices } = participantsStore;
 
-  const localAudioTrack = localTracks.find(track => track.kind === TRACK_TYPE.AUDIO) as LocalAudioTrack;
+  const localAudioTrack = participantsStore.localTracks.find(
+    track => track?.kind === TRACK_TYPE.AUDIO
+  ) as LocalAudioTrack;
   const mediaStreamTrack = useMediaStreamTrack(localAudioTrack);
   const localAudioInputDeviceId = mediaStreamTrack?.getSettings().deviceId;
 
@@ -28,14 +30,14 @@ export default function AudioInputList() {
       </Typography>
       <Grid container alignItems="center" justify="center">
         <div className="inputSelect">
-          {audioInputDevices.length > 1 ? (
+          {devices.audioInputDevices.length > 1 ? (
             <FormControl fullWidth>
               <Select
                 onChange={e => replaceTrack(e.target.value as string)}
                 value={localAudioInputDeviceId || ''}
                 variant="outlined"
               >
-                {audioInputDevices.map(device => (
+                {devices.audioInputDevices.map(device => (
                   <MenuItem value={device.deviceId} key={device.deviceId}>
                     {device.label}
                   </MenuItem>
@@ -46,8 +48,10 @@ export default function AudioInputList() {
             <Typography>{localAudioTrack?.mediaStreamTrack.label || 'No Local Audio'}</Typography>
           )}
         </div>
-        <AudioLevelIndicator audioTrack={localAudioTrack} background="white" />
+        <AudioLevelIndicator propAudioTrack={localAudioTrack} background="white" />
       </Grid>
     </div>
   );
-}
+};
+
+export default observer(AudioInputList);

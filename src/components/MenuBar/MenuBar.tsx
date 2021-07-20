@@ -10,23 +10,17 @@ import Toolbar from '@material-ui/core/Toolbar';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import { Offline, Online } from 'react-detect-offline';
-import { TRACK_TYPE, NOTIFICATION_MESSAGE, ERROR_MESSAGE } from '../../utils/displayStrings';
-import { PARTICIPANT_TYPES } from '../../utils/rbac/ParticipantTypes';
+import { NOTIFICATION_MESSAGE, ERROR_MESSAGE, ROOM_STATE } from '../../utils/displayStrings';
+import { PARTICIPANT_TYPES as PARTICIPANT_ROLES } from '../../utils/rbac/ParticipantTypes';
 import LocalAudioLevelIndicator from './LocalAudioLevelIndicator/LocalAudioLevelIndicator';
 import ToggleFullscreenButton from './ToggleFullScreenButton/ToggleFullScreenButton';
 import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
-//import SettingsButton from './SettingsButton/SettingsButton';
 import Menu from './Menu/Menu';
-import useRoomState from '../../hooks/useRoomState/useRoomState';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import useIsHostIn from '../../hooks/useIsHostIn/useIsHostIn';
-import usePublishDataTrack from '../../hooks/useDataTrackPublisher/useDataTrackPublisher';
-import useDataTrackListener from '../../hooks/useDataTrackListener/useDataTrackListener';
-import { useAppState } from '../../hooks/useAppState/useAppState';
 import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
-// import { LogglyTracker } from 'react-native-loggly-jslogger';
-import moment from 'moment';
+import rootStore from '../../stores/rootStore';
+import { observer } from 'mobx-react-lite';
+import FloatingDebugInfo from './FloatingDebugInfo/FloatingDebugInfo';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';
 const RETRY_ROOM_MESSAGE = 'Retry Entering Hearing Room';
 const useStyles = makeStyles(theme =>
@@ -69,53 +63,20 @@ const useStyles = makeStyles(theme =>
     dialIn: {
       margin: 0,
     },
-    floatingDebugInfo: {
-      position: 'absolute',
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.2)',
-      color: 'rgba(255,255,255,0.4)',
-      fontSize: '10px',
-    },
   })
 );
 
-const getPartyTypes = () => {
-  return Object.values(PARTICIPANT_TYPES);
-};
-
-const FloatingDebugInfo = ({ time, subConferenceId, wrapperClass }) => (
-  <div className={wrapperClass}>
-    {time} - SC:{subConferenceId}
-  </div>
-);
-
-export default function MenuBar() {
+const MenuBar = () => {
   const classes = useStyles();
   const [submitButtonValue, setSubmitButtonValue] = useState<any>(JOIN_ROOM_MESSAGE);
-  const {
-    setError,
-    getToken,
-    isFetching,
-    authoriseParticipant,
-    setNotification,
-    isAutoRetryingToJoinRoom,
-    setWaitingNotification,
-    isConfigLoaded,
-    // logger,
-  } = useAppState();
-  const { isConnecting, connect, localTracks } = useVideoContext();
-  const roomState = useRoomState();
+  const { roomsStore, participantsStore } = rootStore;
+  const { isConnecting, config, isAutoRetryingToJoinRoom } = roomsStore;
+  const { isFetchingUserToken, participantInformation } = participantsStore;
 
-  const [participantInfo, setParticipantInfo] = useState<ParticipantInformation | null>(null);
   const [retryJoinRoomAttemptTimerId, setRetryJoinRoomAttemptTimerId] = useState<NodeJS.Timeout>(null as any);
   const RETRY_INTERVAL = 15000;
 
-  const { isHostIn, isReporterIn } = useIsHostIn();
-  const [isHostInState, setIsHostInState] = useState(isHostIn);
-  const [isReporterInState, setIsReporterInState] = useState(isReporterIn);
-  useDataTrackListener();
-  usePublishDataTrack(participantInfo);
+  const [isReporterInState, setIsReporterInState] = useState(participantsStore.isReporterIn);
 
   if (isAutoRetryingToJoinRoom === false) {
     clearTimeout(retryJoinRoomAttemptTimerId);
@@ -126,10 +87,10 @@ export default function MenuBar() {
 
     var response = null as any;
     try {
-      response = await getToken(participantInformation);
+      response = await participantsStore.getParticipantConferenceToken(participantInformation);
     } catch (err) {
-      if (err.response) setError({ message: err.response.data } as TwilioError);
-      else setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
+      if (err.response) roomsStore.setError({ message: err.response.data } as TwilioError);
+      else roomsStore.setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
       return;
@@ -138,79 +99,73 @@ export default function MenuBar() {
     if (response === NOTIFICATION_MESSAGE.ROOM_NOT_FOUND) {
       setSubmitButtonValue(RETRY_ROOM_MESSAGE);
       if (isAutoRetryingToJoinRoom) {
-        setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
+        roomsStore.setWaitingNotification(NOTIFICATION_MESSAGE.AUTO_RETRYING_TO_JOIN_ROOM);
         var timeoutObj: NodeJS.Timeout = setTimeout(() => {
           joinRoom(participantInformation);
         }, RETRY_INTERVAL);
         setRetryJoinRoomAttemptTimerId(timeoutObj);
       } else {
-        setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
+        roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.ROOM_NOT_FOUND });
       }
     } else {
-      setWaitingNotification(null);
-      await connect(response);
+      roomsStore.setWaitingNotification(null);
+      await roomsStore.joinRoom(response);
 
       setSubmitButtonValue(JOIN_ROOM_MESSAGE);
     }
   }
 
   useEffect(() => {
-    // Authorise participant
-    if (!isConfigLoaded) return;
-    (async () => {
-      if (participantInfo === null) {
-        const participantInformation: ParticipantInformation = await authoriseParticipant();
-
-        if (participantInformation && participantInformation.displayName !== '') {
-          setParticipantInfo(participantInformation);
-          /*logger.push({
-              browserType: detectBrowser(),
-              userAgent: navigator.userAgent,
-              participantInformation: participantInformation,
-            });*/
-        }
-      }
-    })();
-  }, [participantInfo, authoriseParticipant, isConfigLoaded]);
+    if (config.loaded) {
+      participantsStore.authoriseParticipant();
+    }
+  }, [participantsStore, config]);
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    joinRoom(participantInfo);
+    joinRoom(participantInformation);
   };
 
-  const audioTrack = localTracks.find(x => x.kind === TRACK_TYPE.AUDIO);
-  if (isHostIn !== isHostInState) {
-    if (isHostIn) {
-      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
-    } else {
-      audioTrack?.disable();
-      setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+  const isReporterIn = participantsStore.isReporterIn;
+
+  useEffect(() => {
+    if (!participantInformation?.role) {
+      return;
     }
-    setIsHostInState(isHostIn);
-  }
-  if (isReporterIn !== isReporterInState) {
-    if (!isReporterIn && participantInfo?.partyType === PARTICIPANT_TYPES.HEARING_OFFICER)
-      setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    if (isReporterIn === isReporterInState || roomsStore.currentRoomState !== ROOM_STATE.CONNECTED) return;
+
+    if (![PARTICIPANT_ROLES.HEARING_OFFICER, PARTICIPANT_ROLES.REPORTER].includes(participantInformation.role)) {
+      if (isReporterIn) {
+        roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_HAS_JOINED });
+      } else {
+        participantsStore.setLocalAudioTrackEnabled(false);
+        roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.WAITING_FOR_REPORTER });
+      }
+    }
+
+    if (participantInformation.role === PARTICIPANT_ROLES.HEARING_OFFICER) {
+      if (!isReporterIn) roomsStore.setNotification({ message: NOTIFICATION_MESSAGE.REPORTER_DROPPED_FROM_THE_CALL });
+    }
     setIsReporterInState(isReporterIn);
-  }
+  }, [participantInformation, participantsStore, isReporterIn, isReporterInState, roomsStore]);
 
   return (
     <AppBar className={classes.container} position="static">
       <Toolbar>
         <img src="/escribers-logo-transparent.png" height="64px" alt="eScribers" />
-        {roomState === 'disconnected' ? (
+        {roomsStore.currentRoomState === ROOM_STATE.DISCONNECTED ? (
           <form className={classes.form} onSubmit={handleSubmit}>
             <FormControl className={classes.textField}>
               <InputLabel>Party Type</InputLabel>
               <Select
                 data-cy="select"
-                label="Party Type"
-                value={participantInfo ? participantInfo.partyType : ''}
+                label="Role"
+                value={participantInformation ? participantInformation.role : ''}
                 margin="dense"
-                placeholder="Party Type"
+                placeholder="Role"
                 disabled={true}
               >
-                {getPartyTypes().map(type => (
+                {Object.values(PARTICIPANT_ROLES).map(type => (
                   <MenuItem key={type} value={type} data-cy="menu-item">
                     {type}
                   </MenuItem>
@@ -223,17 +178,16 @@ export default function MenuBar() {
               id="party-name"
               label="Party Name"
               className={classes.textField}
-              value={participantInfo ? participantInfo.displayName : ''}
+              value={participantInformation ? participantInformation.displayName : ''}
               margin="dense"
               disabled={true}
             />
-
             <TextField
               autoComplete="off"
               id="case-number"
               label="Case Number"
               className={classes.textField}
-              value={participantInfo ? participantInfo.caseReference : ''}
+              value={participantInformation ? participantInformation.caseReference : ''}
               margin="dense"
               disabled={true}
             />
@@ -243,7 +197,7 @@ export default function MenuBar() {
                 type="submit"
                 color="primary"
                 variant="contained"
-                disabled={isConnecting || !participantInfo || isFetching}
+                disabled={isConnecting || !participantInformation || isFetchingUserToken}
               >
                 {submitButtonValue}
               </Button>
@@ -253,11 +207,11 @@ export default function MenuBar() {
                 Offline
               </Button>
             </Offline>
-            {(isConnecting || isFetching) && <CircularProgress className={classes.loadingSpinner} />}
+            {(isConnecting || isFetchingUserToken) && <CircularProgress className={classes.loadingSpinner} />}
           </form>
         ) : (
           <h3 style={{ paddingLeft: '10px' }}>
-            Case Reference: {participantInfo ? participantInfo.caseReference : ''}
+            Case Reference: {participantInformation ? participantInformation.caseReference : ''}
           </h3>
         )}
         <div className={classes.rightButtonContainer}>
@@ -266,19 +220,14 @@ export default function MenuBar() {
             <span>+1 917 994 9780</span>
           </div>
           <ToggleGridViewButton />
-          {/* {!mobileAndTabletCheck() && (
-            <SettingsButton selectedAudioDevice={selectedAudioDevice} selectedVideoDevice={selectedVideoDevice} />
-          )} */}
           <LocalAudioLevelIndicator />
           <ToggleFullscreenButton />
           <Menu />
         </div>
       </Toolbar>
-      <FloatingDebugInfo
-        wrapperClass={classes.floatingDebugInfo}
-        time={moment().format()}
-        subConferenceId={participantInfo?.videoConferenceRoomName}
-      />
+      <FloatingDebugInfo />
     </AppBar>
   );
-}
+};
+
+export default observer(MenuBar);

@@ -82,5 +82,21 @@ export declare interface PreflightTest extends EventEmitter {
 }
 
 export interface INotification {
+  type?: 'error' | 'notification';
   message: string;
+  code?: number;
+  name?: string;
+}
+
+export interface IMuteRemoteParticipantMessage {
+  action: string;
+  participantSid: number;
+}
+
+export interface IConfig {
+  loading: boolean;
+  loaded: boolean;
+  endPoint: string | undefined;
+  environmentName: string | undefined;
+  domainName: string | undefined;
 }

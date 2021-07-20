@@ -1,70 +1,80 @@
-import { EventEmitter } from 'events';
 import React from 'react';
 import { shallow } from 'enzyme';
-import useScreenShareParticipant from '../../../hooks/useScreenShareParticipant/useScreenShareParticipant';
-import useScreenShareToggle from '../../../hooks/useScreenShareToggle/useScreenShareToggle';
-import useVideoContext from '../../../hooks/useVideoContext/useVideoContext';
+import { RootStore } from '../../../stores/makeStore';
+let rootStore = new RootStore();
+jest.mock('../../../stores/rootStore', () => rootStore);
 
+import useScreenShareToggle from '../../../hooks/useScreenShareToggle/useScreenShareToggle';
 import ToggleScreenShareButton, {
   SCREEN_SHARE_TEXT,
   STOP_SCREEN_SHARE_TEXT,
   SHARE_IN_PROGRESS_TEXT,
   SHARE_NOT_SUPPORTED_TEXT,
 } from './ToggleScreenShareButton';
+import { ROOM_STATE } from '../../../utils/displayStrings';
+import ScreenShare from '@material-ui/icons/ScreenShare';
+import { mockParticipant } from '../../../utils/mocks';
+import StopScreenShare from '@material-ui/icons/StopScreenShare';
 
 jest.mock('../../../hooks/useScreenShareToggle/useScreenShareToggle');
-jest.mock('../../../hooks/useScreenShareParticipant/useScreenShareParticipant');
-jest.mock('../../../hooks/useVideoContext/useVideoContext');
-
 const mockUseScreenShareToggle = useScreenShareToggle as jest.Mock<any>;
-const mockUseScreenShareParticipant = useScreenShareParticipant as jest.Mock<any>;
-const mockUseVideoContext = useVideoContext as jest.Mock<any>;
-
-mockUseVideoContext.mockImplementation(() => ({ room: new EventEmitter() }));
-
-Object.defineProperty(navigator, 'mediaDevices', {
-  value: {
-    getDisplayMedia: () => {},
-  },
-  configurable: true,
-});
 
 describe('the ToggleScreenShareButton component', () => {
-  //   it('should render correctly when screenSharing is allowed', () => {
-  //     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
-  //     const wrapper = shallow(<ToggleScreenShareButton />);
-  //     expect(wrapper.find('ScreenShareIcon').exists()).toBe(true);
-  //     expect(wrapper.prop('title')).toBe(SCREEN_SHARE_TEXT);
-  //   });
+  beforeEach(() => {
+    const newStore = new RootStore();
+    rootStore.participantsStore = newStore.participantsStore;
+    rootStore.roomsStore = newStore.roomsStore;
+  });
 
-  //   it('should render correctly when the user is sharing their screen', () => {
-  //     mockUseScreenShareToggle.mockImplementation(() => [true, () => {}]);
-  //     const wrapper = shallow(<ToggleScreenShareButton />);
-  //     expect(wrapper.find('StopScreenShareIcon').exists()).toBe(true);
-  //     expect(wrapper.prop('title')).toBe(STOP_SCREEN_SHARE_TEXT);
-  //   });
-
-  it('should render correctly when another user is sharing their screen', () => {
-    mockUseScreenShareParticipant.mockImplementation(() => 'mockParticipant');
+  it('should render correctly when screenSharing is allowed', () => {
+    rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
     mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
     const wrapper = shallow(<ToggleScreenShareButton />);
+    expect(wrapper.find(ScreenShare).exists()).toBe(true);
+    expect(wrapper.prop('title')).toBe(SCREEN_SHARE_TEXT);
+  });
+
+  it('should render correctly when the user is sharing their screen', () => {
+    mockUseScreenShareToggle.mockImplementation(() => [true, () => {}]);
+    rootStore.participantsStore.localParticipant.isSharingScreen = true;
+    const wrapper = shallow(<ToggleScreenShareButton />);
+    expect(wrapper.find(StopScreenShare).exists()).toBe(true);
+    expect(wrapper.prop('title')).toBe(STOP_SCREEN_SHARE_TEXT);
+  });
+
+  it('should render correctly when another user is sharing their screen', () => {
+    rootStore.roomsStore.currentRoom.state = ROOM_STATE.CONNECTED;
+    let participant = new mockParticipant('remote', 'Reporter', 2);
+    participant.tracks = new Map([[0, { trackName: 'screen' }]]);
+    rootStore.participantsStore.addParticipant(participant);
+
+    rootStore.participantsStore.setScreenSharingInProgress(true);
+
+    mockUseScreenShareToggle.mockImplementation(() => [false, () => {}]);
+    const wrapper = shallow(<ToggleScreenShareButton />);
+
     expect(wrapper.find('WithStyles(ForwardRef(Fab))').prop('disabled')).toBe(true);
     expect(wrapper.prop('title')).toBe(SHARE_IN_PROGRESS_TEXT);
   });
 
   it('should call the correct toggle function when clicked', () => {
     const mockFn = jest.fn();
-    mockUseScreenShareToggle.mockImplementation(() => [false, mockFn]);
+    jest.spyOn(rootStore.participantsStore.localParticipant, 'toggleScreenShare');
+    rootStore.participantsStore.localParticipant.toggleScreenShare = mockFn;
     const wrapper = shallow(<ToggleScreenShareButton />);
     wrapper.find('WithStyles(ForwardRef(Fab))').simulate('click');
     expect(mockFn).toHaveBeenCalled();
   });
 
-  //   it('should render the screenshare button with the correct messaging if screensharing is not supported', () => {
-  //     Object.defineProperty(navigator, 'mediaDevices', { value: { getDisplayMedia: undefined } });
-  //     const wrapper = shallow(<ToggleScreenShareButton />);
-  //     expect(wrapper.find('ScreenShareIcon').exists()).toBe(true);
-  //     expect(wrapper.find('WithStyles(ForwardRef(Fab))').prop('disabled')).toBe(true);
-  //     expect(wrapper.prop('title')).toBe(SHARE_NOT_SUPPORTED_TEXT);
-  //   });
+  it('should render the screenshare button with the correct messaging if screensharing is not supported', () => {
+    const mockFn = jest.fn();
+
+    Object.defineProperty(navigator, 'mediaDevices', { value: { getDisplayMedia: undefined } });
+    mockUseScreenShareToggle.mockImplementation(() => [false, mockFn]);
+
+    const wrapper = shallow(<ToggleScreenShareButton />);
+    expect(wrapper.find(ScreenShare).exists()).toBe(true);
+    expect(wrapper.find('WithStyles(ForwardRef(Fab))').prop('disabled')).toBe(true);
+    expect(wrapper.prop('title')).toBe(SHARE_NOT_SUPPORTED_TEXT);
+  });
 });

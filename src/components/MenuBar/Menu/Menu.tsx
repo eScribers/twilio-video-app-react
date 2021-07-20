@@ -5,9 +5,10 @@ import MenuContainer from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
-import MuteNonModerators from '../MuteNonModerators/MuteNonModerators';
+import rootStore from '../../../stores/rootStore';
 
-export default function Menu() {
+const Menu = () => {
+  const { participantsStore } = rootStore;
   const [aboutOpen, setAboutOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -21,9 +22,16 @@ export default function Menu() {
       <MenuContainer open={menuOpen} onClose={() => setMenuOpen(state => !state)} anchorEl={anchorRef.current}>
         <MenuItem onClick={() => setAboutOpen(true)}>About</MenuItem>
         <MenuItem onClick={() => setSettingsOpen(true)}>Settings</MenuItem>
-        <MuteNonModerators onClick={() => setMenuOpen(false)} />
-        {/* TODO - check if Twilio repository do the same function (handleSignOut) when the end call called  */}
-        {/* {user && <MenuItem onClick={handleSignOut}>Logout</MenuItem>} */}
+        {!participantsStore.muteableParticipants.length ? null : (
+          <MenuItem
+            onClick={() => {
+              participantsStore.muteAllNoneModerators();
+              setMenuOpen(false);
+            }}
+          >
+            Mute non-moderators
+          </MenuItem>
+        )}
       </MenuContainer>
       <AboutDialog
         open={aboutOpen}
@@ -41,4 +49,6 @@ export default function Menu() {
       />
     </div>
   );
-}
+};
+
+export default Menu;

@@ -1,13 +1,16 @@
+import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'react';
 import { AudioTrack as IAudioTrack } from 'twilio-video';
-import { useAppState } from '../../hooks/useAppState/useAppState';
+import rootStore from '../../stores/rootStore';
 
 interface AudioTrackProps {
   track: IAudioTrack;
 }
 
-export default function AudioTrack({ track }: AudioTrackProps) {
-  const { activeSinkId } = useAppState();
+const AudioTrack = ({ track }: AudioTrackProps) => {
+  const { roomsStore } = rootStore;
+  const { activeSinkId } = roomsStore;
+
   const audioEl = useRef<HTMLAudioElement>();
 
   useEffect(() => {
@@ -23,4 +26,6 @@ export default function AudioTrack({ track }: AudioTrackProps) {
   }, [activeSinkId]);
 
   return null;
-}
+};
+
+export default observer(AudioTrack);

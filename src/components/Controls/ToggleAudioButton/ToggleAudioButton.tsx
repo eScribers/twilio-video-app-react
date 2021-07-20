@@ -4,7 +4,10 @@ import Fab from '@material-ui/core/Fab';
 import Mic from '@material-ui/icons/Mic';
 import MicOff from '@material-ui/icons/MicOff';
 import Tooltip from '@material-ui/core/Tooltip';
-import useLocalAudioToggle from '../../../hooks/useLocalAudioToggle/useLocalAudioToggle';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../stores/rootStore';
+import useIsTrackEnabled from '../../../hooks/useIsTrackEnabled/useIsTrackEnabled';
+import { LocalAudioTrack, RemoteAudioTrack } from 'twilio-video';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -14,16 +17,26 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-export default function ToggleAudioButton(props: { disabled?: boolean }) {
+const ToggleAudioButton = observer((props: { disabled?: boolean }) => {
   const classes = useStyles();
-  let [isAudioEnabled, toggleAudioEnabled] = useLocalAudioToggle();
+  const { participantsStore } = rootStore;
+
+  const isAudioEnabled = useIsTrackEnabled(participantsStore.localAudioTrack as LocalAudioTrack | RemoteAudioTrack);
+
   return (
     <Tooltip title={isAudioEnabled ? 'Mute' : 'Unmute'} placement="top" PopperProps={{ disablePortal: true }}>
       <span>
-        <Fab className={classes.fab} onClick={toggleAudioEnabled} disabled={props.disabled} data-cy-audio-toggle>
+        <Fab
+          className={classes.fab}
+          onClick={() => participantsStore.toggleAudioEnabled()}
+          disabled={props.disabled}
+          data-cy-audio-toggle
+        >
           {isAudioEnabled ? <Mic /> : <MicOff />}
         </Fab>
       </span>
     </Tooltip>
   );
-}
+});
+
+export default ToggleAudioButton;

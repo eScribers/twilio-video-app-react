@@ -2,7 +2,8 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { render, fireEvent } from '@testing-library/react';
 import useFullScreenToggle from '../../../hooks/useFullScreenToggle/useFullScreenToggle';
-
+import FullscreenIcon from '@material-ui/icons/Fullscreen';
+import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import ToggleFullscreenButton from './ToggleFullScreenButton';
 
 jest.mock('../../../hooks/useFullScreenToggle/useFullScreenToggle');
@@ -18,17 +19,17 @@ describe('Full screen button', () => {
     expect(toggleFullScreen).toHaveBeenCalled();
   });
 
-  // it('should render FullscreenExitIcon when the page is in full screen mode', () => {
-  //   mockeduseFullScreenToggle.mockImplementation(() => [true, toggleFullScreen]);
-  //   const wrapper = shallow(<ToggleFullscreenButton />);
-  //   expect(wrapper.find('FullscreenExitIcon').exists()).toBe(true);
-  // });
+  it('should render FullscreenExitIcon when the page is in full screen mode', () => {
+    mockeduseFullScreenToggle.mockImplementation(() => [true, toggleFullScreen]);
+    const wrapper = shallow(<ToggleFullscreenButton />);
+    expect(wrapper.find(FullscreenExitIcon).exists()).toBe(true);
+  });
 
-  // it('should render FullscreenIcon when the page is not in full screen mode', () => {
-  //   mockeduseFullScreenToggle.mockImplementation(() => [false, toggleFullScreen]);
-  //   const wrapper = shallow(<ToggleFullscreenButton />);
-  //   expect(wrapper.find('FullscreenIcon').exists()).toBe(true);
-  // });
+  it('should render FullscreenIcon when the page is not in full screen mode', () => {
+    mockeduseFullScreenToggle.mockImplementation(() => [false, toggleFullScreen]);
+    const wrapper = shallow(<ToggleFullscreenButton />);
+    expect(wrapper.find(FullscreenIcon).exists()).toBe(true);
+  });
 
   it('should not render when Fullscreen API is not supported', () => {
     // @ts-ignore

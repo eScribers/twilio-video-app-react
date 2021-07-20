@@ -2,6 +2,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import VideoTrack from './VideoTrack';
 import useVideoTrackDimensions from '../../hooks/useVideoTrackDimensions/useVideoTrackDimensions';
+import { act } from 'react-dom/test-utils';
 
 jest.mock('../../hooks/useMediaStreamTrack/useMediaStreamTrack');
 
@@ -10,15 +11,18 @@ const mockUseVideoTrackDimensions = useVideoTrackDimensions as jest.Mock<any>;
 mockUseVideoTrackDimensions.mockImplementation(() => ({ width: 200, height: 100 }));
 
 describe('the VideoTrack component', () => {
-  const mockTrack = {
-    attach: jest.fn(),
-    detach: jest.fn(),
-    setPriority: jest.fn(),
-    mediaStreamTrack: { getSettings: () => ({}) },
-    name: 'camera',
-  } as any;
+  let mockTrack: any;
 
-  afterEach(jest.clearAllMocks);
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockTrack = {
+      attach: jest.fn(),
+      detach: jest.fn(),
+      setPriority: jest.fn(),
+      mediaStreamTrack: { getSettings: () => ({}) },
+      name: 'camera',
+    };
+  });
 
   it('should call the attach method when the component mounts', () => {
     render(<VideoTrack track={mockTrack} />);
@@ -46,7 +50,9 @@ describe('the VideoTrack component', () => {
   });
   it('it should call the detach method when the component unmounts', () => {
     const { unmount } = render(<VideoTrack track={mockTrack} />);
-    unmount();
+    act(() => {
+      unmount();
+    });
     expect(mockTrack.detach).toHaveBeenCalledWith(expect.any(window.HTMLVideoElement));
   });
 
@@ -90,13 +96,18 @@ describe('the VideoTrack component', () => {
   it('should set the track priority to "null" when it is unmounted', () => {
     const { unmount } = render(<VideoTrack track={mockTrack} priority="high" />);
     expect(mockTrack.setPriority).toHaveBeenCalledWith('high');
-    unmount();
+    act(() => {
+      unmount();
+    });
     expect(mockTrack.setPriority).toHaveBeenCalledWith(null);
   });
 
-  it('should not set the track priority on mount or unmount when no priority is specified', () => {
+  it('should not set the track priority on mount or unmount when no priority is specified', async () => {
     const { unmount } = render(<VideoTrack track={mockTrack} />);
-    unmount();
+    act(() => {
+      unmount();
+    });
+    // await flushPromise()
     expect(mockTrack.setPriority).not.toHaveBeenCalled();
   });
 });

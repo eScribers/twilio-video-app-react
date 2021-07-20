@@ -1,22 +1,24 @@
 import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
-import { useAppState } from '../../../../hooks/useAppState/useAppState';
-import useDevices from '../../../../hooks/useDevices/useDevices';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../../../stores/rootStore';
 
-export default function AudioOutputList() {
-  const { audioOutputDevices } = useDevices();
-  const { activeSinkId, setActiveSinkId } = useAppState();
-  const activeOutputLabel = audioOutputDevices.find(device => device.deviceId === activeSinkId)?.label;
+const AudioOutputList = () => {
+  const { participantsStore, roomsStore } = rootStore;
+  const { activeSinkId, setActiveSinkId } = roomsStore;
+  const activeOutputLabel = participantsStore.devices.audioOutputDevices.find(
+    device => device.deviceId === activeSinkId
+  )?.label;
 
   return (
     <div className="inputSelect">
-      {audioOutputDevices.length > 1 ? (
+      {participantsStore.devices.audioOutputDevices.length > 1 ? (
         <FormControl fullWidth>
           <Typography variant="subtitle2" gutterBottom>
             Audio Output
           </Typography>
           <Select onChange={e => setActiveSinkId(e.target.value as string)} value={activeSinkId} variant="outlined">
-            {audioOutputDevices.map(device => (
+            {participantsStore.devices.audioOutputDevices.map(device => (
               <MenuItem value={device.deviceId} key={device.deviceId}>
                 {device.label}
               </MenuItem>
@@ -31,4 +33,6 @@ export default function AudioOutputList() {
       )}
     </div>
   );
-}
+};
+
+export default observer(AudioOutputList);

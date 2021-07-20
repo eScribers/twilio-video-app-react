@@ -8,7 +8,7 @@ exports[`the ToggleGridViewButton should render correctly 1`] = `
   <WithStyles(ForwardRef(IconButton))
     onClick={[Function]}
   >
-    <Memo([object Object]) />
+    <Memo(ForwardRef(GridOnIcon)) />
   </WithStyles(ForwardRef(IconButton))>
 </WithStyles(ForwardRef(Tooltip))>
 `;

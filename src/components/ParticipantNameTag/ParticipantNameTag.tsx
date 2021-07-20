@@ -2,7 +2,9 @@ import React from 'react';
 import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import { Participant } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
-import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores/rootStore';
+import { LocalParticipant } from 'twilio-video';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -16,24 +18,25 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 interface IParticipantNameTag {
-  participant: Participant;
+  participant: Participant | LocalParticipant;
 }
 
-export const ParticipantNameTag = ({ participant }: IParticipantNameTag) => {
+export const ParticipantNameTag = observer(({ participant }: IParticipantNameTag) => {
   const classes = useStyles();
-  const {
-    room: { localParticipant },
-  } = useVideoContext();
+  const { participantsStore } = rootStore;
+  // const {
+  //   room: { localParticipant },
+  // } = useVideoContext();
 
-  const isLocalParticipant = participant === localParticipant;
-  const { partyType, isRegisteredUser, partyName } = ParticipantIdentity.Parse(participant.identity);
+  const isLocalParticipant = participant.identity === participantsStore.localParticipant?.participant?.identity;
+  const { role, isRegisteredUser, partyName } = ParticipantIdentity.Parse(participant.identity);
 
   return (
     <Typography variant="body1" className={classes.typeography} component="span">
-      {partyType}
+      {role}
       {partyName && ` - ${partyName}`}
       {isRegisteredUser ? ' *' : null}
       {isLocalParticipant && ' (You)'}
     </Typography>
   );
-};
+});

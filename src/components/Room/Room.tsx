@@ -3,7 +3,8 @@ import ParticipantStripCollaboration from '../ParticipantStrip/ParticipantStripC
 import ParticipantGrid from '../ParticipantStrip/ParticipantGrid/ParticipantGrid';
 import { styled } from '@material-ui/core/styles';
 import MainParticipant from '../MainParticipant/MainParticipant';
-import { useAppState } from '../../hooks/useAppState/useAppState';
+import { observer } from 'mobx-react-lite';
+import rootStore from '../../stores/rootStore';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -20,8 +21,9 @@ const Container = styled('div')(({ theme }) => ({
   },
 }));
 
-export default function Room() {
-  const { settings } = useAppState();
+const Room = () => {
+  const { roomsStore } = rootStore;
+  const { settings } = roomsStore;
 
   if (settings.viewMode.includes('grid')) {
     return <ParticipantGrid viewMode={settings.viewMode} />;
@@ -33,4 +35,6 @@ export default function Room() {
       <MainParticipant />
     </Container>
   );
-}
+};
+
+export default observer(Room);

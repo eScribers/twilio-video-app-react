@@ -19,35 +19,43 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
       <WithStyles(ForwardRef(Paper))
         className="makeStyles-paper-2"
       >
-        <Participant
+        <Memo(wrappedComponent)
           isSelected={false}
-          onClick={[Function]}
-          participant={Object {}}
-        />
-      </WithStyles(ForwardRef(Paper))>
-    </WithStyles(ForwardRef(Grid))>
-    <WithStyles(ForwardRef(Grid))
-      item={true}
-      key="0"
-      lg={3}
-      md={4}
-      sm={6}
-      xs={12}
-    >
-      <WithStyles(ForwardRef(Paper))
-        className="makeStyles-paper-2"
-      >
-        <Participant
-          isDominantSpeaker={true}
-          isSelected={false}
-          key="0"
           onClick={[Function]}
           participant={
             Object {
-              "sid": 0,
+              "addListener": [Function],
+              "audioTracks": Map {},
+              "dataTracks": Map {},
+              "emit": [Function],
+              "eventNames": [Function],
+              "getMaxListeners": [Function],
+              "identity": "local@Reporter@1",
+              "listenerCount": [Function],
+              "listeners": [Function],
+              "networkQualityLevel": null,
+              "networkQualityStats": null,
+              "off": [Function],
+              "once": [Function],
+              "prependListener": [Function],
+              "prependOnceListener": [Function],
+              "publishTrack": [Function],
+              "publishTracks": [Function],
+              "rawListeners": [Function],
+              "removeAllListeners": [Function],
+              "removeListener": [Function],
+              "setMaxListeners": [Function],
+              "setNetworkQualityConfiguration": [Function],
+              "setParameters": [Function],
+              "sid": "123",
+              "signalingRegion": "todo",
+              "state": "todo",
+              "tracks": Map {},
+              "unpublishTrack": [Function],
+              "unpublishTracks": [Function],
+              "videoTracks": Map {},
             }
           }
-          userIsSilenced={false}
         />
       </WithStyles(ForwardRef(Paper))>
     </WithStyles(ForwardRef(Grid))>
@@ -62,14 +70,83 @@ exports[`the ParticipantStrip component should correctly render ParticipantInfo 
       <WithStyles(ForwardRef(Paper))
         className="makeStyles-paper-2"
       >
-        <Participant
-          isDominantSpeaker={true}
+        <Memo(wrappedComponent)
+          isDominantSpeaker={false}
           isSelected={false}
           key="1"
           onClick={[Function]}
           participant={
-            Object {
+            mockParticipant {
+              "addListener": [Function],
+              "audioTracks": Map {},
+              "dataTracks": Map {},
+              "emit": [Function],
+              "eventNames": [Function],
+              "getMaxListeners": [Function],
+              "identity": "participant1@Reporter@1",
+              "listenerCount": [Function],
+              "listeners": [Function],
+              "networkQualityLevel": null,
+              "networkQualityStats": null,
+              "off": [Function],
+              "once": [Function],
+              "prependListener": [Function],
+              "prependOnceListener": [Function],
+              "rawListeners": [Function],
+              "removeAllListeners": [Function],
+              "removeListener": [Function],
+              "setMaxListeners": [Function],
               "sid": 1,
+              "state": "todo",
+              "tracks": Map {},
+              "videoTracks": Map {},
+            }
+          }
+          userIsSilenced={false}
+        />
+      </WithStyles(ForwardRef(Paper))>
+    </WithStyles(ForwardRef(Grid))>
+    <WithStyles(ForwardRef(Grid))
+      item={true}
+      key="2"
+      lg={3}
+      md={4}
+      sm={6}
+      xs={12}
+    >
+      <WithStyles(ForwardRef(Paper))
+        className="makeStyles-paper-2"
+      >
+        <Memo(wrappedComponent)
+          isDominantSpeaker={false}
+          isSelected={false}
+          key="2"
+          onClick={[Function]}
+          participant={
+            mockParticipant {
+              "addListener": [Function],
+              "audioTracks": Map {},
+              "dataTracks": Map {},
+              "emit": [Function],
+              "eventNames": [Function],
+              "getMaxListeners": [Function],
+              "identity": "participant2@Reporter@2",
+              "listenerCount": [Function],
+              "listeners": [Function],
+              "networkQualityLevel": null,
+              "networkQualityStats": null,
+              "off": [Function],
+              "once": [Function],
+              "prependListener": [Function],
+              "prependOnceListener": [Function],
+              "rawListeners": [Function],
+              "removeAllListeners": [Function],
+              "removeListener": [Function],
+              "setMaxListeners": [Function],
+              "sid": 2,
+              "state": "todo",
+              "tracks": Map {},
+              "videoTracks": Map {},
             }
           }
           userIsSilenced={false}

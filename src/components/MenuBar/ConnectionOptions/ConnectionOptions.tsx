@@ -12,11 +12,13 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { inputLabels, Settings } from '../../../state/settings/settingsReducer';
-import { RenderDimensions } from '../../../state/settings/renderDimensions';
-import useRoomState from '../../../hooks/useRoomState/useRoomState';
 import useWindowSize from '../../../hooks/useWindowSize/useWindowSize';
-import { useAppState } from '../../../hooks/useAppState/useAppState';
+import rootStore from '../../../stores/rootStore';
+import { observer } from 'mobx-react-lite';
+import { ROOM_STATE } from '../../../utils/displayStrings';
+import { Settings, SettingsKeys } from '../../../types/settings';
+import { RenderDimensions } from '../../../utils/renderDimensions';
+import { initialSettings } from '../../../stores/roomsStore';
 
 const useStyles = makeStyles({
   formControl: {
@@ -39,21 +41,31 @@ const RenderDimensionItems = RenderDimensions.map(({ label, value }) => (
   </MenuItem>
 ));
 
-export default function ConnectionOptions({ className, hidden }: { className?: string; hidden?: boolean }) {
+const inputLabels = (() => {
+  const target: any = {};
+  for (const setting in initialSettings) {
+    target[setting] = setting as SettingsKeys;
+  }
+  return target as { [key in SettingsKeys]: string };
+})();
+
+const ConnectionOptions = observer(({ className, hidden }: { className?: string; hidden?: boolean }) => {
   const classes = useStyles();
-  const { settings, dispatchSetting } = useAppState();
-  const roomState = useRoomState();
-  const isDisabled = roomState !== 'disconnected';
+  const { roomsStore } = rootStore;
+  const { settings } = roomsStore;
+
+  const isDisabled = roomsStore.currentRoomState !== ROOM_STATE.DISCONNECTED;
   const { width } = useWindowSize();
 
   const onlyCollaboration = width && width < 768;
 
   const handleChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
-      dispatchSetting({ name: e.target.name as keyof Settings, value: e.target.value as string });
+      roomsStore.setSetting(e.target.name as keyof Settings, e.target.value as string);
     },
-    [dispatchSetting]
+    [roomsStore]
   );
+
   const handleNumberChange = useCallback(
     (e: React.ChangeEvent<{ value: unknown; name?: string }>) => {
       if (!/[^\d]/.test(e.target.value as string)) handleChange(e);
@@ -221,4 +233,6 @@ export default function ConnectionOptions({ className, hidden }: { className?: s
       </div>
     </DialogContent>
   );
-}
+});
+
+export default ConnectionOptions;
