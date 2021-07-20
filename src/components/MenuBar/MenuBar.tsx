@@ -87,7 +87,7 @@ const MenuBar = () => {
 
     var response = null as any;
     try {
-      response = await participantsStore.getToken(participantInformation);
+      response = await participantsStore.getParticipantConferenceToken(participantInformation);
     } catch (err) {
       if (err.response) roomsStore.setError({ message: err.response.data } as TwilioError);
       else roomsStore.setError({ message: ERROR_MESSAGE.NETWORK_ERROR } as TwilioError);

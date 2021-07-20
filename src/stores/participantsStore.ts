@@ -62,7 +62,6 @@ class participantsStore {
       await this.getDevices();
       this.toggleVideoEnabled();
       this.toggleAudioEnabled();
-      this.addDataTrack();
     })();
 
     navigator.mediaDevices?.addEventListener('devicechange', () => {
@@ -228,13 +227,6 @@ class participantsStore {
     return;
   }
 
-  addDataTrack() {
-    // let localDataTrackOptions = {} as LocalDataTrackOptions;
-    // localDataTrackOptions.maxRetransmits = 3;
-    // localDataTrackOptions.ordered = true;
-    // this.localDataTrack = new LocalDataTrack(localDataTrackOptions);
-  }
-
   setDominantSpeaker(participant: string | null) {
     this.dominantSpeaker = participant;
     if (participant === null) return;
@@ -355,7 +347,7 @@ class participantsStore {
     this.isFetchingUserToken = state;
   }
 
-  async getToken(participantInformation: ParticipantInformation) {
+  async getParticipantConferenceToken(participantInformation: ParticipantInformation) {
     if (!this.rootStore.roomsStore.config.loaded) return null;
     try {
       this.setIsFetchingToken(true);
@@ -391,7 +383,7 @@ class participantsStore {
 
       return user.twilioToken;
     } catch (err) {
-      console.log('error occured on getToken: ' + JSON.stringify(err));
+      console.log('error occured on getParticipantConferenceToken: ' + JSON.stringify(err));
       return '';
     }
   }

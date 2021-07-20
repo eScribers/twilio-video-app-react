@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom/extend-expect';
 
-const mockGetToken = jest.fn(() => Promise.resolve('mockToken'));
+const mockgetParticipantConferenceToken = jest.fn(() => Promise.resolve('mockToken'));
 
 jest.mock('../../hooks/useVideoContext/useVideoContext');
 jest.mock('react-alert');
@@ -137,7 +137,7 @@ describe('the MenuBar component', () => {
   //   expect(window.history.replaceState).not.toHaveBeenCalled();
   // });
 
-  // it('should call getToken() and connect() on submit', done => {
+  // it('should call getParticipantConferenceToken() and connect() on submit', done => {
   //   mockedUseRoomState.mockImplementation(() => 'disconnected');
   //   mockedUseVideoContext.mockImplementation(
   //     () => ({ isConnecting: false, connect: mockConnect, room: {}, localTracks: [] } as any)
@@ -147,7 +147,7 @@ describe('the MenuBar component', () => {
   //   fireEvent.change(getByLabelText('Party Name'), { target: { value: 'PartyName' } });
   //   fireEvent.change(getByLabelText('Party Type'), { target: { value: 'PartyType' } });
   //   fireEvent.click(getByText('Join Room').parentElement!);
-  //   expect(mockGetToken).toHaveBeenCalledWith('CaseNumber', 'PartyName','PartyType');
+  //   expect(mockgetParticipantConferenceToken).toHaveBeenCalledWith('CaseNumber', 'PartyName','PartyType');
   //   setImmediate(() => {
   //     expect(mockConnect).toHaveBeenCalledWith('mockToken');
   //     done();
