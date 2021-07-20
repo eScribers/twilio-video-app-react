@@ -4,7 +4,7 @@ import { makeStyles, Theme, Typography } from '@material-ui/core';
 import { LocalVideoTrack } from 'twilio-video';
 import VideoTrack from '../VideoTrack/VideoTrack';
 import LocalAudioLevelIndicator from '../MenuBar/LocalAudioLevelIndicator/LocalAudioLevelIndicator';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles((theme: Theme) => ({

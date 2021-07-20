@@ -1,6 +1,6 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { ParticipantNameTag } from './ParticipantNameTag';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
 

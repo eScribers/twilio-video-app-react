@@ -8,7 +8,7 @@ import roleChecker from '../../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
 import { ParticipantIdentity } from '../../../utils/participantIdentity';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 interface ParticipantDropDownProps {
   localParticipantType: string;
   participant: Participant;

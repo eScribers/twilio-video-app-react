@@ -5,7 +5,7 @@ import Paper from '@material-ui/core/Paper';
 import { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Participant from '../../Participant/Participant';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 
 const useStyles = makeStyles(theme => ({
   root: {

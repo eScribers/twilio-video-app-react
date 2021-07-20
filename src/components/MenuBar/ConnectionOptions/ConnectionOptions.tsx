@@ -13,7 +13,7 @@ import {
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import useWindowSize from '../../../hooks/useWindowSize/useWindowSize';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import { observer } from 'mobx-react-lite';
 import { ROOM_STATE } from '../../../utils/displayStrings';
 import { Settings, SettingsKeys } from '../../../types/settings';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 import ToggleAudioButton from './ToggleAudioButton';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import MicOff from '@material-ui/icons/MicOff';
 import Mic from '@material-ui/icons/Mic';
 import { MockTrack } from '../../../__mocks__/twilio-video';

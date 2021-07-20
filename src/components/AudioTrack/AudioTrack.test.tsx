@@ -4,7 +4,7 @@ import { render } from '@testing-library/react';
 import AudioTrack from './AudioTrack';
 import { act } from 'react-dom/test-utils';
 
-jest.mock('../../stores', () => {
+jest.mock('../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

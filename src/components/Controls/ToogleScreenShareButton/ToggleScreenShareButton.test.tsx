@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { RootStore } from '../../../stores/makeStore';
 let rootStore = new RootStore();
-jest.mock('../../../stores', () => rootStore);
+jest.mock('../../../stores/rootStore', () => rootStore);
 
 import useScreenShareToggle from '../../../hooks/useScreenShareToggle/useScreenShareToggle';
 import ToggleScreenShareButton, {

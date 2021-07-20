@@ -2,7 +2,7 @@ import React from 'react';
 import { observer } from 'mobx-react-lite';
 import { styled } from '@material-ui/core/styles';
 import Participant from '../../Participant/Participant';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 
 const Container = styled('aside')(({ theme }) => ({
   padding: '0.5em',

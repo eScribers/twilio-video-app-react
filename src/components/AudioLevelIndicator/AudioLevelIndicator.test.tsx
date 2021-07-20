@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import AudioLevelIndicator from './AudioLevelIndicator';
 import MicOff from '@material-ui/icons/MicOff';
 import useVideoContext from '../../hooks/useVideoContext/useVideoContext';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { MockTrack } from '../../__mocks__/twilio-video';
 jest.mock('../../hooks/useVideoContext/useVideoContext');
 

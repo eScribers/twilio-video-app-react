@@ -4,7 +4,7 @@ import CallEnd from '@material-ui/icons/CallEnd';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import roleChecker from '../../../utils/rbac/roleChecker';
 import { ROLE_PERMISSIONS } from '../../../utils/rbac/rolePermissions';
 import { Dialog } from '@material-ui/core';

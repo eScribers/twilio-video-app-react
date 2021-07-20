@@ -6,7 +6,7 @@ import rootStore, { RootStore } from '../../../../stores/makeStore';
 import { LocalAudioTrack } from 'twilio-video';
 import AudioInputList from './AudioInputList';
 
-jest.mock('../../../../stores', () => {
+jest.mock('../../../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

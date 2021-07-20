@@ -1,7 +1,7 @@
 import rootStore, { RootStore } from '../../stores/makeStore';
 import { Settings } from '../../types/settings';
 
-jest.mock('../../stores', () => {
+jest.mock('../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

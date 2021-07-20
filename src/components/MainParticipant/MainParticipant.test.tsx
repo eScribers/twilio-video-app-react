@@ -3,7 +3,7 @@ import MainParticipant from './MainParticipant';
 import ParticipantTracks from '../ParticipantTracks/ParticipantTracks';
 import { shallow } from 'enzyme';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 const localParticipant = new mockLocalParticipant('local', 'Reporter', 1);
 

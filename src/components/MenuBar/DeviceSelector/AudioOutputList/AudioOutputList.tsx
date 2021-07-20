@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormControl, MenuItem, Typography, Select } from '@material-ui/core';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../../stores';
+import rootStore from '../../../../stores/rootStore';
 
 const AudioOutputList = () => {
   const { participantsStore, roomsStore } = rootStore;

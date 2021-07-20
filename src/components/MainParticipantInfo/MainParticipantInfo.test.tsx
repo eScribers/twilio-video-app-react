@@ -7,7 +7,7 @@ import usePublications from '../../hooks/usePublications/usePublications';
 import useTrack from '../../hooks/useTrack/useTrack';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import { mockLocalParticipant, mockParticipant } from '../../utils/mocks';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 jest.mock('../../hooks/usePublications/usePublications');
 jest.mock('../../hooks/useIsTrackSwitchedOff/useIsTrackSwitchedOff');

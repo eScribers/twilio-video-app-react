@@ -8,7 +8,7 @@ describe('the useRoomState hook', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     unmountRoom && unmountRoom();
-    jest.mock('../../stores', () => {
+    jest.mock('../../stores/rootStore', () => {
       return {
         __esModule: true, // this property makes it work
         default: rootStore,
@@ -59,7 +59,7 @@ describe('the useRoomState hook', () => {
   });
 
   it('tear down old listeners when receiving a new room', async () => {
-    rootStore = require('../../stores').default;
+    rootStore = require('../../stores/rootStore').default;
     await act(async () => {
       unmountRoom = await rootStore.roomsStore.joinRoom('');
     });

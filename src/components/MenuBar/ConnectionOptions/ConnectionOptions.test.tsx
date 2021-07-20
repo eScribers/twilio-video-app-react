@@ -5,7 +5,7 @@ import { shallow } from 'enzyme';
 import ConnectionOptions from './ConnectionOptions';
 import { ROOM_STATE } from '../../../utils/displayStrings';
 
-jest.mock('../../../stores', () => {
+jest.mock('../../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

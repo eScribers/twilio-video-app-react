@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { Base64 } from 'js-base64';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 interface IMessageText {
   defaultMessage?: string;

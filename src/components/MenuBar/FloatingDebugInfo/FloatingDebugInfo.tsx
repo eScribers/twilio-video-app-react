@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, makeStyles } from '@material-ui/core';
 import moment from 'moment';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles(theme =>

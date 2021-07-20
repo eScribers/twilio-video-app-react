@@ -2,7 +2,7 @@ import React from 'react';
 import MainParticipantInfo from '../MainParticipantInfo/MainParticipantInfo';
 import ParticipantTracks from '../ParticipantTracks/ParticipantTracks';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { Track } from 'twilio-video';
 
 const MainParticipant = () => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import Fab from '@material-ui/core/Fab';
 import ScreenShare from '@material-ui/icons/ScreenShare';
 import StopScreenShare from '@material-ui/icons/StopScreenShare';

@@ -18,7 +18,7 @@ import ToggleGridViewButton from './ToggleGridViewButton/ToggleGridViewButton';
 import Menu from './Menu/Menu';
 import { ParticipantInformation } from '../../types/participantInformation';
 import { TwilioError } from 'twilio-video';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { observer } from 'mobx-react-lite';
 import FloatingDebugInfo from './FloatingDebugInfo/FloatingDebugInfo';
 const JOIN_ROOM_MESSAGE = 'Enter Hearing Room';

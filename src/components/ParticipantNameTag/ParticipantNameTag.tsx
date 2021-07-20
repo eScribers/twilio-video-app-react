@@ -3,7 +3,7 @@ import { createStyles, makeStyles, Theme, Typography } from '@material-ui/core';
 import { Participant } from 'twilio-video';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { LocalParticipant } from 'twilio-video';
 
 const useStyles = makeStyles((theme: Theme) =>

@@ -2,7 +2,7 @@ import React from 'react';
 import { mount } from 'enzyme';
 import { Base64 } from 'js-base64';
 import MessageText from './MessageText';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 describe('the MenuBar component', () => {
   it('should pop a message on load', () => {

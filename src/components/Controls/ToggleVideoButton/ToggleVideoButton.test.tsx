@@ -4,7 +4,7 @@ import VideocamOff from '@material-ui/icons/VideocamOff';
 import Videocam from '@material-ui/icons/Videocam';
 
 import ToggleVideoButton from './ToggleVideoButton';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import { sleep } from '../../../utils';
 import { LocalVideoTrack } from 'twilio-video';
 

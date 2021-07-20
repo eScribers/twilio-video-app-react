@@ -3,7 +3,7 @@ import rootStore, { RootStore } from '../../../../stores/makeStore';
 import AudioOutputList from './AudioOutputList';
 import { Select, Typography } from '@material-ui/core';
 import { shallow } from 'enzyme';
-jest.mock('../../../../stores', () => {
+jest.mock('../../../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

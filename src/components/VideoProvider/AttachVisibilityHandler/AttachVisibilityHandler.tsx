@@ -1,7 +1,7 @@
 import { isMobile } from '../../../utils';
 import { useEffect, useRef } from 'react';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 
 /* 
   This component adds a visibilitychange handler to the document when

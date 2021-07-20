@@ -5,7 +5,7 @@ import AvatarIcon from '../../icons/AvatarIcon';
 import { LocalVideoTrack } from 'twilio-video';
 import LocalVideoPreview from './LocalVideoPreview';
 
-jest.mock('../../stores', () => {
+jest.mock('../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

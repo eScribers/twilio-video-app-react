@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import VideoTrack from '../../../VideoTrack/VideoTrack';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../../stores';
+import rootStore from '../../../../stores/rootStore';
 
 const useStyles = makeStyles({
   preview: {

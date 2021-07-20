@@ -5,7 +5,7 @@ import MenuContainer from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreIcon from '@material-ui/icons/MoreVert';
 import SettingsDialog from '../SettingsDialog/SettingsDialog';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 
 const Menu = () => {
   const { participantsStore } = rootStore;

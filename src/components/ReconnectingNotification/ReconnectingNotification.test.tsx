@@ -4,7 +4,7 @@ import ReconnectingNotification from './ReconnectingNotification';
 import { shallow } from 'enzyme';
 import { ROOM_STATE } from '../../utils/displayStrings';
 
-jest.mock('../../stores', () => {
+jest.mock('../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

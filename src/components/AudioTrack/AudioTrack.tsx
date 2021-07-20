@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { useEffect, useRef } from 'react';
 import { AudioTrack as IAudioTrack } from 'twilio-video';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 interface AudioTrackProps {
   track: IAudioTrack;

@@ -6,7 +6,7 @@ import { mockLocalParticipant, mockParticipant } from '../../../utils/mocks';
 import { act } from '@testing-library/react';
 import Participant from '../../Participant/Participant';
 
-jest.mock('../../../stores', () => {
+jest.mock('../../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

@@ -2,7 +2,7 @@ import React from 'react';
 import AttachVisibilityHandler from './AttachVisibilityHandler';
 import { render } from '@testing-library/react';
 import * as utils from '../../../utils';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 
 jest.mock('../../../hooks/useVideoContext/useVideoContext', () => () => ({ room: {} }));
 

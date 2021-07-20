@@ -2,7 +2,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import axios from 'axios';
 import EndCallButton from './EndCallButton';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import { mockRoom } from '../../../__mocks__/twilio-video';
 import { mockLocalParticipant } from '../../../utils/mocks';
 

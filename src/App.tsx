@@ -11,7 +11,7 @@ import { ROOM_STATE } from './utils/displayStrings';
 import useHeight from './hooks/useHeight/useHeight';
 import MessageText from './components/MessageText/MessageText';
 import MessagingSection from './components/MessagingSection/MessagingSection';
-import rootStore from './stores';
+import rootStore from './stores/rootStore';
 import { observer } from 'mobx-react-lite';
 
 const Container = styled('div')({

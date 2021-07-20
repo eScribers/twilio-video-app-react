@@ -4,7 +4,7 @@ import GridOnIcon from '@material-ui/icons/GridOn';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import { Settings, VIEW_MODE } from '../../../types/settings';
 
 const ViewModeArray = Object.values(VIEW_MODE);

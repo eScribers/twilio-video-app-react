@@ -16,7 +16,7 @@ import theme from './theme';
 import App from './App';
 import WaitingForRoomDialog from 'components/WaitingForRoomDialog/WaitingForRoomDialog';
 import { observer } from 'mobx-react-lite';
-import rootStore from './stores';
+import rootStore from './stores/rootStore';
 import { INotification } from './types';
 
 const alertProviderOptions = {

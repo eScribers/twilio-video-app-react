@@ -5,7 +5,7 @@ import Mic from '@material-ui/icons/Mic';
 import MicOff from '@material-ui/icons/MicOff';
 import Tooltip from '@material-ui/core/Tooltip';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 import useIsTrackEnabled from '../../../hooks/useIsTrackEnabled/useIsTrackEnabled';
 import { LocalAudioTrack, RemoteAudioTrack } from 'twilio-video';
 

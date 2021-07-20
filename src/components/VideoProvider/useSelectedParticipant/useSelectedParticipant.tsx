@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Participant, Room } from 'twilio-video';
-import rootStore from '../../../stores';
+import rootStore from '../../../stores/rootStore';
 // import { ROOM_STATE } from '../../../utils/displayStrings';
 
 type selectedParticipantContextType = [Participant | null, (participant: Participant) => void];

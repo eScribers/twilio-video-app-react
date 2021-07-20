@@ -4,7 +4,7 @@ import AttachVisibilityHandler from './AttachVisibilityHandler/AttachVisibilityH
 import useHandleTrackPublicationFailed from './useHandleTrackPublicationFailed/useHandleTrackPublicationFailed';
 import { ConnectOptions, Room, TwilioError } from 'twilio-video';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 /*
  *  The hooks used by the VideoProvider component are different than the hooks found in the 'hooks/' directory. The hooks
  *  in the 'hooks/' directory can be used anywhere in a video application, and they can be used any number of times.

@@ -3,7 +3,7 @@ import { shallow } from 'enzyme';
 import { RootStore } from '../../stores/makeStore';
 import { ROOM_STATE } from '../../utils/displayStrings';
 let rootStore = new RootStore();
-jest.mock('../../stores', () => rootStore);
+jest.mock('../../stores/rootStore', () => rootStore);
 
 import EndCallButton from './EndCallButton/EndCallButton';
 import useIsUserActive from './useIsUserActive/useIsUserActive';

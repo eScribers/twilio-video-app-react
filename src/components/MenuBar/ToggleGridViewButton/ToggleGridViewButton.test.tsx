@@ -5,7 +5,7 @@ import { shallow, mount } from 'enzyme';
 import IconButton from '@material-ui/core/IconButton';
 import { act } from 'react-dom/test-utils';
 
-jest.mock('../../../stores', () => {
+jest.mock('../../../stores/rootStore', () => {
   return {
     __esModule: true, // this property makes it work
     default: rootStore,

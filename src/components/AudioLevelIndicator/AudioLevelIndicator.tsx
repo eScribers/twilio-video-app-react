@@ -8,7 +8,7 @@ import { IconButton } from '@material-ui/core';
 import { ParticipantIdentity } from '../../utils/participantIdentity';
 import { getParticipantOptions } from '../../components/ParticipantInfo/ParticipantDropDown/ParticipantDropDown';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 let clipId = 0;
 const getUniqueClipId = () => clipId++;

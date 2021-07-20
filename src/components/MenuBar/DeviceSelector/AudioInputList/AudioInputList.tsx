@@ -6,7 +6,7 @@ import { SELECTED_AUDIO_INPUT_KEY } from '../../../../constants';
 import useMediaStreamTrack from '../../../../hooks/useMediaStreamTrack/useMediaStreamTrack';
 import { TRACK_TYPE } from '../../../../utils/displayStrings';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../../../stores';
+import rootStore from '../../../../stores/rootStore';
 
 const AudioInputList = () => {
   const { participantsStore } = rootStore;

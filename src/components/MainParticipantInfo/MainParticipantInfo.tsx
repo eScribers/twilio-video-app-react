@@ -11,7 +11,7 @@ import AudioLevelIndicator from '../../components/AudioLevelIndicator/AudioLevel
 import AvatarIcon from '../../icons/AvatarIcon';
 import useParticipantIsReconnecting from '../../hooks/useParticipantIsReconnecting/useParticipantIsReconnecting';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { TrackPublication } from 'twilio-video';
 import { LocalTrackPublication } from 'twilio-video';
 import { RemoteTrackPublication } from 'twilio-video';

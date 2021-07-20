@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { createStyles, makeStyles } from '@material-ui/core/styles';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles(theme =>

@@ -4,7 +4,7 @@ import ParticipantGrid from '../ParticipantStrip/ParticipantGrid/ParticipantGrid
 import { styled } from '@material-ui/core/styles';
 import MainParticipant from '../MainParticipant/MainParticipant';
 import { observer } from 'mobx-react-lite';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 
 const Container = styled('div')(({ theme }) => ({
   position: 'relative',

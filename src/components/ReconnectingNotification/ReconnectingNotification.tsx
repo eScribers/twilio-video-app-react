@@ -5,7 +5,7 @@ import InfoIcon from '@material-ui/icons/Info';
 import Snackbar from '@material-ui/core/Snackbar';
 import { SnackbarContent } from '@material-ui/core';
 import { ROOM_STATE } from '../../utils/displayStrings';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import { observer } from 'mobx-react-lite';
 
 const useStyles = makeStyles({

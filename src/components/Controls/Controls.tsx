@@ -1,7 +1,7 @@
 import React from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import rootStore from '../../stores';
+import rootStore from '../../stores/rootStore';
 import ToggleScreenShareButton from './ToogleScreenShareButton/ToggleScreenShareButton';
 import EndCallButton from './EndCallButton/EndCallButton';
 import ToggleAudioButton from './ToggleAudioButton/ToggleAudioButton';
